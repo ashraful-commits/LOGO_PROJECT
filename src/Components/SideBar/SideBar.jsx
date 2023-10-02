@@ -7,7 +7,8 @@ import {
   BiLogoLinkedin,
   BiLogoInstagram,
 } from "react-icons/bi";
-
+import appleStore from "../../../public/appleStore.jpg";
+import playStore from "../../../public/playstore.jpg";
 import { RiGroupLine } from "react-icons/ri";
 const SideBar = () => {
   return (
@@ -107,12 +108,12 @@ const SideBar = () => {
         <div className="store">
           <div className="apple-store">
             <button>
-              <img src="/public/appleStore.jpg" alt="" />
+              <img src={appleStore} alt="" />
             </button>
           </div>
           <div className="play-store">
             <button>
-              <img src="/public/playstore.jpg" alt="" />
+              <img src={playStore} alt="" />
             </button>
           </div>
         </div>
