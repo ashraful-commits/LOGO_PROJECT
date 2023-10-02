@@ -325,7 +325,7 @@ const Sidebar = styled.div`
       ul {
         display: flex;
         flex-wrap: wrap;
-        column-gap: 0.5rem;
+        gap: 0.5rem;
         li {
           background-color: #e6e6e6;
           padding: 0.1rem 0;
@@ -333,21 +333,35 @@ const Sidebar = styled.div`
           width: 1.5rem;
           height: 1.5rem;
           display: flex;
-          justify-content: center;
           align-items: center;
           &:first-child {
             width: 80px;
+
             background-color: transparent;
+            margin: 0;
+            padding: 0;
             a {
               font-size: 0.9rem;
+              padding: 0;
             }
           }
           a {
             font-size: 0.8rem;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
             color: gray;
             line-height: 0.3rem;
+            &:first-child {
+              display: flex;
+              justify-content: start;
+            }
             svg {
               font-size: 0.9rem;
+              color: black;
+              margin-left: 5px;
             }
             &:hover {
               color: var(--secondary-text-color);

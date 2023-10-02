@@ -16,6 +16,6 @@ const Container = styled.div`
   height: auto;
   min-height: 100vh;
   max-height: fit-content;
-  background-color: #fff;
+  background-color: #fcf9f9;
 `;
 export default Layout;
