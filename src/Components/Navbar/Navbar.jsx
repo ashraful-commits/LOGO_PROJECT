@@ -33,12 +33,13 @@ const Navbar = () => {
 
 const Container = styled.div`
   width: 100vw;
-  height: 60px;
+  height: 75px;
   padding: 1rem 2rem;
   background-color: white;
   display: grid;
   grid-template-columns: 5% auto 10%;
-  box-shadow: 0 0 20px #e7e6e6;
+  box-shadow: 0px 12px 42px -4px rgba(24, 39, 75, 0.12),
+    0px 8px 18px -6px rgba(24, 39, 75, 0.12);
   align-items: center;
   gap: 1rem;
   .left {
@@ -53,6 +54,14 @@ const Container = styled.div`
       justify-content: center;
       align-items: center;
       button {
+        color: #000;
+        text-align: center;
+        font-family: Roboto;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        text-transform: capitalize;
         display: flex;
         align-items: center;
         gap: 0.3rem;
@@ -60,7 +69,7 @@ const Container = styled.div`
         cursor: pointer;
         background-color: transparent;
         svg {
-          font-size: 1.2rem;
+          font-size: 24px;
         }
         span {
           font-size: 0.8rem;
@@ -75,7 +84,7 @@ const Container = styled.div`
         display: flex;
         gap: 0.5rem;
         svg {
-          font-size: 1rem;
+          font-size: 24px;
         }
         input {
           border: none;
@@ -132,12 +141,17 @@ const Container = styled.div`
       font-weight: bold;
     }
     button {
-      width: 5rem;
+      width: 93px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 40px;
       border: none;
       background-image: var(--bg-gradient);
       padding: 0.5rem 0.5rem;
       border-radius: 1rem;
       font-size: 0.9rem;
+      flex-shrink: 0;
       color: white;
     }
   }

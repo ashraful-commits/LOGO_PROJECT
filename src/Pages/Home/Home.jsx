@@ -18,6 +18,7 @@ const Container = styled.div`
   padding: 1.8rem 9rem;
   max-height: fit-content;
   display: grid;
-  grid-template-columns: 20% 40% 20%;
+  grid-template-columns: 25% 30% auto;
+  gap: 5rem;
 `;
 export default Home;

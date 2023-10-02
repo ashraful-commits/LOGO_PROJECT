@@ -7,8 +7,13 @@ import {
   BiLogoLinkedin,
   BiLogoInstagram,
 } from "react-icons/bi";
-import appleStore from "../../../public/appleStore.jpg";
-import playStore from "../../../public/playstore.jpg";
+import appleStore from "../../../public/appleStore1.png";
+import playStore from "../../../public/palystore.png";
+import avtar1 from "../../../public/avatar1.png";
+import avtar2 from "../../../public/avatar2.png";
+import avtar3 from "../../../public/avatar3.png";
+import avtar4 from "../../../public/avatar4.png";
+import avtar5 from "../../../public/avatar5.png";
 import { RiGroupLine } from "react-icons/ri";
 const SideBar = () => {
   return (
@@ -40,10 +45,7 @@ const SideBar = () => {
         <div className="popular-creators">
           <div className="popular-creator">
             <div className="avatar">
-              <img
-                src="https://img.favpng.com/18/18/18/computer-icons-icon-design-avatar-png-favpng-X29r5WhWMXVYvNsYXkR4iBgwf.jpg"
-                alt="avatar"
-              />
+              <img src={avtar1} alt="avatar" />
             </div>
             <div className="creator-details">
               <p>Makenna Rosser</p>
@@ -52,10 +54,7 @@ const SideBar = () => {
           </div>
           <div className="popular-creator">
             <div className="avatar">
-              <img
-                src="https://img.favpng.com/18/18/18/computer-icons-icon-design-avatar-png-favpng-X29r5WhWMXVYvNsYXkR4iBgwf.jpg"
-                alt="avatar"
-              />
+              <img src={avtar2} alt="avatar" />
             </div>
             <div className="creator-details">
               <p>Makenna Rosser</p>
@@ -64,10 +63,7 @@ const SideBar = () => {
           </div>
           <div className="popular-creator">
             <div className="avatar">
-              <img
-                src="https://img.favpng.com/18/18/18/computer-icons-icon-design-avatar-png-favpng-X29r5WhWMXVYvNsYXkR4iBgwf.jpg"
-                alt="avatar"
-              />
+              <img src={avtar2} alt="avatar" />
             </div>
             <div className="creator-details">
               <p>Makenna Rosser</p>
@@ -76,10 +72,7 @@ const SideBar = () => {
           </div>
           <div className="popular-creator">
             <div className="avatar">
-              <img
-                src="https://img.favpng.com/18/18/18/computer-icons-icon-design-avatar-png-favpng-X29r5WhWMXVYvNsYXkR4iBgwf.jpg"
-                alt="avatar"
-              />
+              <img src={avtar3} alt="avatar" />
             </div>
             <div className="creator-details">
               <p>Makenna Rosser</p>
@@ -88,10 +81,16 @@ const SideBar = () => {
           </div>
           <div className="popular-creator">
             <div className="avatar">
-              <img
-                src="https://img.favpng.com/18/18/18/computer-icons-icon-design-avatar-png-favpng-X29r5WhWMXVYvNsYXkR4iBgwf.jpg"
-                alt="avatar"
-              />
+              <img src={avtar4} alt="avatar" />
+            </div>
+            <div className="creator-details">
+              <p>Makenna Rosser</p>
+              <span>@rosser_makenna</span>
+            </div>
+          </div>
+          <div className="popular-creator">
+            <div className="avatar">
+              <img src={avtar5} alt="avatar" />
             </div>
             <div className="creator-details">
               <p>Makenna Rosser</p>
@@ -208,10 +207,12 @@ const Sidebar = styled.div`
     justify-content: start;
     align-items: start;
     h4 {
-      font-weight: bold;
-      font-size: 1.1rem;
-      margin: 1rem 0;
-      text-transform: capitalize;
+      color: #000;
+      font-family: Poppins;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
     }
     .popular-creators {
       display: flex;
@@ -221,8 +222,12 @@ const Sidebar = styled.div`
         display: flex;
         gap: 0.5rem;
         .avatar {
+          border-radius: 58.716px;
+          border: 2.135px solid #fff;
           img {
-            width: 2rem;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
           }
         }
         .creator-details {
@@ -231,23 +236,34 @@ const Sidebar = styled.div`
           justify-content: center;
           align-items: start;
           p {
-            font-size: 0.8rem;
-            font-weight: 600;
             margin-bottom: 0;
+            color: #000;
+            font-family: Poppins;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
           }
           span {
-            font-size: 0.5rem;
+            color: #4f4f4f;
+            font-family: Poppins;
+            font-size: 10px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
           }
         }
       }
     }
     a {
+      color: #3c3c3c;
+      font-family: Poppins;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
       display: flex;
       align-items: center;
-      gap: 0.1rem;
-      margin: 1rem 0;
-      font-size: 0.8rem;
-      text-transform: capitalize;
       svg {
         font-size: 1rem;
       }
@@ -259,37 +275,35 @@ const Sidebar = styled.div`
     margin-bottom: 1.4rem;
     gap: 0.5rem;
     h4 {
-      font-size: 1.1rem;
+      color: #000;
+      font-family: Poppins;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
     }
     .store {
       display: flex;
       gap: 0.5rem;
       .apple-store {
-        width: 7rem;
-        height: 2.5rem;
+        width: 121.333px;
+        height: 40px;
+        flex-shrink: 0;
 
-        overflow: hidden;
-        border-radius: 0.5rem;
-        border: 1px solid gray;
         button {
           img {
             width: 100%;
-            object-fit: cover;
-            transform: scaleX(1.2) scaleY(1.55);
           }
         }
       }
       .play-store {
-        width: 7rem;
-        height: 2.5rem;
-        overflow: hidden;
-        border-radius: 0.5rem;
-        border: 1px solid gray;
+        width: 121.333px;
+        height: 40px;
+        flex-shrink: 0;
+
         button {
           img {
             width: 100%;
-            object-fit: cover;
-            transform: scaleX(1.15) scaleY(1.2);
           }
         }
       }
@@ -300,17 +314,24 @@ const Sidebar = styled.div`
     flex-direction: column;
     gap: 0.8rem;
     h4 {
-      font-size: 1.1rem;
-      font-weight: bold;
+      width: 191px;
+      height: 27.38px;
+      flex-shrink: 0;
     }
     .menus {
       ul {
         display: flex;
         flex-wrap: wrap;
-        column-gap: 0.5rem;
+        column-gap: 0.9rem;
+        row-gap: 0.5rem;
         li {
           a {
-            font-size: 0.8rem;
+            color: #3c3c3c;
+            font-family: Poppins;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
             color: gray;
             &:hover {
               color: var(--secondary-text-color);

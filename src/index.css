@@ -17,7 +17,7 @@
     46%
   ); /* Define a variable for the primary background color */
   --secondary-color: #f8f8f8;
-  --bg-gradient: linear-gradient(to bottom, hsl(111, 97%, 46%), #6aff50);
+  --bg-gradient: linear-gradient(353deg, #9ae769 -2.88%, #69bd06 115.09%);
 }
 * {
   margin: 0;
