@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import SideBar from "../../Components/SideBar/SideBar";
+import Post from "../../Components/Post/Post";
 
 const Home = () => {
   return (
     <Container>
       <SideBar />
-      <div></div>
+      <Post />
       <div></div>
     </Container>
   );
@@ -14,7 +15,7 @@ const Home = () => {
 const Container = styled.div`
   width: 100vw;
   min-height: 100vh;
-  padding: 2rem 9rem;
+  padding: 1.8rem 9rem;
   max-height: fit-content;
   display: grid;
   grid-template-columns: 20% 40% 20%;

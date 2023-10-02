@@ -6,6 +6,11 @@
     97%,
     46%
   ); /* Define a variable for main text color */
+  --secondary-text-color: hsl(
+    111,
+    99%,
+    26%
+  ); /* Define a variable for main text color */
   --primary-color: hsl(
     111,
     97%,
