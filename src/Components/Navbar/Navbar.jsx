@@ -1,24 +1,161 @@
 import styled from "styled-components";
-import { AiOutlineMenu, AiOutlineMinus } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+
+import avtar1 from "../../../public/avatar1.png";
+import avtar2 from "../../../public/avatar2.png";
+import avtar3 from "../../../public/avatar3.png";
+import avtar4 from "../../../public/avatar4.png";
+import avtar5 from "../../../public/avatar5.png";
+import trending from "../../../public/trendingIcn.png";
+import group from "../../../public/groupIcon.png";
+import play from "../../../public/playIcon.png";
+import {
+  Drawer,
+  Box,
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Button,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  List,
+} from "@mui/material";
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const toggleDrawer = (anchor) => {
+    setShowMenu(anchor);
+  };
   return (
     <Container>
+      {showMenu && (
+        <Drawer
+          open={showMenu}
+          sx={{
+            width: "100px",
+            height: "100vh",
+            padding: "0 30px",
+            transition: ".2s ease",
+            transitionDelay: ".3s",
+            transitionDuration: ".5s",
+          }}
+          onClose={() => toggleDrawer(!showMenu)}
+          BackdropComponent={false}
+        >
+          <Toolbar>
+            <Box
+              sx={{
+                width: "300px",
+                padding: "0 30px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "start",
+                gap: "10px",
+              }}
+            >
+              <IconButton onClick={() => toggleDrawer(false)}>
+                <AiOutlineClose />
+              </IconButton>
+              <List>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <img src={trending} alt="" />
+                    </ListItemIcon>
+                    <ListItemText primary="Trending" />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <img src={group} />
+                    </ListItemIcon>
+                    <ListItemText primary="Following" />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <img src={play} />
+                    </ListItemIcon>
+                    <ListItemText primary="Following" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+              <Typography fontSize={18} fontWeight={600}>
+                Popular Creators
+              </Typography>
+              <List>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <img src={avtar1} alt="" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Makenna Rosser"
+                      secondary="@rosser_makenna"
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <img src={avtar2} alt="" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Makenna Rosser"
+                      secondary="@rosser_makenna"
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <img src={avtar3} alt="" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Makenna Rosser"
+                      secondary="@rosser_makenna"
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <img src={avtar4} alt="" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Makenna Rosser"
+                      secondary="@rosser_makenna"
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <img src={avtar5} alt="" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Makenna Rosser"
+                      secondary="@rosser_makenna"
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Box>
+          </Toolbar>
+        </Drawer>
+      )}
       <div className="container">
-        {showMenu && (
-          <div className="dropdown-menu">
-            <ul>
-              <li className="active">About us</li>
-              <li>Partnership</li>
-              <li>Help</li>
-              <li>Safety</li>
-              <li>Community Guidelines</li>
-            </ul>
-          </div>
-        )}
         <div className="left">
           {/* small menu  */}
           <div className="small-menu">
@@ -59,7 +196,131 @@ const Container = styled.div`
   background: #fff;
   display: flex;
   justify-content: center;
+  .MuiPaper-root {
+    .drawer {
+      width: 100%;
+      height: 100%;
 
+      background-color: red;
+      .trending-following-explore {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        justify-content: start;
+        align-items: start;
+        ul {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          li {
+            a {
+              color: #000;
+              font-family: Poppins;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 500;
+              line-height: normal;
+              display: flex;
+              gap: 4px;
+              color: black;
+
+              &:hover {
+                color: var(--secondary-text-color);
+              }
+            }
+          }
+        }
+      }
+      .popular {
+        width: 100%;
+        height: 380px;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        margin-top: 42px;
+        h4 {
+          color: #000;
+          font-family: Poppins;
+          font-size: 18px;
+          font-style: normal;
+          font-weight: 600;
+          line-height: normal;
+        }
+        .popular-creators {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          margin-top: 16px;
+          .popular-creator {
+            display: flex;
+            gap: 7px;
+            .avatar {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              width: 40px;
+              height: 40px;
+              img {
+                flex-shrink: 0;
+              }
+            }
+            .creator-details {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: start;
+              p {
+                margin-bottom: 0;
+                color: #000;
+                font-family: Poppins;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: normal;
+              }
+              span {
+                color: #4f4f4f;
+                font-family: Poppins;
+                font-size: 10px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+              }
+            }
+          }
+        }
+        a {
+          color: #3c3c3c;
+          font-family: Poppins;
+          font-size: 14px;
+          font-style: normal;
+          margin-top: 20px;
+          font-weight: 400;
+          line-height: normal;
+          display: flex;
+          align-items: center;
+          svg {
+            font-size: 15px;
+            margin-left: 2px;
+            margin-top: 2px;
+          }
+        }
+      }
+      .close {
+        top: 10%;
+        right: 10%;
+        position: absolute;
+        button {
+          border: none;
+          background-color: transparent;
+          svg {
+            font-size: 24px;
+          }
+        }
+      }
+    }
+  }
   .container {
     position: relative;
     width: 1440px;
@@ -360,27 +621,6 @@ const Container = styled.div`
       grid-template-columns: 1fr 2fr;
       justify-content: space-between;
       padding: 0 50px;
-    }
-  }
-  .dropdown-menu {
-    position: absolute;
-    padding: 20px;
-    border-radius: 20px;
-    border-top-left-radius: 0;
-    left: 50px;
-    top: 90%;
-    background-color: white;
-    box-shadow: 0 0 10px #e4e4e4;
-    ul {
-      display: flex;
-      flex-direction: column;
-      gap: 23px;
-      li {
-        padding: 5px 0;
-      }
-      .active {
-        border-bottom: 1px solid gray;
-      }
     }
   }
 `;
