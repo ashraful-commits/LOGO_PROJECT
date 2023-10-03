@@ -66,7 +66,7 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
             url={videoUrl}
             width="100%"
             height="100%"
-            controls={true}
+            controls={false}
             playing={playing}
           />
           <div className="play-button" onClick={togglePlay}>
