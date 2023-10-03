@@ -22,6 +22,7 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
         if (entry.isIntersecting) {
           // Video is in view, play it
           setPlaying(true);
+          videoRef.current?.seekTo(0);
         } else {
           // Video is out of view, pause it
           setPlaying(false);

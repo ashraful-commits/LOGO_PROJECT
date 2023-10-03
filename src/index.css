@@ -40,3 +40,9 @@ ul {
 li {
   list-style: none;
 }
+button {
+  cursor: pointer;
+}
+a {
+  cursor: pointer;
+}

@@ -2,14 +2,27 @@ import styled from "styled-components";
 import { AiOutlineMenu, AiOutlineMinus } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
+import { useState } from "react";
 const Navbar = () => {
+  const [showMenu, setShowMenu] = useState(false);
   return (
     <Container>
       <div className="container">
+        {showMenu && (
+          <div className="dropdown-menu">
+            <ul>
+              <li className="active">About us</li>
+              <li>Partnership</li>
+              <li>Help</li>
+              <li>Safety</li>
+              <li>Community Guidelines</li>
+            </ul>
+          </div>
+        )}
         <div className="left">
           {/* small menu  */}
           <div className="small-menu">
-            <button>
+            <button onClick={() => setShowMenu(!showMenu)}>
               <AiOutlineMenu />
               <span>Menu</span>
               <img src={logo} alt="" />
@@ -48,6 +61,7 @@ const Container = styled.div`
   justify-content: center;
 
   .container {
+    position: relative;
     width: 1440px;
     display: grid;
     margin: 0 auto;
@@ -346,6 +360,27 @@ const Container = styled.div`
       grid-template-columns: 1fr 2fr;
       justify-content: space-between;
       padding: 0 50px;
+    }
+  }
+  .dropdown-menu {
+    position: absolute;
+    padding: 20px;
+    border-radius: 20px;
+    border-top-left-radius: 0;
+    left: 50px;
+    top: 90%;
+    background-color: white;
+    box-shadow: 0 0 10px #e4e4e4;
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 23px;
+      li {
+        padding: 5px 0;
+      }
+      .active {
+        border-bottom: 1px solid gray;
+      }
     }
   }
 `;
