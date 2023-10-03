@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { BsStars, BsCollectionPlay, BsTwitter } from "react-icons/bs";
+import { BsTwitter } from "react-icons/bs";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import {
   BiLogoFacebook,

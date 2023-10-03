@@ -1,9 +1,48 @@
 import styled from "styled-components";
 import avatar1 from "../../../public/avatar1.png";
 import postImg1 from "../../../public/postImg1.png";
+import ReactPlayer from "react-player";
+import { BsChat, BsHeart, BsPause, BsPlay, BsShare } from "react-icons/bs";
+import { useEffect, useRef, useState } from "react";
+const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
+  const [playing, setPlaying] = useState(false);
+  const videoRef = useRef();
+  const togglePlay = () => {
+    setPlaying(!playing);
+  };
+  useEffect(() => {
+    const options = {
+      root: null, // use the viewport as the root
+      rootMargin: "0px", // no margin
+      threshold: 0.5, // 50% of the video element must be visible
+    };
 
-import { BsChat, BsHeart, BsShare } from "react-icons/bs";
-const PostComponent = () => {
+    const handleIntersection = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // Video is in view, play it
+          setPlaying(true);
+        } else {
+          // Video is out of view, pause it
+          setPlaying(false);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, options);
+
+    // Start observing the video element
+    if (videoRef.current) {
+      observer.observe(videoRef.current);
+    }
+
+    // Cleanup the observer when the component unmounts
+    return () => {
+      if (videoRef.current) {
+        observer.unobserve(videoRef.current);
+      }
+    };
+  }, []);
   return (
     <PostContainer>
       <div className="post-user-details">
@@ -21,13 +60,22 @@ const PostComponent = () => {
         </div>
       </div>
       <div className="title">
-        <p>Good Morning! Here is my latest magic video.</p>
+        <p>{title}</p>
       </div>
       <div className="img-status">
-        <div className="img">
-          <img src={postImg1} alt="postimg" />
+        <div ref={videoRef} className="img">
+          <ReactPlayer
+            url={videoUrl}
+            width="100%"
+            height="100%"
+            controls={true}
+            playing={playing}
+          />
+          <div className="play-button" onClick={togglePlay}>
+            {playing ? <BsPause /> : <BsPlay />}
+          </div>
           <div className="desc">
-            <p>Good morining every one #goodmorning</p>
+            <p>{desc}</p>
             <span>On the way - (alan walker) - music hip hop...</span>
           </div>
         </div>
@@ -139,11 +187,14 @@ const PostContainer = styled.div`
       font-style: normal;
       font-weight: 500;
       line-height: normal;
+      white-space: nowrap; /* Prevent text from wrapping to the next line */
+      overflow: hidden; /* Hide any content that overflows its container */
+      text-overflow: ellipsis; /* Display an ellipsis (...) when text overflows */
+      max-width: 150px;
     }
   }
   .img-status {
     height: 570px;
-    width: 100%;
     flex-shrink: 0;
     display: grid;
     margin-top: 9px;
@@ -151,18 +202,47 @@ const PostContainer = styled.div`
     gap: 10px;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     .img {
+      width: 100%;
       position: relative;
-      img {
-        width: 100%;
-        height: 100%;
-        margin-left: 62px;
+      height: 100%;
+      overflow: hidden;
+      background-color: gray;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #000;
+      border-radius: 24.731px;
+      margin-left: 62px;
+      z-index: 1;
+      .play-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        font-size: 24px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        padding: 10px;
+        z-index: 100;
+        transition: background-color 0.2s;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .play-button:hover {
+        background-color: rgba(0, 0, 0, 0.7);
       }
       .desc {
         position: absolute;
         overflow: hidden;
         bottom: 0;
-        left: 62px;
         width: 320px;
         height: 498px;
         flex-shrink: 0;
@@ -171,7 +251,10 @@ const PostContainer = styled.div`
         display: flex;
         flex-direction: column;
         justify-content: end;
+        align-items: center;
         /* align-items: center; */
+        z-index: 5;
+        padding: 10px;
         padding-bottom: 35px;
         background: linear-gradient(
           0deg,
@@ -179,7 +262,7 @@ const PostContainer = styled.div`
           rgba(45, 45, 45, 0.35) 35.03%,
           rgba(48, 48, 48, 0) 45.12%
         );
-        mix-blend-mode: multiply;
+        mix-blend-mode: normal;
         p {
           color: #bcbcbc;
           font-family: Roboto;
@@ -187,6 +270,7 @@ const PostContainer = styled.div`
           font-style: normal;
           font-weight: 400;
           line-height: normal;
+          z-index: 2;
         }
         span {
           color: #bcbcbc;
