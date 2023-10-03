@@ -322,12 +322,18 @@ const PostContainer = styled.div`
     .post-user-details {
       width: 380.112px;
     }
+    .title {
+      width: 50%;
+    }
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
     width: 100%;
     .post-user-details {
       width: 450.112px;
+    }
+    .title {
+      width: 70%;
     }
   }
 `;
