@@ -327,7 +327,7 @@ const PostContainer = styled.div`
       width: 350.112px;
     }
     .title {
-      width: 50%;
+      width: 75%;
     }
   }
 
