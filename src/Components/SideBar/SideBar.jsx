@@ -167,13 +167,12 @@ const SideBar = () => {
 const Sidebar = styled.div`
   width: 100%;
   position: sticky; /* Make the sidebar sticky */
-  top: 13%;
+  top: 11.2%;
   bottom: 0; /* Stick to the top of the viewport */
   height: 100vh;
-  grid-template-rows: 20% 40% 40%;
+  grid-template-rows: 20% 40% 30%;
   gap: 5rem;
-  grid-template-rows: 20% 40% 40%;
-  gap: 5rem;
+
   .trending-following-explore {
     width: 100%;
     height: fit-content;
