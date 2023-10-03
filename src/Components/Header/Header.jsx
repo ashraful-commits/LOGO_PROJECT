@@ -18,11 +18,11 @@ const HeaderContainer = styled.div`
   top: 0; /* Specify the top position where it becomes sticky */
   background-color: white; /* You may want to specify a background color */
   z-index: 100; /* Adjust the z-index as needed */
-  @media (min-width: 400px) and (max-width: 786) {
-    width: 100%;
+  @media (max-width: 768px) {
+    width: 110%;
   }
-  @media (min-width: 786px) and (max-width: 1024px) {
-    width: 100%;
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 110%;
   }
   @media (min-width: 1025px) and (max-width: 1279px) {
     /* Styles for tablet devices */
