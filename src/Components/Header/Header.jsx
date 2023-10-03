@@ -14,5 +14,9 @@ const HeaderContainer = styled.div`
     0px 8px 18px -6px rgba(24, 39, 75, 0.12);
   display: flex;
   justify-content: center;
+  position: sticky;
+  top: 0; /* Specify the top position where it becomes sticky */
+  background-color: white; /* You may want to specify a background color */
+  z-index: 100; /* Adjust the z-index as needed */
 `;
 export default Header;
