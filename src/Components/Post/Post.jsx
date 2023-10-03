@@ -48,6 +48,7 @@ const PostContainer = styled.div`
   }
   @media (min-width: 769px) and (max-width: 1024px) {
     margin-top: 50px;
+    top: 10%;
   }
 `;
 export default Post;

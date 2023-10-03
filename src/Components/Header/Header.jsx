@@ -24,5 +24,9 @@ const HeaderContainer = styled.div`
   @media (min-width: 786px) and (max-width: 1024px) {
     width: 100%;
   }
+  @media (min-width: 1025px) and (max-width: 1279px) {
+    /* Styles for tablet devices */
+    width: 100%;
+  }
 `;
 export default Header;

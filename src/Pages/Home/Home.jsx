@@ -34,5 +34,9 @@ const Container = styled.div`
       display: none;
     }
   }
+  @media (min-width: 1025px) and (max-width: 1279px) {
+    width: 100%;
+    grid-template-columns: 255.333px 400px 10px;
+  }
 `;
 export default Home;

@@ -241,7 +241,7 @@ const PostContainer = styled.div`
         position: absolute;
         overflow: hidden;
         bottom: 0;
-        width: 320px;
+        width: 300px;
         height: 498px;
         flex-shrink: 0;
         border-radius: 24.731px;
@@ -249,10 +249,13 @@ const PostContainer = styled.div`
         display: flex;
         flex-direction: column;
         justify-content: end;
-        align-items: center;
-        /* align-items: center; */
+        align-items: start;
+        white-space: nowrap; /* Prevent text from wrapping to the next line */
+        overflow: hidden; /* Hide overflowing text */
+        text-overflow: ellipsis; /* Display an ellipsis (...) when text overflows */
+        max-width: 100%;
         z-index: 5;
-        padding: 10px;
+        padding: 20px;
         padding-bottom: 35px;
         background: linear-gradient(
           0deg,
@@ -318,8 +321,8 @@ const PostContainer = styled.div`
   }
   @media (max-width: 768px) {
     width: 100%;
+    margin: 0 auto;
     height: 671.334px;
-
     .post-user-details {
       width: 350.112px;
     }
@@ -330,6 +333,7 @@ const PostContainer = styled.div`
 
   @media (min-width: 769px) and (max-width: 1024px) {
     width: 100%;
+    top: 5%;
     .post-user-details {
       width: 450.112px;
     }
