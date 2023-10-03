@@ -17,7 +17,7 @@ import avtar5 from "../../../public/avatar5.png";
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
-import { RiGroupLine } from "react-icons/ri";
+
 const SideBar = () => {
   return (
     <Sidebar>
@@ -66,7 +66,7 @@ const SideBar = () => {
           </div>
           <div className="popular-creator">
             <div className="avatar">
-              <img src={avtar2} alt="avatar" />
+              <img src={avtar3} alt="avatar" />
             </div>
             <div className="creator-details">
               <p>James Workman</p>
@@ -75,7 +75,7 @@ const SideBar = () => {
           </div>
           <div className="popular-creator">
             <div className="avatar">
-              <img src={avtar3} alt="avatar" />
+              <img src={avtar4} alt="avatar" />
             </div>
             <div className="creator-details">
               <p>Talan Stanton</p>
@@ -84,7 +84,7 @@ const SideBar = () => {
           </div>
           <div className="popular-creator">
             <div className="avatar">
-              <img src={avtar4} alt="avatar" />
+              <img src={avtar5} alt="avatar" />
             </div>
             <div className="creator-details">
               <p>Madelyn</p>
