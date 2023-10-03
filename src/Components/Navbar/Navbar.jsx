@@ -339,5 +339,14 @@ const Container = styled.div`
       }
     }
   }
+  @media (min-width: 1025px) and (max-width: 1441px) {
+    width: 100%;
+    .container {
+      width: 100%;
+      grid-template-columns: 1fr 2fr;
+      justify-content: space-between;
+      padding: 0 50px;
+    }
+  }
 `;
 export default Navbar;

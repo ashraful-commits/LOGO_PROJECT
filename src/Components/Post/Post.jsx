@@ -43,6 +43,9 @@ const PostContainer = styled.div`
     width: 100%;
   }
 
+  @media (min-width: 300px) and (max-width: 768px) {
+    gap: 12px;
+  }
   @media (min-width: 769px) and (max-width: 1024px) {
     margin-top: 50px;
   }

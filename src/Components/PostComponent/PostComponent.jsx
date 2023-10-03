@@ -319,8 +319,9 @@ const PostContainer = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     height: 671.334px;
+
     .post-user-details {
-      width: 380.112px;
+      width: 350.112px;
     }
     .title {
       width: 50%;
@@ -331,6 +332,9 @@ const PostContainer = styled.div`
     width: 100%;
     .post-user-details {
       width: 450.112px;
+    }
+    .img-status {
+      grid-template-columns: 320px auto;
     }
     .title {
       width: 70%;
