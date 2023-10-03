@@ -55,20 +55,29 @@ const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 10px;
   .post-user-details {
     width: 545.112px;
-    height: 81px;
+    height: 50px;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     .user-details {
       display: flex;
-      align-items: center;
+      gap: 5.4px;
       .avatar {
-        width: 50px;
-        height: 50px;
+        width: 52px;
+        height: 52px;
         flex-shrink: 0;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
       .details {
         p {
@@ -92,7 +101,7 @@ const PostContainer = styled.div`
     .follow {
       display: flex;
       justify-content: end;
-      align-items: center;
+
       button {
         width: 75px;
         height: 32px;
@@ -111,10 +120,12 @@ const PostContainer = styled.div`
     }
   }
   .title {
-    width: 70%;
+    width: 80%;
     text-align: left;
     display: flex;
     justify-content: start;
+    margin-left: 5px;
+    margin-top: 2px;
     p {
       color: #000;
       font-family: Poppins;
@@ -126,31 +137,35 @@ const PostContainer = styled.div`
   }
   .img-status {
     height: 570px;
+    width: 100%;
     flex-shrink: 0;
     display: grid;
-    gap: 0.5rem;
+    margin-top: 9px;
     grid-template-columns: 320px auto;
+    gap: 10px;
     align-items: center;
-    justify-content: end;
+    justify-content: center;
     img {
       width: 100%;
       height: 100%;
+      margin-left: 62px;
     }
     .status {
       height: 100%;
-      width: 100%;
+      width: 115px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: end;
       align-items: end;
-      gap: 1rem;
+      gap: 21px;
 
       .status-item {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 0.2rem;
+        gap: 6px;
+
         button {
           width: 40px;
           height: 40px;
@@ -158,10 +173,11 @@ const PostContainer = styled.div`
           justify-content: center;
           align-items: center;
           border: none;
+
           border-radius: 100%;
-          padding: 0.1rem;
+
           svg {
-            font-size: 1.2rem;
+            font-size: 22px;
           }
         }
         span {

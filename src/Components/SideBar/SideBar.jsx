@@ -14,6 +14,9 @@ import avtar2 from "../../../public/avatar2.png";
 import avtar3 from "../../../public/avatar3.png";
 import avtar4 from "../../../public/avatar4.png";
 import avtar5 from "../../../public/avatar5.png";
+import trending from "../../../public/trendingIcn.png";
+import group from "../../../public/groupIcon.png";
+import play from "../../../public/playIcon.png";
 import { RiGroupLine } from "react-icons/ri";
 const SideBar = () => {
   return (
@@ -22,19 +25,19 @@ const SideBar = () => {
         <ul>
           <li>
             <Link>
-              <BsStars />
+              <img src={trending} alt="trending" />
               <span></span>Trending
             </Link>
           </li>
           <li>
             <Link>
-              <RiGroupLine />
+              <img src={group} alt="" />
               <span></span>Following
             </Link>
           </li>
           <li>
             <Link>
-              <BsCollectionPlay />
+              <img src={play} alt="" />
               <span></span>Explore
             </Link>
           </li>
@@ -57,8 +60,8 @@ const SideBar = () => {
               <img src={avtar2} alt="avatar" />
             </div>
             <div className="creator-details">
-              <p>Makenna Rosser</p>
-              <span>@rosser_makenna</span>
+              <p>Desirae Bator</p>
+              <span>@batorbaby</span>
             </div>
           </div>
           <div className="popular-creator">
@@ -66,8 +69,8 @@ const SideBar = () => {
               <img src={avtar2} alt="avatar" />
             </div>
             <div className="creator-details">
-              <p>Makenna Rosser</p>
-              <span>@rosser_makenna</span>
+              <p>James Workman</p>
+              <span>@workman</span>
             </div>
           </div>
           <div className="popular-creator">
@@ -75,8 +78,8 @@ const SideBar = () => {
               <img src={avtar3} alt="avatar" />
             </div>
             <div className="creator-details">
-              <p>Makenna Rosser</p>
-              <span>@rosser_makenna</span>
+              <p>Talan Stanton</p>
+              <span>@stanton</span>
             </div>
           </div>
           <div className="popular-creator">
@@ -84,22 +87,13 @@ const SideBar = () => {
               <img src={avtar4} alt="avatar" />
             </div>
             <div className="creator-details">
-              <p>Makenna Rosser</p>
-              <span>@rosser_makenna</span>
-            </div>
-          </div>
-          <div className="popular-creator">
-            <div className="avatar">
-              <img src={avtar5} alt="avatar" />
-            </div>
-            <div className="creator-details">
-              <p>Makenna Rosser</p>
-              <span>@rosser_makenna</span>
+              <p>Madelyn</p>
+              <span>@madelynbips</span>
             </div>
           </div>
         </div>
         <Link>
-          See more <MdOutlineKeyboardArrowRight />
+          See More <MdOutlineKeyboardArrowRight />
         </Link>
       </div>
       <div className="download-app">
@@ -184,14 +178,19 @@ const Sidebar = styled.div`
     ul {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 20px;
       li {
         a {
+          color: #000;
+          font-family: Poppins;
+          font-size: 18px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
           display: flex;
-          gap: 0.3rem;
+          gap: 4px;
           color: black;
-          font-weight: bold;
-          font-size: 1rem;
+
           &:hover {
             color: var(--secondary-text-color);
           }
@@ -201,11 +200,12 @@ const Sidebar = styled.div`
   }
   .popular {
     width: 100%;
+    height: 380px;
     display: flex;
-    padding: 2.1rem 0;
     flex-direction: column;
     justify-content: start;
     align-items: start;
+    margin-top: 42px;
     h4 {
       color: #000;
       font-family: Poppins;
@@ -217,16 +217,18 @@ const Sidebar = styled.div`
     .popular-creators {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 16px;
+      margin-top: 16px;
       .popular-creator {
         display: flex;
-        gap: 0.5rem;
+        gap: 7px;
         .avatar {
-          border-radius: 58.716px;
-          border: 2.135px solid #fff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 40px;
+          height: 40px;
           img {
-            width: 40px;
-            height: 40px;
             flex-shrink: 0;
           }
         }
@@ -260,20 +262,24 @@ const Sidebar = styled.div`
       font-family: Poppins;
       font-size: 14px;
       font-style: normal;
+      margin-top: 20px;
       font-weight: 400;
       line-height: normal;
       display: flex;
       align-items: center;
       svg {
-        font-size: 1rem;
+        font-size: 15px;
+        margin-left: 2px;
+        margin-top: 2px;
       }
     }
   }
   .download-app {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1.4rem;
-    gap: 0.5rem;
+    width: 100%;
+    margin-top: -4px;
+    gap: 5px;
     h4 {
       color: #000;
       font-family: Poppins;
@@ -284,15 +290,20 @@ const Sidebar = styled.div`
     }
     .store {
       display: flex;
-      gap: 0.5rem;
+      gap: 13px;
+      margin-top: 7px;
       .apple-store {
         width: 121.333px;
         height: 40px;
         flex-shrink: 0;
 
         button {
+          border-radius: 5px;
+          border: none;
           img {
             width: 100%;
+            height: 100%;
+            object-fit: contain;
           }
         }
       }
@@ -300,10 +311,13 @@ const Sidebar = styled.div`
         width: 121.333px;
         height: 40px;
         flex-shrink: 0;
-
         button {
+          border-radius: 5px;
+          border: none;
           img {
             width: 100%;
+            height: 100%;
+            object-fit: contain;
           }
         }
       }
@@ -312,27 +326,40 @@ const Sidebar = styled.div`
   .about {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    margin-top: 20px;
+    width: 100%;
     h4 {
-      width: 191px;
-      height: 27.38px;
-      flex-shrink: 0;
+      color: #000;
+      font-family: Poppins;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+      margin-top: 11px;
     }
     .menus {
+      width: 100%;
+      margin-top: 16px;
       ul {
         display: flex;
         flex-wrap: wrap;
-        column-gap: 0.9rem;
-        row-gap: 0.5rem;
+        row-gap: 15px;
+
         li {
+          margin-right: 16px;
+          &:last-child {
+            margin-right: 2px;
+          }
           a {
+            white-space: nowrap;
             color: #3c3c3c;
             font-family: Poppins;
+            text-transform: capitalize;
             font-size: 16px;
             font-style: normal;
             font-weight: 400;
             line-height: normal;
-            color: gray;
+
             &:hover {
               color: var(--secondary-text-color);
             }
@@ -344,13 +371,13 @@ const Sidebar = styled.div`
       display: flex;
       justify-content: start;
       align-items: center;
+      margin-top: 17px;
       ul {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: 6px;
         li {
           background-color: #e6e6e6;
-          padding: 0.1rem 0;
           border-radius: 100%;
           width: 1.5rem;
           height: 1.5rem;
@@ -358,13 +385,22 @@ const Sidebar = styled.div`
           align-items: center;
           &:first-child {
             width: 80px;
-
             background-color: transparent;
             margin: 0;
             padding: 0;
             a {
-              font-size: 0.9rem;
-              padding: 0;
+              font-family: Poppins;
+              font-weight: 400;
+              line-height: 24px;
+              letter-spacing: 0em;
+              text-align: left;
+              svg {
+                font-size: 20px;
+                font-weight: bold;
+              }
+              &:first-child {
+                font-size: 16px;
+              }
             }
           }
           a {

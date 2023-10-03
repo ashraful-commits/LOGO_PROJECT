@@ -5,17 +5,20 @@ import styled from "styled-components";
 const Layout = () => {
   return (
     <Container>
-      <Header />
-      <Outlet />
+      <div className="container">
+        <Header />
+        <Outlet />
+      </div>
     </Container>
   );
 };
 
 const Container = styled.div`
-  width: 100vw;
-  height: auto;
+  width: 99vw;
   min-height: 100vh;
   max-height: fit-content;
   background-color: #fff;
+  display: flex;
+  justify-content: center;
 `;
 export default Layout;

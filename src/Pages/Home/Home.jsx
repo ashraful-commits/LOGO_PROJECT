@@ -13,12 +13,12 @@ const Home = () => {
 };
 
 const Container = styled.div`
-  width: 100vw;
+  width: 1165px;
   min-height: 100vh;
-  padding: 1.8rem 9rem;
-  max-height: fit-content;
+  padding-top: 33.5px;
   display: grid;
-  grid-template-columns: 25% 30% auto;
-  gap: 5rem;
+  gap: 109px;
+  margin: 0 auto;
+  grid-template-columns: 255.333px auto auto;
 `;
 export default Home;
