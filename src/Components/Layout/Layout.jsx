@@ -20,5 +20,12 @@ const Container = styled.div`
   background-color: #fff;
   display: flex;
   justify-content: center;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 100%;
+  }
 `;
 export default Layout;

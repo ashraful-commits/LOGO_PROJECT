@@ -7,7 +7,7 @@ const Home = () => {
     <Container>
       <SideBar />
       <Post />
-      <div></div>
+      <div className="white"></div>
     </Container>
   );
 };
@@ -20,5 +20,19 @@ const Container = styled.div`
   gap: 109px;
   margin: 0 auto;
   grid-template-columns: 255.333px auto auto;
+  @media (max-width: 768px) {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 0 50px;
+    .white {
+      display: none;
+    }
+  }
 `;
 export default Home;

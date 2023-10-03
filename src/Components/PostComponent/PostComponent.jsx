@@ -31,12 +31,10 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
 
     const observer = new IntersectionObserver(handleIntersection, options);
 
-    // Start observing the video element
     if (videoRef.current) {
       observer.observe(videoRef.current);
     }
 
-    // Cleanup the observer when the component unmounts
     return () => {
       if (videoRef.current) {
         observer.unobserve(videoRef.current);
@@ -316,6 +314,20 @@ const PostContainer = styled.div`
           font-size: 0.6rem;
         }
       }
+    }
+  }
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 671.334px;
+    .post-user-details {
+      width: 380.112px;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 100%;
+    .post-user-details {
+      width: 450.112px;
     }
   }
 `;

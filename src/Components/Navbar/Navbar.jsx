@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineMenu, AiOutlineMinus } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
 const Navbar = () => {
@@ -159,6 +159,162 @@ const Container = styled.div`
           border: none;
           border-radius: 50px;
           background-image: linear-gradient(#8fdd5d, #71bb42);
+        }
+      }
+    }
+    /* Styles for mobile devices */
+  }
+  @media (max-width: 768px) {
+    width: 100%;
+    .container {
+      width: 100%;
+      grid-template-columns: 1fr 2fr;
+      justify-content: space-between;
+      .left {
+        border-right: 0px solid gray;
+        display: flex;
+        justify-content: start;
+        .small-menu {
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          padding-left: 12px;
+        }
+      }
+      .right {
+        display: flex;
+        justify-content: space-between;
+        .search-field {
+          display: flex;
+          justify-content: end;
+          align-items: center;
+          form {
+            svg {
+              font-size: 25px;
+            }
+            input {
+              display: none;
+
+              &:focus {
+                outline: none;
+              }
+            }
+          }
+        }
+        .logo {
+          display: flex;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          img {
+            display: none;
+          }
+        }
+        .creator {
+          border-left: 0px solid gray;
+          display: flex;
+          padding: 20px;
+
+          span {
+            display: none;
+            color: #3c3c3c;
+            font-family: Poppins;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+          }
+          button {
+            width: 93px;
+            height: 40px;
+            flex-shrink: 0;
+            color: #fff;
+            font-family: Poppins;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 30px;
+            border: none;
+            border-radius: 50px;
+            background-image: linear-gradient(#8fdd5d, #71bb42);
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 100%;
+    .container {
+      width: 100%;
+      grid-template-columns: 1fr 2fr;
+      justify-content: space-between;
+      padding: 0 30px;
+      .left {
+        border-right: 0px solid gray;
+        display: flex;
+        justify-content: start;
+        .small-menu {
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          padding-left: 12px;
+        }
+      }
+      .right {
+        display: flex;
+        justify-content: space-between;
+        .search-field {
+          display: flex;
+          justify-content: end;
+          align-items: center;
+          form {
+            svg {
+              font-size: 25px;
+            }
+            input {
+              &:focus {
+                outline: none;
+              }
+            }
+          }
+        }
+        .logo {
+          display: flex;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          img {
+          }
+        }
+        .creator {
+          border-left: 0px solid gray;
+          display: flex;
+          padding: 20px;
+
+          span {
+            display: none;
+            color: #3c3c3c;
+            font-family: Poppins;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+          }
+          button {
+            width: 93px;
+            height: 40px;
+            flex-shrink: 0;
+            color: #fff;
+            font-family: Poppins;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 30px;
+            border: none;
+            border-radius: 50px;
+            background-image: linear-gradient(#8fdd5d, #71bb42);
+          }
         }
       }
     }

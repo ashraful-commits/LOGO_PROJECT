@@ -38,7 +38,13 @@ const Post = () => {
 const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
-
   gap: 52px;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    margin-top: 50px;
+  }
 `;
 export default Post;
