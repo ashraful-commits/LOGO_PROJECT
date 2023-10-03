@@ -564,7 +564,7 @@ const Sidebar = styled.div`
         gap: 13px;
         margin-top: 7px;
         .apple-store {
-          width: 121.333px;
+          width: 100.333px;
           height: 40px;
           flex-shrink: 0;
 
@@ -579,7 +579,7 @@ const Sidebar = styled.div`
           }
         }
         .play-store {
-          width: 121.333px;
+          width: 100.333px;
           height: 40px;
           flex-shrink: 0;
           button {

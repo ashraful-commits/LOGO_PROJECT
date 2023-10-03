@@ -12,6 +12,7 @@ const Navbar = () => {
             <button>
               <AiOutlineMenu />
               <span>Menu</span>
+              <img src={logo} alt="" />
             </button>
           </div>
           {/* search field  */}
@@ -84,6 +85,9 @@ const Container = styled.div`
             font-weight: 400;
             line-height: normal;
             text-transform: capitalize;
+          }
+          img {
+            display: none;
           }
         }
       }
@@ -179,6 +183,14 @@ const Container = styled.div`
           justify-content: start;
           align-items: center;
           padding-left: 12px;
+          button {
+            span {
+              display: none;
+            }
+            img {
+              display: block;
+            }
+          }
         }
       }
       .right {
@@ -259,6 +271,14 @@ const Container = styled.div`
           justify-content: start;
           align-items: center;
           padding-left: 12px;
+          button {
+            span {
+              display: none;
+            }
+            img {
+              display: block;
+            }
+          }
         }
       }
       .right {
