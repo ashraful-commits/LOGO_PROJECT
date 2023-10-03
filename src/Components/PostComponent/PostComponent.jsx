@@ -24,7 +24,13 @@ const PostComponent = () => {
         <p>Good Morning! Here is my latest magic video.</p>
       </div>
       <div className="img-status">
-        <img src={postImg1} alt="" />
+        <div className="img">
+          <img src={postImg1} alt="postimg" />
+          <div className="desc">
+            <p>Good morining every one #goodmorning</p>
+            <span>On the way - (alan walker) - music hip hop...</span>
+          </div>
+        </div>
         <div className="status">
           <div className="status-item">
             <button>
@@ -145,10 +151,52 @@ const PostContainer = styled.div`
     gap: 10px;
     align-items: center;
     justify-content: center;
-    img {
-      width: 100%;
-      height: 100%;
-      margin-left: 62px;
+    .img {
+      position: relative;
+      img {
+        width: 100%;
+        height: 100%;
+        margin-left: 62px;
+      }
+      .desc {
+        position: absolute;
+        overflow: hidden;
+        bottom: 0;
+        left: 62px;
+        width: 320px;
+        height: 498px;
+        flex-shrink: 0;
+        border-radius: 24.731px;
+        opacity: 0.8;
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        /* align-items: center; */
+        padding-bottom: 35px;
+        background: linear-gradient(
+          0deg,
+          #1c1c1c 7.3%,
+          rgba(45, 45, 45, 0.35) 35.03%,
+          rgba(48, 48, 48, 0) 45.12%
+        );
+        mix-blend-mode: multiply;
+        p {
+          color: #bcbcbc;
+          font-family: Roboto;
+          font-size: 10.234px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+        span {
+          color: #bcbcbc;
+          font-family: Roboto;
+          font-size: 8.528px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+      }
     }
     .status {
       height: 100%;
