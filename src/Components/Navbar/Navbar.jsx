@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import avtar1 from "../../../public/avatar1.png";
 import avtar2 from "../../../public/avatar2.png";
 import avtar3 from "../../../public/avatar3.png";
@@ -27,149 +27,186 @@ const Navbar = () => {
   const toggleDrawer = (anchor) => {
     setShowMenu(anchor);
   };
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay (you can replace this with actual data fetching logic)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Adjust the delay as needed
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <Container>
-      {showMenu && (
-        <Drawer
-          anchor="left"
-          open={showMenu}
-          onClose={() => toggleDrawer(!showMenu)}
-          hideBackdrop={true}
-        >
-          <Box
-            sx={{
-              width: "300px",
-              padding: "30px 30px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "start",
-              gap: "10px",
-            }}
-          >
-            <IconButton onClick={() => toggleDrawer(false)}>
-              <AiOutlineClose />
-            </IconButton>
-            <List sx={{ padding: "50px 0" }}>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <img src={trending} alt="" />
-                  </ListItemIcon>
-                  <ListItemText primary="Trending" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <img src={group} />
-                  </ListItemIcon>
-                  <ListItemText primary="Following" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <img src={play} />
-                  </ListItemIcon>
-                  <ListItemText primary="Following" />
-                </ListItemButton>
-              </ListItem>
-            </List>
-            <Typography fontSize={18} fontWeight={600}>
-              Popular Creators
-            </Typography>
-            <List>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <img src={avtar1} alt="" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Makenna Rosser"
-                    secondary="@rosser_makenna"
-                  />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <img src={avtar2} alt="" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Makenna Rosser"
-                    secondary="@rosser_makenna"
-                  />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <img src={avtar3} alt="" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Makenna Rosser"
-                    secondary="@rosser_makenna"
-                  />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <img src={avtar4} alt="" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Makenna Rosser"
-                    secondary="@rosser_makenna"
-                  />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <img src={avtar5} alt="" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Makenna Rosser"
-                    secondary="@rosser_makenna"
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Box>
-        </Drawer>
+    <>
+      {loading ? (
+        <Container>
+          <SkeletonContent>
+            <div className="left">
+              <SmallMenuButton>
+                <span></span>
+                <SkeletonLogo />
+              </SmallMenuButton>
+            </div>
+            <div className="right">
+              <SearchField>
+                <SkeletonSearch />
+              </SearchField>
+              <Logo>
+                <SkeletonLogo />
+              </Logo>
+              <Creator>
+                <SkeletonCreatorButton />
+              </Creator>
+            </div>
+          </SkeletonContent>
+        </Container>
+      ) : (
+        <Container>
+          {showMenu && (
+            <Drawer
+              anchor="left"
+              open={showMenu}
+              onClose={() => toggleDrawer(!showMenu)}
+              hideBackdrop={true}
+            >
+              <Box
+                sx={{
+                  width: "300px",
+                  padding: "30px 30px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "start",
+                  gap: "10px",
+                }}
+              >
+                <IconButton onClick={() => toggleDrawer(false)}>
+                  <AiOutlineClose />
+                </IconButton>
+                <List sx={{ padding: "50px 0" }}>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={trending} alt="" />
+                      </ListItemIcon>
+                      <ListItemText primary="Trending" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={group} />
+                      </ListItemIcon>
+                      <ListItemText primary="Following" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={play} />
+                      </ListItemIcon>
+                      <ListItemText primary="Following" />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+                <Typography fontSize={18} fontWeight={600}>
+                  Popular Creators
+                </Typography>
+                <List>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={avtar1} alt="" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Makenna Rosser"
+                        secondary="@rosser_makenna"
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={avtar2} alt="" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Makenna Rosser"
+                        secondary="@rosser_makenna"
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={avtar3} alt="" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Makenna Rosser"
+                        secondary="@rosser_makenna"
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={avtar4} alt="" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Makenna Rosser"
+                        secondary="@rosser_makenna"
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={avtar5} alt="" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Makenna Rosser"
+                        secondary="@rosser_makenna"
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </Box>
+            </Drawer>
+          )}
+          <div className="container">
+            <div className="left">
+              {/* small menu  */}
+              <div className="small-menu">
+                <button onClick={() => setShowMenu(!showMenu)}>
+                  <AiOutlineMenu />
+                  <span>Menu</span>
+                  <img src={logo} alt="" />
+                </button>
+              </div>
+              {/* search field  */}
+            </div>
+
+            <div className="right">
+              <div className="search-field">
+                <form action="">
+                  <CiSearch />
+                  <input type="text" placeholder="Search" />
+                </form>
+              </div>
+              <div className="logo">
+                <img src={logo} alt="" />
+              </div>
+
+              <div className="creator">
+                <span>Creator</span>
+                <button>Get App</button>
+              </div>
+            </div>
+          </div>
+        </Container>
       )}
-      <div className="container">
-        <div className="left">
-          {/* small menu  */}
-          <div className="small-menu">
-            <button onClick={() => setShowMenu(!showMenu)}>
-              <AiOutlineMenu />
-              <span>Menu</span>
-              <img src={logo} alt="" />
-            </button>
-          </div>
-          {/* search field  */}
-        </div>
-
-        <div className="right">
-          <div className="search-field">
-            <form action="">
-              <CiSearch />
-              <input type="text" placeholder="Search" />
-            </form>
-          </div>
-          <div className="logo">
-            <img src={logo} alt="" />
-          </div>
-
-          <div className="creator">
-            <span>Creator</span>
-            <button>Get App</button>
-          </div>
-        </div>
-      </div>
-    </Container>
+    </>
   );
 };
 
@@ -180,131 +217,10 @@ const Container = styled.div`
   background: #fff;
   display: flex;
   justify-content: center;
+  position: relative;
   .MuiPaper-root {
-    .drawer {
-      width: 100%;
-      height: 100%;
-
-      background-color: red;
-      .trending-following-explore {
-        width: 100%;
-        height: fit-content;
-        display: flex;
-        justify-content: start;
-        align-items: start;
-        ul {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          li {
-            a {
-              color: #000;
-              font-family: Poppins;
-              font-size: 18px;
-              font-style: normal;
-              font-weight: 500;
-              line-height: normal;
-              display: flex;
-              gap: 4px;
-              color: black;
-              transition: all 0.5s ease 0.5s;
-
-              &:hover {
-                color: var(--secondary-text-color);
-              }
-            }
-          }
-        }
-      }
-      .popular {
-        width: 100%;
-        height: 380px;
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        align-items: start;
-        margin-top: 42px;
-        h4 {
-          color: #000;
-          font-family: Poppins;
-          font-size: 18px;
-          font-style: normal;
-          font-weight: 600;
-          line-height: normal;
-        }
-        .popular-creators {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          margin-top: 16px;
-          .popular-creator {
-            display: flex;
-            gap: 7px;
-            .avatar {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              width: 40px;
-              height: 40px;
-              img {
-                flex-shrink: 0;
-              }
-            }
-            .creator-details {
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: start;
-              p {
-                margin-bottom: 0;
-                color: #000;
-                font-family: Poppins;
-                font-size: 14px;
-                font-style: normal;
-                font-weight: 500;
-                line-height: normal;
-              }
-              span {
-                color: #4f4f4f;
-                font-family: Poppins;
-                font-size: 10px;
-                font-style: normal;
-                font-weight: 400;
-                line-height: normal;
-              }
-            }
-          }
-        }
-        a {
-          color: #3c3c3c;
-          font-family: Poppins;
-          font-size: 14px;
-          font-style: normal;
-          margin-top: 20px;
-          font-weight: 400;
-          line-height: normal;
-          display: flex;
-          align-items: center;
-          svg {
-            font-size: 15px;
-            margin-left: 2px;
-            margin-top: 2px;
-          }
-        }
-      }
-      .close {
-        top: 10%;
-        right: 10%;
-        position: absolute;
-        button {
-          border: none;
-          background-color: transparent;
-          svg {
-            font-size: 24px;
-          }
-        }
-      }
-    }
+    transition: all 0.5s ease-in-out !important;
+    opacity: 0;
   }
   .container {
     position: relative;
@@ -483,10 +399,6 @@ const Container = styled.div`
         display: flex;
         justify-content: space-between;
         .search-field {
-          display: flex;
-          justify-content: end;
-          align-items: center;
-
           position: relative;
           &:hover input {
             max-width: 200px; /* Adjust the max-width value as needed */
@@ -647,5 +559,65 @@ const Container = styled.div`
       padding: 0 50px;
     }
   }
+`;
+
+const SkeletonContent = styled.div`
+  width: 1442px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 50px;
+  .left,
+  .right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  margin-left: 25px;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const SmallMenuButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background-color: transparent;
+  padding: 10px;
+`;
+
+const SearchField = styled.div`
+  margin-left: 25px;
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const Logo = styled.div`
+  margin-left: 25px;
+`;
+
+const Creator = styled.div`
+  margin-left: 25px;
+`;
+
+const SkeletonLogo = styled.div`
+  width: 56px;
+  height: 30px;
+  background-color: #ddd; /* Placeholder background color */
+`;
+
+const SkeletonSearch = styled.div`
+  width: 200px;
+  height: 40px;
+  background-color: #ddd; /* Placeholder background color */
+`;
+
+const SkeletonCreatorButton = styled.div`
+  width: 50px;
+  height: 40px;
+  background-color: #ddd; /* Placeholder background color */
 `;
 export default Navbar;

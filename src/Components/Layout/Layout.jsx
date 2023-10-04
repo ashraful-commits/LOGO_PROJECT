@@ -14,18 +14,14 @@ const Layout = () => {
 };
 
 const Container = styled.div`
-  width: 99vw;
+  width: 100vw;
   min-height: 100vh;
   max-height: fit-content;
   background-color: #fff;
   display: flex;
   justify-content: center;
   @media (max-width: 768px) {
-    width: 100%;
-  }
-
-  @media (min-width: 769px) and (max-width: 1024px) {
-    width: 100%;
+    width: 99vw;
   }
 `;
 export default Layout;

@@ -553,7 +553,7 @@ const SkeletonLoader = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #bbb9b9;
+      background-color: #e2e2e2;
       border-radius: 24.731px;
       margin-left: 62px;
       z-index: 1;
@@ -661,7 +661,7 @@ const SkeletonLoader = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     margin: 0 auto;
-    padding: 0 20px;
+
     height: 671.334px;
 
     .post-user-details {
