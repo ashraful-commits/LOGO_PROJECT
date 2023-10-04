@@ -409,7 +409,10 @@ const PostContainer = styled.div`
       width: 100%;
     }
     .img-status {
-      grid-template-columns: 300px auto;
+      grid-template-columns: 290px auto;
+      gap: 5px;
+      .status {
+      }
     }
     .title {
       width: 65%;
