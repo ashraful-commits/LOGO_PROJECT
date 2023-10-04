@@ -338,9 +338,10 @@ const PostContainer = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     margin: 0 auto;
+    padding: 0 20px;
     height: 671.334px;
     .post-user-details {
-      width: 350.112px;
+      width: 100%;
     }
     .title {
       width: 65%;
