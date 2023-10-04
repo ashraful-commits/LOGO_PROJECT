@@ -45,8 +45,8 @@ const SideBar = () => {
       </div>
       <div className="popular">
         <h4>Popular Creators</h4>
-        <div className="popular-creators">
-          <div className="popular-creator">
+        <ul className="popular-creators">
+          <li className="popular-creator">
             <div className="avatar">
               <img src={avtar1} alt="avatar" />
             </div>
@@ -54,8 +54,8 @@ const SideBar = () => {
               <p>Makenna Rosser</p>
               <span>@rosser_makenna</span>
             </div>
-          </div>
-          <div className="popular-creator">
+          </li>
+          <li className="popular-creator">
             <div className="avatar">
               <img src={avtar2} alt="avatar" />
             </div>
@@ -63,8 +63,8 @@ const SideBar = () => {
               <p>Desirae Bator</p>
               <span>@batorbaby</span>
             </div>
-          </div>
-          <div className="popular-creator">
+          </li>
+          <li className="popular-creator">
             <div className="avatar">
               <img src={avtar3} alt="avatar" />
             </div>
@@ -72,8 +72,8 @@ const SideBar = () => {
               <p>James Workman</p>
               <span>@workman</span>
             </div>
-          </div>
-          <div className="popular-creator">
+          </li>
+          <li className="popular-creator">
             <div className="avatar">
               <img src={avtar4} alt="avatar" />
             </div>
@@ -81,8 +81,8 @@ const SideBar = () => {
               <p>Talan Stanton</p>
               <span>@stanton</span>
             </div>
-          </div>
-          <div className="popular-creator">
+          </li>
+          <li className="popular-creator">
             <div className="avatar">
               <img src={avtar5} alt="avatar" />
             </div>
@@ -90,8 +90,8 @@ const SideBar = () => {
               <p>Madelyn</p>
               <span>@madelynbips</span>
             </div>
-          </div>
-        </div>
+          </li>
+        </ul>
         <Link>
           See More <MdOutlineKeyboardArrowRight />
         </Link>
@@ -194,7 +194,8 @@ const Sidebar = styled.div`
           display: flex;
           gap: 4px;
           color: black;
-
+          position: relative;
+          transition: color 0.5s ease-in-out;
           &:hover {
             color: var(--secondary-text-color);
           }
@@ -224,8 +225,25 @@ const Sidebar = styled.div`
       gap: 16px;
       margin-top: 16px;
       .popular-creator {
+        cursor: pointer;
         display: flex;
         gap: 7px;
+        position: relative;
+        transition: all 0.5s ease-in-out;
+        padding-right: 10px;
+        border-top-left-radius: 15px;
+        border-bottom-left-radius: 15px;
+        &:hover {
+          background-color: #71bb42;
+          .creator-details {
+            p {
+              color: white;
+            }
+            span {
+              color: white;
+            }
+          }
+        }
         .avatar {
           display: flex;
           justify-content: center;
@@ -271,6 +289,10 @@ const Sidebar = styled.div`
       line-height: normal;
       display: flex;
       align-items: center;
+      transition: all 0.5s ease-in-out;
+      &:hover {
+        color: #71bb42;
+      }
       svg {
         font-size: 15px;
         margin-left: 2px;
@@ -363,7 +385,7 @@ const Sidebar = styled.div`
             font-style: normal;
             font-weight: 400;
             line-height: normal;
-
+            transition: all 0.5s ease-in-out;
             &:hover {
               color: var(--secondary-text-color);
             }
@@ -387,6 +409,15 @@ const Sidebar = styled.div`
           height: 1.5rem;
           display: flex;
           align-items: center;
+          transition: all 0.5s ease-in-out;
+          &:hover {
+            background-color: #71bb42;
+            a {
+              svg {
+                color: white;
+              }
+            }
+          }
           &:first-child {
             width: 80px;
             background-color: transparent;

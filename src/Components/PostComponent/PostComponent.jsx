@@ -125,6 +125,7 @@ const PostContainer = styled.div`
         display: flex;
         justify-content: start;
         align-items: center;
+        cursor: pointer;
 
         img {
           width: 100%;
@@ -140,6 +141,7 @@ const PostContainer = styled.div`
           font-style: normal;
           font-weight: 600;
           line-height: normal;
+          cursor: pointer;
         }
         span {
           color: #4f4f4f;
@@ -148,6 +150,7 @@ const PostContainer = styled.div`
           font-style: normal;
           font-weight: 400;
           line-height: normal;
+          cursor: pointer;
         }
       }
     }
@@ -169,6 +172,11 @@ const PostContainer = styled.div`
         font-style: normal;
         font-weight: 600;
         line-height: normal;
+        position: relative;
+        transition: all 0.5s ease-in-out;
+        &:hover {
+          background-image: linear-gradient(#71bb42, #8fdd5d);
+        }
       }
     }
   }
@@ -307,6 +315,13 @@ const PostContainer = styled.div`
           justify-content: center;
           align-items: center;
           border: none;
+          transition: all 0.5s ease-in-out;
+          &:hover {
+            background-color: #71bb42;
+            svg {
+              color: white;
+            }
+          }
 
           border-radius: 100%;
 
@@ -328,7 +343,7 @@ const PostContainer = styled.div`
       width: 350.112px;
     }
     .title {
-      width: 75%;
+      width: 65%;
     }
   }
 

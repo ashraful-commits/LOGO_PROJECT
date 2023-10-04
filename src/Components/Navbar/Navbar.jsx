@@ -3,10 +3,6 @@ import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-
 import avtar1 from "../../../public/avatar1.png";
 import avtar2 from "../../../public/avatar2.png";
 import avtar3 from "../../../public/avatar3.png";
@@ -18,11 +14,8 @@ import play from "../../../public/playIcon.png";
 import {
   Drawer,
   Box,
-  AppBar,
-  Toolbar,
   Typography,
   IconButton,
-  Button,
   ListItem,
   ListItemButton,
   ListItemIcon,
@@ -38,121 +31,112 @@ const Navbar = () => {
     <Container>
       {showMenu && (
         <Drawer
+          anchor="left"
           open={showMenu}
-          sx={{
-            width: "100px",
-            height: "100vh",
-            padding: "0 30px",
-            transition: ".2s ease",
-            transitionDelay: ".3s",
-            transitionDuration: ".5s",
-          }}
           onClose={() => toggleDrawer(!showMenu)}
-          BackdropComponent={false}
+          hideBackdrop={true}
         >
-          <Toolbar>
-            <Box
-              sx={{
-                width: "300px",
-                padding: "0 30px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "start",
-                gap: "10px",
-              }}
-            >
-              <IconButton onClick={() => toggleDrawer(false)}>
-                <AiOutlineClose />
-              </IconButton>
-              <List>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={trending} alt="" />
-                    </ListItemIcon>
-                    <ListItemText primary="Trending" />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={group} />
-                    </ListItemIcon>
-                    <ListItemText primary="Following" />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={play} />
-                    </ListItemIcon>
-                    <ListItemText primary="Following" />
-                  </ListItemButton>
-                </ListItem>
-              </List>
-              <Typography fontSize={18} fontWeight={600}>
-                Popular Creators
-              </Typography>
-              <List>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar1} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar2} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar3} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar4} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar5} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </List>
-            </Box>
-          </Toolbar>
+          <Box
+            sx={{
+              width: "300px",
+              padding: "30px 30px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "start",
+              gap: "10px",
+            }}
+          >
+            <IconButton onClick={() => toggleDrawer(false)}>
+              <AiOutlineClose />
+            </IconButton>
+            <List sx={{ padding: "50px 0" }}>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <img src={trending} alt="" />
+                  </ListItemIcon>
+                  <ListItemText primary="Trending" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <img src={group} />
+                  </ListItemIcon>
+                  <ListItemText primary="Following" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <img src={play} />
+                  </ListItemIcon>
+                  <ListItemText primary="Following" />
+                </ListItemButton>
+              </ListItem>
+            </List>
+            <Typography fontSize={18} fontWeight={600}>
+              Popular Creators
+            </Typography>
+            <List>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <img src={avtar1} alt="" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Makenna Rosser"
+                    secondary="@rosser_makenna"
+                  />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <img src={avtar2} alt="" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Makenna Rosser"
+                    secondary="@rosser_makenna"
+                  />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <img src={avtar3} alt="" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Makenna Rosser"
+                    secondary="@rosser_makenna"
+                  />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <img src={avtar4} alt="" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Makenna Rosser"
+                    secondary="@rosser_makenna"
+                  />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <img src={avtar5} alt="" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Makenna Rosser"
+                    secondary="@rosser_makenna"
+                  />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Box>
         </Drawer>
       )}
       <div className="container">
@@ -223,6 +207,7 @@ const Container = styled.div`
               display: flex;
               gap: 4px;
               color: black;
+              transition: all 0.5s ease 0.5s;
 
               &:hover {
                 color: var(--secondary-text-color);
@@ -348,10 +333,23 @@ const Container = styled.div`
           align-items: center;
           border: none;
           background-color: transparent;
+          padding: 10px;
+          transition: all 0.2s ease-in-out 0.1s;
+          &:hover {
+            background-color: #8fdd5d;
+            svg {
+              color: white;
+            }
+            span {
+              color: white;
+            }
+          }
           svg {
             font-size: 22px;
+            transition: all 0.2s ease-in-out 0.1s;
           }
           span {
+            transition: all 0.2s ease-in-out 0.1s;
             color: #000;
             text-align: center;
             font-family: Roboto;
@@ -383,6 +381,10 @@ const Container = styled.div`
 
           svg {
             font-size: 25px;
+            cursor: pointer;
+            &:hover {
+              color: #71bb42;
+            }
           }
           input {
             border: none;
@@ -392,9 +394,12 @@ const Container = styled.div`
             line-height: 21px;
             letter-spacing: 0em;
             text-align: left;
+            padding: 0 5px;
+            border-left: 1px solid white;
 
             &:focus {
               outline: none;
+              border-left: 1px solid #71bb42;
             }
           }
         }
@@ -417,6 +422,7 @@ const Container = styled.div`
         justify-content: start;
         align-items: center;
         gap: 16px;
+        position: relative;
         span {
           color: #3c3c3c;
           font-family: Poppins;
@@ -438,6 +444,11 @@ const Container = styled.div`
           border: none;
           border-radius: 50px;
           background-image: linear-gradient(#8fdd5d, #71bb42);
+          transition: all 0.5s ease-in-out;
+          position: relative;
+          &:hover {
+            background-image: linear-gradient(#71bb42, #8fdd5d);
+          }
         }
       }
     }
@@ -475,16 +486,29 @@ const Container = styled.div`
           display: flex;
           justify-content: end;
           align-items: center;
+
+          position: relative;
+          &:hover input {
+            max-width: 200px; /* Adjust the max-width value as needed */
+            opacity: 1;
+          }
           form {
-            svg {
-              font-size: 25px;
+            transition: all 0.5s ease-in-out 0.1s;
+            &:hover {
+              input {
+                display: block;
+              }
             }
             input {
-              display: none;
-
-              &:focus {
-                outline: none;
-              }
+              position: absolute; /* Position the input absolutely */
+              display: block;
+              max-width: 0;
+              opacity: 0;
+              transition: max-width 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            }
+            svg {
+              font-size: 25px;
+              transition: all 0.5s ease-in-out 0.1s; /* Apply transition to the SVG element */
             }
           }
         }

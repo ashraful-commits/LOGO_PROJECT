@@ -19,14 +19,14 @@ const HeaderContainer = styled.div`
   background-color: white; /* You may want to specify a background color */
   z-index: 100; /* Adjust the z-index as needed */
   @media (max-width: 768px) {
-    width: 100%;
+    width: 99.2vw;
   }
   @media (min-width: 769px) and (max-width: 1024px) {
-    width: 100%;
+    width: 99.2vw;
   }
   @media (min-width: 1025px) and (max-width: 1279px) {
     /* Styles for tablet devices */
-    width: 100%;
+    width: 99.2vw;
   }
 `;
 export default Header;
