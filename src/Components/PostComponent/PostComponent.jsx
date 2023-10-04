@@ -257,6 +257,7 @@ const PostContainer = styled.div`
     }
   }
   .img-status {
+    width: 100%;
     height: 570px;
     flex-shrink: 0;
     display: grid;
@@ -410,10 +411,14 @@ const PostContainer = styled.div`
     }
     .img-status {
       width: 100%;
-      grid-template-columns: 250px auto;
-      gap: 5px;
+      grid-template-columns: auto 50px;
+      gap: 21px;
       padding: 0 20px;
       .status {
+        align-items: start;
+      }
+      .img {
+        margin-left: 10px;
       }
     }
     .title {
