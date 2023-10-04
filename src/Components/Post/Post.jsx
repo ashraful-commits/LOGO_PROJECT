@@ -38,6 +38,7 @@ const Post = () => {
 const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 52px;
   @media (max-width: 768px) {
     width: 100%;

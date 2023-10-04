@@ -377,6 +377,7 @@ const Container = styled.div`
       grid-template-columns: 1fr 2fr;
       justify-content: space-between;
       .left {
+        width: 100%;
         border-right: 0px solid gray;
         display: flex;
         justify-content: start;
@@ -384,7 +385,7 @@ const Container = styled.div`
           display: flex;
           justify-content: start;
           align-items: center;
-          padding-left: 12px;
+          padding-left: 50px;
           button {
             span {
               display: none;
@@ -396,6 +397,7 @@ const Container = styled.div`
         }
       }
       .right {
+        width: 100%;
         display: flex;
         justify-content: space-between;
         .search-field {
@@ -437,6 +439,7 @@ const Container = styled.div`
           border-left: 0px solid gray;
           display: flex;
           padding: 20px;
+          padding-right: 70px;
 
           span {
             display: none;
