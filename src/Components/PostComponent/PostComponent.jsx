@@ -42,64 +42,120 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
       }
     };
   }, []);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate a delay, e.g., while fetching data
+    setTimeout(() => {
+      setLoading(false); // Set loading to false when your data is ready
+    }, 2000); // Replace with your actual data loading logic
+  }, []);
   return (
-    <PostContainer>
-      <div className="post-user-details">
-        <div className="user-details">
-          <div className="avatar">
-            <img src={avatar1} alt="" />
+    <>
+      {loading ? (
+        <SkeletonLoader>
+          <div className="skeleton-loader">
+            <div className="post-user-details">
+              <div className="user-details">
+                <div className="avatar"></div>
+                <div className="details">
+                  <div className="skeleton-item"></div>
+                  <div className="skeleton-item"></div>
+                </div>
+              </div>
+              <div className="follow">
+                <div className="skeleton-button"></div>
+              </div>
+            </div>
+            <div className="title">
+              <div className="skeleton-item"></div>
+            </div>
+            <div className="img-status">
+              <div className={`img ${loading ? "loading" : ""}`}>
+                <div className="skeleton-item"></div>
+                <div className="play-button"></div>
+                <div className="desc">
+                  <div className="skeleton-item"></div>
+                  <div className="skeleton-item"></div>
+                </div>
+              </div>
+              <div className="status">
+                <div className="status-item">
+                  <div className="skeleton-button"></div>
+                  <div className="skeleton-item"></div>
+                </div>
+                <div className="status-item">
+                  <div className="skeleton-button"></div>
+                  <div className="skeleton-item"></div>
+                </div>
+                <div className="status-item">
+                  <div className="skeleton-button"></div>
+                  <div className="skeleton-item"></div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="details">
-            <p>Makenna Rosser</p>
-            <span>@rosser_makenna</span>
+        </SkeletonLoader>
+      ) : (
+        <PostContainer>
+          <div className="post-user-details">
+            <div className="user-details">
+              <div className="avatar">
+                <img src={avatar1} alt="" />
+              </div>
+              <div className="details">
+                <p>Makenna Rosser</p>
+                <span>@rosser_makenna</span>
+              </div>
+            </div>
+            <div className="follow">
+              <button>Follow</button>
+            </div>
           </div>
-        </div>
-        <div className="follow">
-          <button>Follow</button>
-        </div>
-      </div>
-      <div className="title">
-        <p>{title}</p>
-      </div>
-      <div className="img-status">
-        <div ref={videoRef} className="img">
-          <ReactPlayer
-            url={videoUrl}
-            width="100%"
-            height="100%"
-            controls={false}
-            playing={playing}
-          />
-          <div className="play-button" onClick={togglePlay}>
-            {playing ? <BsPause /> : <BsPlay />}
+          <div className="title">
+            <p>{title}</p>
           </div>
-          <div className="desc">
-            <p>{desc}</p>
-            <span>On the way - (alan walker) - music hip hop...</span>
+          <div className="img-status">
+            <div ref={videoRef} className="img">
+              <ReactPlayer
+                url={videoUrl}
+                width="100%"
+                height="100%"
+                controls={false}
+                playing={playing}
+              />
+              <div className="play-button" onClick={togglePlay}>
+                {playing ? <BsPause /> : <BsPlay />}
+              </div>
+              <div className="desc">
+                <p>{desc}</p>
+                <span>On the way - (alan walker) - music hip hop...</span>
+              </div>
+            </div>
+            <div className="status">
+              <div className="status-item">
+                <button>
+                  <BsHeart />
+                </button>
+                <span>22 M</span>
+              </div>
+              <div className="status-item">
+                <button>
+                  <BsChat />
+                </button>
+                <span>15.5 k</span>
+              </div>
+              <div className="status-item">
+                <button>
+                  <BsShare />
+                </button>
+                <span>3.5 k</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="status">
-          <div className="status-item">
-            <button>
-              <BsHeart />
-            </button>
-            <span>22 M</span>
-          </div>
-          <div className="status-item">
-            <button>
-              <BsChat />
-            </button>
-            <span>15.5 k</span>
-          </div>
-          <div className="status-item">
-            <button>
-              <BsShare />
-            </button>
-            <span>3.5 k</span>
-          </div>
-        </div>
-      </div>
-    </PostContainer>
+        </PostContainer>
+      )}
+    </>
   );
 };
 const PostContainer = styled.div`
@@ -210,6 +266,15 @@ const PostContainer = styled.div`
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    .loading {
+      background-color: #bcbcbc !important;
+      .play-button {
+        display: none!;
+      }
+      .desc {
+        display: none;
+      }
+    }
     .img {
       width: 100%;
       position: relative;
@@ -219,7 +284,7 @@ const PostContainer = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #000;
+      background-color: #080808;
       border-radius: 24.731px;
       margin-left: 62px;
       z-index: 1;
@@ -362,4 +427,268 @@ const PostContainer = styled.div`
     }
   }
 `;
+// Create a separate styled component for the skeleton
+const SkeletonLoader = styled.div`
+  width: 545.112px;
+  height: 671.334px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: loading 1s infinite alternate;
+  @keyframes loading {
+    0% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  .post-user-details {
+    width: 545.112px;
+    height: 50px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+
+    .user-details {
+      display: flex;
+      gap: 5.4px;
+
+      .avatar {
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        cursor: pointer;
+        border-radius: 100%;
+        background-color: #ccc; /* Placeholder color */
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .details {
+        p {
+          width: 100px; /* Adjust width */
+          height: 20px; /* Adjust height */
+          background-color: #ccc; /* Placeholder color */
+          margin: 0;
+        }
+
+        span {
+          width: 80px; /* Adjust width */
+          height: 14px; /* Adjust height */
+          background-color: #ccc; /* Placeholder color */
+          margin: 0;
+        }
+      }
+    }
+
+    .follow {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        width: 75px;
+        height: 32px;
+        flex-shrink: 0;
+        background-color: #ccc; /* Placeholder color */
+        border-radius: 8px;
+        border: none;
+        color: #fff;
+        text-align: center;
+        font-family: Segoe UI;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        position: relative;
+        transition: all 0.5s ease-in-out;
+
+        &:hover {
+          background-color: #71bb42;
+        }
+      }
+    }
+  }
+
+  .title {
+    width: 80%;
+    text-align: left;
+    display: flex;
+    justify-content: start;
+    margin-left: 5px;
+    margin-top: 2px;
+    p {
+      width: 150px; /* Adjust width */
+      height: 16px; /* Adjust height */
+      background-color: #ccc; /* Placeholder color */
+      margin: 0;
+    }
+  }
+
+  .img-status {
+    height: 570px;
+    flex-shrink: 0;
+    display: grid;
+    margin-top: 9px;
+    grid-template-columns: 320px auto;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .img {
+      width: 100%;
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+      background-color: #ccc8c8; /* Placeholder color */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #bbb9b9;
+      border-radius: 24.731px;
+      margin-left: 62px;
+      z-index: 1;
+
+      .play-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        font-size: 24px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        padding: 10px;
+        z-index: 100;
+        transition: background-color 0.2s;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ccc; /* Placeholder color */
+      }
+
+      .desc {
+        position: absolute;
+        overflow: hidden;
+        bottom: 0;
+        width: 300px;
+        height: 498px;
+        flex-shrink: 0;
+        border-radius: 24.731px;
+        opacity: 0.8;
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        align-items: start;
+        background-color: transparent;
+        mix-blend-mode: normal;
+
+        p {
+          width: 100%; /* Adjust width */
+          height: 10px; /* Adjust height */
+          background-color: #ccc; /* Placeholder color */
+          margin: 0;
+        }
+
+        span {
+          width: 100%; /* Adjust width */
+          height: 8px; /* Adjust height */
+          background-color: #ccc; /* Placeholder color */
+          margin: 0;
+        }
+      }
+    }
+
+    .status {
+      height: 100%;
+      width: 115px;
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      align-items: end;
+      gap: 21px;
+
+      .status-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+
+        button {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border: none;
+          transition: all 0.5s ease-in-out;
+          background-color: #ccc; /* Placeholder color */
+
+          &:hover {
+            background-color: #71bb42;
+            svg {
+              color: white;
+            }
+          }
+
+          border-radius: 100%;
+
+          svg {
+            font-size: 22px;
+          }
+        }
+
+        span {
+          font-size: 0.6rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    height: 671.334px;
+
+    .post-user-details {
+      width: 100%;
+    }
+
+    .title {
+      width: 65%;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 100%;
+    top: 5%;
+
+    .post-user-details {
+      width: 450.112px;
+    }
+
+    .img-status {
+      grid-template-columns: 320px auto;
+    }
+
+    .title {
+      width: 70%;
+    }
+  }
+`;
+
 export default PostComponent;

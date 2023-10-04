@@ -17,150 +17,193 @@ import avtar5 from "../../../public/avatar5.png";
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
+import { useEffect, useState } from "react";
 
 const SideBar = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate a delay, e.g., while fetching data
+    setTimeout(() => {
+      setLoading(false); // Set loading to false when your data is ready
+    }, 2000); // Replace with your actual data loading logic
+  }, []);
   return (
-    <Sidebar>
-      <div className="trending-following-explore">
-        <ul>
-          <li>
-            <Link>
-              <img src={trending} alt="trending" />
-              <span></span>Trending
-            </Link>
-          </li>
-          <li>
-            <Link>
-              <img src={group} alt="" />
-              <span></span>Following
-            </Link>
-          </li>
-          <li>
-            <Link>
-              <img src={play} alt="" />
-              <span></span>Explore
-            </Link>
-          </li>
-        </ul>
-      </div>
-      <div className="popular">
-        <h4>Popular Creators</h4>
-        <ul className="popular-creators">
-          <li className="popular-creator">
-            <div className="avatar">
-              <img src={avtar1} alt="avatar" />
+    <>
+      {loading ? (
+        <Sidebar>
+          <div className="skeleton-loader">
+            {/* Trending, Following, Explore */}
+            <div className="skeleton-item"></div>
+            <div className="skeleton-item"></div>
+            <div className="skeleton-item"></div>
+
+            {/* Popular Creators */}
+            <div className="skeleton-item avatar"></div>
+            <div className="skeleton-item creator-details">
+              <div className="creator-name"></div>
+              <div className="creator-username"></div>
             </div>
-            <div className="creator-details">
-              <p>Makenna Rosser</p>
-              <span>@rosser_makenna</span>
+
+            {/* Download App */}
+            <div className="skeleton-item download-app">
+              <div className="store">
+                <div className="apple-store"></div>
+                <div className="play-store"></div>
+              </div>
             </div>
-          </li>
-          <li className="popular-creator">
-            <div className="avatar">
-              <img src={avtar2} alt="avatar" />
+
+            {/* About */}
+            <div className="skeleton-item about">
+              <div className="menus"></div>
+              <div className="social"></div>
             </div>
-            <div className="creator-details">
-              <p>Desirae Bator</p>
-              <span>@batorbaby</span>
-            </div>
-          </li>
-          <li className="popular-creator">
-            <div className="avatar">
-              <img src={avtar3} alt="avatar" />
-            </div>
-            <div className="creator-details">
-              <p>James Workman</p>
-              <span>@workman</span>
-            </div>
-          </li>
-          <li className="popular-creator">
-            <div className="avatar">
-              <img src={avtar4} alt="avatar" />
-            </div>
-            <div className="creator-details">
-              <p>Talan Stanton</p>
-              <span>@stanton</span>
-            </div>
-          </li>
-          <li className="popular-creator">
-            <div className="avatar">
-              <img src={avtar5} alt="avatar" />
-            </div>
-            <div className="creator-details">
-              <p>Madelyn</p>
-              <span>@madelynbips</span>
-            </div>
-          </li>
-        </ul>
-        <Link>
-          See More <MdOutlineKeyboardArrowRight />
-        </Link>
-      </div>
-      <div className="download-app">
-        <h4>Download App</h4>
-        <div className="store">
-          <div className="apple-store">
-            <button>
-              <img src={appleStore} alt="" />
-            </button>
           </div>
-          <div className="play-store">
-            <button>
-              <img src={playStore} alt="" />
-            </button>
+        </Sidebar>
+      ) : (
+        <Sidebar>
+          <div className="trending-following-explore">
+            <ul>
+              <li>
+                <Link>
+                  <img src={trending} alt="trending" />
+                  <span></span>Trending
+                </Link>
+              </li>
+              <li>
+                <Link>
+                  <img src={group} alt="" />
+                  <span></span>Following
+                </Link>
+              </li>
+              <li>
+                <Link>
+                  <img src={play} alt="" />
+                  <span></span>Explore
+                </Link>
+              </li>
+            </ul>
           </div>
-        </div>
-      </div>
-      <div className="about">
-        <h4>About</h4>
-        <div className="menus">
-          <ul>
-            <li>
-              <Link>About Us</Link>
-            </li>
-            <li>
-              <Link>Partnership</Link>
-            </li>
-            <li>
-              <Link>help</Link>
-            </li>
-            <li>
-              <Link> Safety</Link>
-            </li>
-            <li>
-              <Link> Community Guidelines</Link>
-            </li>
-          </ul>
-        </div>
-        <div className="social">
-          <ul>
-            <li>
-              <Link> Follow us</Link>
-            </li>
-            <li>
-              <Link>
-                <BiLogoFacebook />
-              </Link>
-            </li>
-            <li>
-              <Link>
-                <BiLogoLinkedin />
-              </Link>
-            </li>
-            <li>
-              <Link>
-                <BiLogoInstagram />
-              </Link>
-            </li>
-            <li>
-              <Link>
-                <BsTwitter />
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </Sidebar>
+          <div className="popular">
+            <h4>Popular Creators</h4>
+            <ul className="popular-creators">
+              <li className="popular-creator">
+                <div className="avatar">
+                  <img src={avtar1} alt="avatar" />
+                </div>
+                <div className="creator-details">
+                  <p>Makenna Rosser</p>
+                  <span>@rosser_makenna</span>
+                </div>
+              </li>
+              <li className="popular-creator">
+                <div className="avatar">
+                  <img src={avtar2} alt="avatar" />
+                </div>
+                <div className="creator-details">
+                  <p>Desirae Bator</p>
+                  <span>@batorbaby</span>
+                </div>
+              </li>
+              <li className="popular-creator">
+                <div className="avatar">
+                  <img src={avtar3} alt="avatar" />
+                </div>
+                <div className="creator-details">
+                  <p>James Workman</p>
+                  <span>@workman</span>
+                </div>
+              </li>
+              <li className="popular-creator">
+                <div className="avatar">
+                  <img src={avtar4} alt="avatar" />
+                </div>
+                <div className="creator-details">
+                  <p>Talan Stanton</p>
+                  <span>@stanton</span>
+                </div>
+              </li>
+              <li className="popular-creator">
+                <div className="avatar">
+                  <img src={avtar5} alt="avatar" />
+                </div>
+                <div className="creator-details">
+                  <p>Madelyn</p>
+                  <span>@madelynbips</span>
+                </div>
+              </li>
+            </ul>
+            <Link>
+              See More <MdOutlineKeyboardArrowRight />
+            </Link>
+          </div>
+          <div className="download-app">
+            <h4>Download App</h4>
+            <div className="store">
+              <div className="apple-store">
+                <button>
+                  <img src={appleStore} alt="" />
+                </button>
+              </div>
+              <div className="play-store">
+                <button>
+                  <img src={playStore} alt="" />
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="about">
+            <h4>About</h4>
+            <div className="menus">
+              <ul>
+                <li>
+                  <Link>About Us</Link>
+                </li>
+                <li>
+                  <Link>Partnership</Link>
+                </li>
+                <li>
+                  <Link>help</Link>
+                </li>
+                <li>
+                  <Link> Safety</Link>
+                </li>
+                <li>
+                  <Link> Community Guidelines</Link>
+                </li>
+              </ul>
+            </div>
+            <div className="social">
+              <ul>
+                <li>
+                  <Link> Follow us</Link>
+                </li>
+                <li>
+                  <Link>
+                    <BiLogoFacebook />
+                  </Link>
+                </li>
+                <li>
+                  <Link>
+                    <BiLogoLinkedin />
+                  </Link>
+                </li>
+                <li>
+                  <Link>
+                    <BiLogoInstagram />
+                  </Link>
+                </li>
+                <li>
+                  <Link>
+                    <BsTwitter />
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </Sidebar>
+      )}
+    </>
   );
 };
 
@@ -172,7 +215,39 @@ const Sidebar = styled.div`
   height: 100vh;
   grid-template-rows: 20% 40% 30%;
   gap: 5rem;
+  .skeleton-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Adjust the spacing between items */
+  }
 
+  .skeleton-item {
+    background-color: #f0f0f0; /* Placeholder background color */
+    height: 20px;
+    width: 100%;
+    animation: loading 1s infinite alternate; /* Add a simple loading animation */
+  }
+
+  .avatar {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+  }
+
+  .creator-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Adjust the spacing between creator name and username */
+  }
+
+  @keyframes loading {
+    0% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
   .trending-following-explore {
     width: 100%;
     height: fit-content;
