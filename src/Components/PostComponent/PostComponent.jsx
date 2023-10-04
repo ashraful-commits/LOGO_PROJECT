@@ -413,7 +413,7 @@ const PostContainer = styled.div`
       width: 100%;
       grid-template-columns: auto 50px;
       gap: 21px;
-      padding: 0 20px;
+      padding: 0 5px;
       .status {
         align-items: start;
       }
