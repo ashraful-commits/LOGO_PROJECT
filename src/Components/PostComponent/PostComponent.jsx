@@ -408,6 +408,9 @@ const PostContainer = styled.div`
     .post-user-details {
       width: 100%;
     }
+    .img-status {
+      grid-template-columns: 300px auto;
+    }
     .title {
       width: 65%;
     }
