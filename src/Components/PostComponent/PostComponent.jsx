@@ -401,7 +401,7 @@ const PostContainer = styled.div`
     }
   }
   @media (max-width: 768px) {
-    width: 100%;
+    width: 100vw;
     margin: 0 auto;
     padding: 0 20px;
     height: 671.334px;
@@ -659,13 +659,13 @@ const SkeletonLoader = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: 100%;
+    width: 100vw;
     margin: 0 auto;
 
     height: 671.334px;
 
     .post-user-details {
-      width: 400px;
+      width: 100%;
     }
 
     .title {
