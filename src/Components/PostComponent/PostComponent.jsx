@@ -430,10 +430,10 @@ const PostContainer = styled.div`
     width: 100%;
     top: 5%;
     .post-user-details {
-      width: 450.112px;
+      width: 550.112px;
     }
     .img-status {
-      grid-template-columns: 320px auto;
+      grid-template-columns: 420px auto;
     }
     .title {
       width: 70%;
