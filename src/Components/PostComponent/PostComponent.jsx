@@ -401,16 +401,18 @@ const PostContainer = styled.div`
     }
   }
   @media (max-width: 768px) {
-    width: 100vw;
+    width: 98vw;
     margin: 0 auto;
     padding: 0 20px;
     height: 671.334px;
     .post-user-details {
-      width: 100%;
+      width: 95%;
     }
     .img-status {
-      grid-template-columns: 290px auto;
+      width: 100%;
+      grid-template-columns: 250px auto;
       gap: 5px;
+      padding: 0 20px;
       .status {
       }
     }
