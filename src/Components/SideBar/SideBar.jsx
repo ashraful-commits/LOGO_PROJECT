@@ -31,7 +31,7 @@ const SideBar = () => {
   return (
     <>
       {loading ? (
-        <Sidebar>
+        <SkelatonStyle>
           <div className="skeleton-loader">
             {/* Trending, Following, Explore */}
             <div className="skeleton-item"></div>
@@ -59,7 +59,7 @@ const SideBar = () => {
               <div className="social"></div>
             </div>
           </div>
-        </Sidebar>
+        </SkelatonStyle>
       ) : (
         <Sidebar>
           <div className="trending-following-explore">
@@ -215,18 +215,6 @@ const Sidebar = styled.div`
   height: 100vh;
   grid-template-rows: 20% 40% 30%;
   gap: 5rem;
-  .skeleton-loader {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Adjust the spacing between items */
-  }
-
-  .skeleton-item {
-    background-color: #f0f0f0; /* Placeholder background color */
-    height: 20px;
-    width: 100%;
-    animation: loading 1s infinite alternate; /* Add a simple loading animation */
-  }
 
   .avatar {
     border-radius: 50%;
@@ -237,7 +225,7 @@ const Sidebar = styled.div`
   .creator-details {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Adjust the spacing between creator name and username */
+    /* Adjust the spacing between creator name and username */
   }
 
   @keyframes loading {
@@ -806,6 +794,19 @@ const Sidebar = styled.div`
         }
       }
     }
+  }
+`;
+const SkelatonStyle = styled.div`
+  .skeleton-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .skeleton-item {
+    background-color: #f0f0f0;
+    height: 20px;
+    width: 100%;
+    animation: loading 1s infinite alternate;
   }
 `;
 export default SideBar;

@@ -316,7 +316,7 @@ const PostContainer = styled.div`
         position: absolute;
         overflow: hidden;
         bottom: 0;
-        width: 300px;
+        width: 100%;
         height: 498px;
         flex-shrink: 0;
         border-radius: 24.731px;
@@ -347,6 +347,10 @@ const PostContainer = styled.div`
           font-weight: 400;
           line-height: normal;
           z-index: 2;
+          white-space: nowrap; /* Prevent text from wrapping */
+          overflow: hidden; /* Hide overflowing text */
+          text-overflow: ellipsis; /* Display an ellipsis (...) when text is truncated */
+          width: 100%;
         }
         span {
           color: #bcbcbc;
@@ -419,6 +423,21 @@ const PostContainer = styled.div`
       }
       .img {
         margin-left: 10px;
+        .desc {
+          p {
+            color: #bcbcbc;
+            font-family: Roboto;
+            font-size: 10.234px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            z-index: 2;
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Display an ellipsis (...) when text is truncated */
+            width: 100%;
+          }
+        }
       }
     }
     .title {
@@ -434,6 +453,27 @@ const PostContainer = styled.div`
     }
     .img-status {
       grid-template-columns: 420px auto;
+      .img {
+        width: 100%;
+        .loading {
+          width: 100%;
+        }
+        .desc {
+          p {
+            color: #bcbcbc;
+            font-family: Roboto;
+            font-size: 10.234px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            z-index: 2;
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Display an ellipsis (...) when text is truncated */
+            width: 100%;
+          }
+        }
+      }
     }
     .title {
       width: 70%;
