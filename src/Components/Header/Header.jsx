@@ -9,7 +9,7 @@ const Header = () => {
   );
 };
 const HeaderContainer = styled.div`
-  width: 100vw;
+  width: 99.2vw;
   box-shadow: 0px 12px 42px -4px rgba(24, 39, 75, 0.12),
     0px 8px 18px -6px rgba(24, 39, 75, 0.12);
   display: flex;
@@ -19,14 +19,14 @@ const HeaderContainer = styled.div`
   background-color: white; /* You may want to specify a background color */
   z-index: 100; /* Adjust the z-index as needed */
   @media (max-width: 768px) {
-    width: 100%;
+    width: 100vw;
   }
   @media (min-width: 769px) and (max-width: 1024px) {
     width: 100%;
   }
   @media (min-width: 1025px) and (max-width: 1279px) {
     /* Styles for tablet devices */
-    width: 100%;
+    width: 99.2vw;
   }
 `;
 export default Header;
