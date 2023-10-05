@@ -209,7 +209,7 @@ const Navbar = () => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  marginTop: "250px",
+                  marginTop: "160px",
                   width: "100%",
                 }}
               >
