@@ -426,7 +426,7 @@ const PostContainer = styled.div`
         flex-direction: row;
       }
       .img {
-        margin-left: 10px;
+        margin-left: 0px;
         .desc {
           p {
             color: #bcbcbc;
