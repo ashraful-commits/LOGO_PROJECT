@@ -725,7 +725,8 @@ const SkeletonLoader = styled.div`
     height: 671.334px;
 
     .post-user-details {
-      width: 100%;
+      width: 205.112px;
+      padding: 0 50px;
     }
 
     .title {
