@@ -21,8 +21,16 @@ import {
   ListItemIcon,
   ListItemText,
   List,
+  Modal,
+  Grid,
+  TextField,
+  Button,
+  Tabs,
+  Tab,
 } from "@mui/material";
-import { Button } from "bootstrap";
+import TabPanel from "@mui/lab/TabPanel";
+import { TabContext, TabList } from "@mui/lab";
+import { Link } from "react-router-dom";
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
   const toggleDrawer = () => {
@@ -38,7 +46,31 @@ const Navbar = () => {
 
     return () => clearTimeout(timer);
   }, []);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  //================================
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData); // You can handle form submission here
+  };
+  const [value, setValue] = useState("login");
+
+  const handleChangeForm = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <>
       {loading ? (
@@ -65,6 +97,184 @@ const Navbar = () => {
         </Container>
       ) : (
         <Container>
+          <div>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "white",
+                    width: "400px",
+                    height: "460px",
+                    padding: "20px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <TabContext value={value}>
+                    <TabList
+                      indicatorColor="secondary"
+                      sx={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                      onChange={handleChangeForm}
+                      aria-label="wrapped label tabs example"
+                    >
+                      <Tab
+                        sx={{ width: "50%" }}
+                        value="login"
+                        label="Login"
+                        wrapped
+                      />
+                      <Tab
+                        sx={{ width: "50%" }}
+                        value="register"
+                        label="Register"
+                      />
+                    </TabList>
+                    <TabPanel value="register">
+                      <form onSubmit={handleSubmit}>
+                        <Grid
+                          container
+                          spacing={2}
+                          justifyContent="center"
+                          alignItems="center"
+                        >
+                          <Grid item xs={12}>
+                            <TextField
+                              fullWidth
+                              label="Name"
+                              name="name"
+                              // Add value and onChange as needed
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                              fullWidth
+                              label="Email"
+                              name="email"
+                              type="email"
+                              // Add value and onChange as needed
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                              fullWidth
+                              label="Password"
+                              name="password"
+                              type="password"
+                              // Add value and onChange as needed
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                              fullWidth
+                              label="Confirm Password"
+                              name="confirmPassword"
+                              type="password"
+                              // Add value and onChange as needed
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Button
+                              type="submit"
+                              fullWidth
+                              sx={{
+                                bgcolor: "#71bb42",
+                                "&:hover": {
+                                  bgcolor: "#8fdd5d",
+                                },
+                                color: "white",
+                              }}
+                            >
+                              Register
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </form>
+                      <Typography>
+                        Already have an account?
+                        <Tab value="login" label="Login" />
+                      </Typography>
+                    </TabPanel>
+                    <TabPanel value="login">
+                      <form onSubmit={handleSubmit}>
+                        <Grid
+                          container
+                          spacing={2}
+                          justifyContent="center"
+                          alignItems="center"
+                        >
+                          <Grid item xs={12}>
+                            <TextField
+                              fullWidth
+                              label="Email"
+                              name="email"
+                              type="email"
+                              value={formData.email}
+                              onChange={handleChange}
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                              fullWidth
+                              label="Password"
+                              name="password"
+                              type="password"
+                              value={formData.password}
+                              onChange={handleChange}
+                              required
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Button
+                              type="submit"
+                              fullWidth
+                              sx={{
+                                bgcolor: "#71bb42",
+                                "&:hover": {
+                                  bgcolor: "#8fdd5d",
+                                },
+                                color: "white",
+                              }}
+                            >
+                              Login
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </form>
+                      <Typography>
+                        Have an account?
+                        <Button
+                          onChange={(e) => handleChangeForm(e, "register")}
+                        >
+                          Register
+                        </Button>
+                      </Typography>
+                    </TabPanel>
+                  </TabContext>
+                </Box>
+              </Box>
+            </Modal>
+          </div>
           <Drawer open={showMenu} onClose={() => toggleDrawer(false)}>
             <Box
               sx={{
@@ -192,7 +402,7 @@ const Navbar = () => {
               <div className="logo">
                 <img src={logo} alt="" />
               </div>
-              <button>Login</button>
+              <button onClick={handleOpen}>Login</button>
               <div className="creator">
                 <span>Creator</span>
                 <button>Get App</button>
