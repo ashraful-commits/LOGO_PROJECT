@@ -415,11 +415,15 @@ const PostContainer = styled.div`
     }
     .img-status {
       width: 100%;
-      grid-template-columns: 260px 50px;
+      grid-template-columns: 95%;
+      grid-template-rows: 470px auto;
       gap: 21px;
       padding: 0 5px;
       .status {
-        align-items: start;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+        flex-direction: row;
       }
       .img {
         margin-left: 10px;
