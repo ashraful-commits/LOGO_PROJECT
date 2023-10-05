@@ -219,7 +219,7 @@ const Navbar = () => {
                     color: "white",
                     position: "absolute",
                     top: "10%",
-                    right: "10%",
+                    right: "5%",
                     fontSize: "24px",
                   }}
                 >
