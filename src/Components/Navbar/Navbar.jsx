@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineLogout, AiOutlineMenu } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
 import { useEffect, useState } from "react";
@@ -46,7 +46,7 @@ const Navbar = () => {
     setShowMenu(!showMenu);
   };
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     setUser(user);
@@ -109,6 +109,7 @@ const Navbar = () => {
           password: "",
         });
         localStorage.setItem("user", JSON.stringify(user));
+        setUser(user);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -188,6 +189,7 @@ const Navbar = () => {
           progress: undefined,
           theme: "dark",
         });
+        setUser(null);
       })
       .catch((error) => {
         const message = error.message;
@@ -550,8 +552,10 @@ const Navbar = () => {
                 <button onClick={() => setShowMenu(!showMenu)}>
                   <AiOutlineMenu />
                   <span>Menu</span>
-                  <img src={logo} alt="" />
                 </button>
+                <Link to={"/"}>
+                  <img src={logo} alt="" />
+                </Link>
               </div>
               {/* search field  */}
             </div>
@@ -568,7 +572,9 @@ const Navbar = () => {
               </div>
 
               {user ? (
-                <button onClick={handleLogout}>Logout</button>
+                <button className="logout" onClick={handleLogout}>
+                  <AiOutlineLogout />
+                </button>
               ) : (
                 <button onClick={handleOpen}>Login</button>
               )}
@@ -615,6 +621,7 @@ const Container = styled.div`
         justify-content: center;
         align-items: center;
         padding-left: 7px;
+        gap: 10px;
 
         button {
           display: flex;
@@ -653,6 +660,10 @@ const Container = styled.div`
             display: none;
           }
         }
+        a {
+          display: none;
+          cursor: pointer;
+        }
       }
     }
     .right {
@@ -661,6 +672,25 @@ const Container = styled.div`
       grid-template-columns: 1fr 780px 1fr 1fr;
       button {
         width: 93px;
+        height: 40px;
+        flex-shrink: 0;
+        color: #fff;
+        font-family: Poppins;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 30px;
+        border: none;
+        border-radius: 50px;
+        background-image: linear-gradient(#8fdd5d, #71bb42);
+        transition: all 0.5s ease-in-out;
+        position: relative;
+        &:hover {
+          background-image: linear-gradient(#71bb42, #8fdd5d);
+        }
+      }
+      .logout {
+        width: 40px;
         height: 40px;
         flex-shrink: 0;
         color: #fff;
@@ -782,8 +812,10 @@ const Container = styled.div`
             span {
               display: none;
             }
+          }
+          a {
+            display: block;
             img {
-              display: block;
             }
           }
         }
@@ -794,8 +826,28 @@ const Container = styled.div`
         grid-template-columns: 2fr 1fr 1fr;
         align-items: center;
         button {
-          width: 70px;
+          width: 65px;
           height: 35px;
+          flex-shrink: 0;
+          color: #fff;
+          font-family: Poppins;
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 30px;
+          border: none;
+          border-radius: 50px;
+          justify-self: flex-end;
+          background-image: linear-gradient(#8fdd5d, #71bb42);
+          transition: all 0.5s ease-in-out;
+          position: relative;
+          &:hover {
+            background-image: linear-gradient(#71bb42, #8fdd5d);
+          }
+        }
+        .logout {
+          width: 40px;
+          height: 40px;
           flex-shrink: 0;
           color: #fff;
           font-family: Poppins;
@@ -902,8 +954,10 @@ const Container = styled.div`
             span {
               display: none;
             }
+          }
+          a {
+            display: block;
             img {
-              display: block;
             }
           }
         }
