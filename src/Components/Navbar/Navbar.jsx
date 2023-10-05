@@ -706,6 +706,12 @@ const Container = styled.div`
         background-image: linear-gradient(#8fdd5d, #71bb42);
         transition: all 0.5s ease-in-out;
         position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        svg {
+          font-size: 24px;
+        }
         &:hover {
           background-image: linear-gradient(#71bb42, #8fdd5d);
         }
