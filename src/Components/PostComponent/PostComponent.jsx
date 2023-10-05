@@ -735,15 +735,16 @@ const SkeletonLoader = styled.div`
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
-    width: 100%;
+    width: 100vw;
     top: 5%;
 
     .post-user-details {
-      width: 450.112px;
+      width: 100%;
     }
 
     .img-status {
-      grid-template-columns: 320px auto;
+      grid-template-columns: 420px auto;
+      margin-right: 450px;
     }
 
     .title {

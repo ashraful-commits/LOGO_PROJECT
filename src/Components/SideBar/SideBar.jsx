@@ -31,35 +31,51 @@ const SideBar = () => {
   return (
     <>
       {loading ? (
-        <SkelatonStyle>
+        <SkeletonStyle>
           <div className="skeleton-loader">
-            {/* Trending, Following, Explore */}
-            <div className="skeleton-item"></div>
-            <div className="skeleton-item"></div>
-            <div className="skeleton-item"></div>
-
-            {/* Popular Creators */}
-            <div className="skeleton-item avatar"></div>
-            <div className="skeleton-item creator-details">
-              <div className="creator-name"></div>
-              <div className="creator-username"></div>
+            <div className="skeleton-header">
+              <div className="skeleton-item trending"></div>
+              <div className="skeleton-item following"></div>
+              <div className="skeleton-item explore"></div>
             </div>
 
-            {/* Download App */}
-            <div className="skeleton-item download-app">
-              <div className="store">
-                <div className="apple-store"></div>
-                <div className="play-store"></div>
+            <div className="skeleton-creators">
+              {[1, 2, 3, 4, 5].map((index) => (
+                <div className="skeleton-creator" key={index}>
+                  <div className="skeleton-item avatar"></div>
+                  <div className="skeleton-item creator-details">
+                    <div className="creator-name"></div>
+                    <div className="creator-username"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="skeleton-app">
+              <div className="skeleton-item3 download-app">
+                <div className="store">
+                  <div className="apple-store"></div>
+                  <div className="play-store"></div>
+                </div>
               </div>
             </div>
 
-            {/* About */}
-            <div className="skeleton-item about">
-              <div className="menus"></div>
-              <div className="social"></div>
+            <div className="skeleton-about">
+              <div className="skeleton-item4 about">
+                <div className="menus">
+                  {[1, 2, 3, 4, 5].map((index) => (
+                    <div className="menu-item" key={index}></div>
+                  ))}
+                </div>
+                <div className="social">
+                  {[1, 2, 3, 4, 5].map((index) => (
+                    <div className="social-item" key={index}></div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </SkelatonStyle>
+        </SkeletonStyle>
       ) : (
         <Sidebar>
           <div className="trending-following-explore">
@@ -796,17 +812,120 @@ const Sidebar = styled.div`
     }
   }
 `;
-const SkelatonStyle = styled.div`
+const SkeletonStyle = styled.div`
   .skeleton-loader {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    width: 100%;
+    position: sticky;
+    top: 11.2%;
+    bottom: 0;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto auto auto auto auto;
+    gap: 1rem;
   }
+
   .skeleton-item {
     background-color: #f0f0f0;
     height: 20px;
     width: 100%;
     animation: loading 1s infinite alternate;
   }
+
+  .skeleton-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .skeleton-creators {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .skeleton-creator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .skeleton-app {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .skeleton-about {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .trending,
+  .following,
+  .explore {
+    height: 30px;
+    width: 80%;
+  }
+
+  .avatar,
+  .creator-details {
+    height: 50px;
+    width: 50px;
+  }
+
+  .download-app {
+    .store {
+      display: flex;
+      gap: 20px;
+
+      .apple-store,
+      .play-store {
+        height: 40px;
+        width: 120px;
+      }
+    }
+  }
+
+  .menus,
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .menu-item,
+  .social-item {
+    height: 20px;
+    width: 80%;
+  }
+
+  @keyframes loading {
+    10% {
+      opacity: 0.8;
+    }
+    20% {
+      opacity: 0.2;
+    }
+    30% {
+      opacity: 0.6;
+    }
+    40% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @media (max-width: 768px) {
+    .skeleton-loader {
+      display: none;
+    }
+    .skeleton-item {
+      display: none;
+    }
+  }
 `;
+
 export default SideBar;

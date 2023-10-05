@@ -27,16 +27,17 @@ const Container = styled.div`
 
   @media (min-width: 769px) and (max-width: 1024px) {
     width: 100%;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    grid-template-columns: 255.333px auto;
+    gap: 10px;
     padding: 0 50px;
     .white {
       display: none;
     }
   }
   @media (min-width: 1025px) and (max-width: 1279px) {
-    width: 100%;
-    grid-template-columns: 255.333px 400px 10px;
+    width: 100vw;
+    grid-template-columns: 255.333px auto auto;
   }
 `;
+
 export default Home;
