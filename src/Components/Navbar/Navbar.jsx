@@ -50,7 +50,7 @@ const Navbar = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     setUser(user);
-  }, [user]);
+  }, []);
   useEffect(() => {
     // Simulate loading delay (you can replace this with actual data fetching logic)
     const timer = setTimeout(() => {
