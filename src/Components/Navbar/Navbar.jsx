@@ -22,6 +22,7 @@ import {
   ListItemText,
   List,
 } from "@mui/material";
+import { Button } from "bootstrap";
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
   const toggleDrawer = () => {
@@ -191,7 +192,7 @@ const Navbar = () => {
               <div className="logo">
                 <img src={logo} alt="" />
               </div>
-
+              <button>Login</button>
               <div className="creator">
                 <span>Creator</span>
                 <button>Get App</button>
@@ -278,7 +279,26 @@ const Container = styled.div`
     .right {
       display: grid;
 
-      grid-template-columns: 1fr 780px 1fr;
+      grid-template-columns: 1fr 780px 1fr 1fr;
+      button {
+        width: 93px;
+        height: 40px;
+        flex-shrink: 0;
+        color: #fff;
+        font-family: Poppins;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 30px;
+        border: none;
+        border-radius: 50px;
+        background-image: linear-gradient(#8fdd5d, #71bb42);
+        transition: all 0.5s ease-in-out;
+        position: relative;
+        &:hover {
+          background-image: linear-gradient(#71bb42, #8fdd5d);
+        }
+      }
       .search-field {
         margin-left: 25px;
         display: flex;
@@ -390,8 +410,30 @@ const Container = styled.div`
         }
       }
       .right {
-        display: flex;
+        display: grid;
         justify-content: space-between;
+        grid-template-columns: 2fr 1fr 1fr;
+        align-items: center;
+        button {
+          width: 70px;
+          height: 35px;
+          flex-shrink: 0;
+          color: #fff;
+          font-family: Poppins;
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 30px;
+          border: none;
+          border-radius: 50px;
+          justify-self: flex-end;
+          background-image: linear-gradient(#8fdd5d, #71bb42);
+          transition: all 0.5s ease-in-out;
+          position: relative;
+          &:hover {
+            background-image: linear-gradient(#71bb42, #8fdd5d);
+          }
+        }
         .search-field {
           position: relative;
           &:hover input {
@@ -442,12 +484,12 @@ const Container = styled.div`
             line-height: normal;
           }
           button {
-            width: 93px;
-            height: 40px;
+            width: 70px;
+            height: 35px;
             flex-shrink: 0;
             color: #fff;
             font-family: Poppins;
-            font-size: 16px;
+            font-size: 12px;
             font-style: normal;
             font-weight: 400;
             line-height: 30px;
@@ -489,6 +531,7 @@ const Container = styled.div`
       .right {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         .search-field {
           display: flex;
           justify-content: end;
