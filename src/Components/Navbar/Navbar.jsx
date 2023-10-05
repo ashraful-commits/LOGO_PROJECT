@@ -710,7 +710,7 @@ const Container = styled.div`
         justify-content: center;
         align-items: center;
         svg {
-          font-size: 24px;
+          font-size: 20px;
         }
         &:hover {
           background-image: linear-gradient(#71bb42, #8fdd5d);
@@ -854,8 +854,8 @@ const Container = styled.div`
           }
         }
         .logout {
-          width: 40px;
-          height: 40px;
+          width: 33px;
+          height: 33px;
           flex-shrink: 0;
           color: #fff;
           font-family: Poppins;
