@@ -415,7 +415,7 @@ const PostContainer = styled.div`
     }
     .img-status {
       width: 100%;
-      grid-template-columns: minmax(min-width, 200px) 50px;
+      grid-template-columns: 260px 50px;
       gap: 21px;
       padding: 0 5px;
       .status {
