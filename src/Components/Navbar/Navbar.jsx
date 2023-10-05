@@ -25,12 +25,20 @@ import {
   Grid,
   TextField,
   Button,
-  Tabs,
   Tab,
 } from "@mui/material";
 import TabPanel from "@mui/lab/TabPanel";
 import { TabContext, TabList } from "@mui/lab";
+//================================= firebase auth
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { app } from "../../firebase.confige";
+import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
   const toggleDrawer = () => {
@@ -50,27 +58,119 @@ const Navbar = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   //================================
-  const [formData, setFormData] = useState({
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+  });
+  const [signUpForm, setSignUpForm] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-
+  //===============================handle register form change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setSignUpForm({ ...signUpForm, [name]: value });
   };
-
-  const handleSubmit = (e) => {
+  const handleChangeLogin = (e) => {
+    const { name, value } = e.target;
+    setLoginForm({ ...loginForm, [name]: value });
+  };
+  //===========================login
+  const handleSubmitLogin = async (e) => {
     e.preventDefault();
-    console.log(formData); // You can handle form submission here
+    const auth = getAuth(app);
+    const email = loginForm.email;
+    const password = loginForm.password;
+    await signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        toast("Login successful!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        setOpen(false);
+        setLoginForm({
+          email: "",
+          password: "",
+        });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        console.log(errorCode);
+        const errorMessage = error.message;
+        console.log(errorMessage);
+        toast(errorMessage, {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      });
+  };
+  //==============================handle register
+  const handleSubmitRegister = async (e) => {
+    e.preventDefault();
+    const auth = getAuth(app);
+    const email = signUpForm.email;
+    const password = signUpForm.password;
+    console.log(email, password);
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed up
+        const user = userCredential.user;
+        console.log(user);
+        toast("User created successfully!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+
+        const errorMessage = error.message;
+
+        if (errorCode == 400) {
+          toast(errorMessage, {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+
+        // ..
+      });
   };
   const [value, setValue] = useState("login");
 
   const handleChangeForm = (event, newValue) => {
     setValue(newValue);
   };
+
   return (
     <>
       {loading ? (
@@ -106,32 +206,45 @@ const Navbar = () => {
             >
               <Box
                 sx={{
-                  width: "100%",
-                  height: "100%",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  marginTop: "250px",
+                  width: "100%",
                 }}
               >
+                <Button
+                  onClick={() => setOpen(false)}
+                  sx={{
+                    color: "white",
+                    position: "absolute",
+                    top: "10%",
+                    right: "10%",
+                    fontSize: "24px",
+                  }}
+                >
+                  <AiOutlineClose />
+                </Button>
                 <Box
                   sx={{
                     backgroundColor: "white",
-                    width: "400px",
-                    height: "460px",
+                    width: "380px",
+                    height: "490px",
                     padding: "20px",
                     borderRadius: "10px",
                   }}
                 >
                   <TabContext value={value}>
                     <TabList
-                      indicatorColor="secondary"
                       sx={{
-                        width: "100%",
+                        width: "85%",
                         display: "flex",
+                        margin: "0 auto",
                         justifyContent: "center",
                       }}
                       onChange={handleChangeForm}
                       aria-label="wrapped label tabs example"
+                      indicatorColor="secondary"
                     >
                       <Tab
                         sx={{ width: "50%" }}
@@ -146,7 +259,7 @@ const Navbar = () => {
                       />
                     </TabList>
                     <TabPanel value="register">
-                      <form onSubmit={handleSubmit}>
+                      <form onSubmit={handleSubmitRegister}>
                         <Grid
                           container
                           spacing={2}
@@ -158,6 +271,7 @@ const Navbar = () => {
                               fullWidth
                               label="Name"
                               name="name"
+                              onChange={handleChange}
                               // Add value and onChange as needed
                               required
                             />
@@ -168,6 +282,7 @@ const Navbar = () => {
                               label="Email"
                               name="email"
                               type="email"
+                              onChange={handleChange}
                               // Add value and onChange as needed
                               required
                             />
@@ -178,6 +293,7 @@ const Navbar = () => {
                               label="Password"
                               name="password"
                               type="password"
+                              onChange={handleChange}
                               // Add value and onChange as needed
                               required
                             />
@@ -188,6 +304,7 @@ const Navbar = () => {
                               label="Confirm Password"
                               name="confirmPassword"
                               type="password"
+                              onChange={handleChange}
                               // Add value and onChange as needed
                               required
                             />
@@ -209,13 +326,18 @@ const Navbar = () => {
                           </Grid>
                         </Grid>
                       </form>
-                      <Typography>
+                      <Typography sx={{ padding: "10px 0" }}>
                         Already have an account?
-                        <Tab value="login" label="Login" />
+                        <Button
+                          sx={{ color: "#71bb42", textTransform: "capitalize" }}
+                          onClick={(event) => handleChangeForm(event, "login")}
+                        >
+                          Login
+                        </Button>
                       </Typography>
                     </TabPanel>
                     <TabPanel value="login">
-                      <form onSubmit={handleSubmit}>
+                      <form onSubmit={handleSubmitLogin}>
                         <Grid
                           container
                           spacing={2}
@@ -228,8 +350,8 @@ const Navbar = () => {
                               label="Email"
                               name="email"
                               type="email"
-                              value={formData.email}
-                              onChange={handleChange}
+                              value={loginForm.email}
+                              onChange={handleChangeLogin}
                               required
                             />
                           </Grid>
@@ -239,8 +361,8 @@ const Navbar = () => {
                               label="Password"
                               name="password"
                               type="password"
-                              value={formData.password}
-                              onChange={handleChange}
+                              value={loginForm.password}
+                              onChange={handleChangeLogin}
                               required
                             />
                           </Grid>
@@ -261,10 +383,13 @@ const Navbar = () => {
                           </Grid>
                         </Grid>
                       </form>
-                      <Typography>
-                        Have an account?
+                      <Typography sx={{ padding: "10px 0" }}>
+                        Don&apos;t have an account?
                         <Button
-                          onChange={(e) => handleChangeForm(e, "register")}
+                          sx={{ color: "#71bb42", textTransform: "capitalize" }}
+                          onClick={(event) =>
+                            handleChangeForm(event, "register")
+                          }
                         >
                           Register
                         </Button>
@@ -287,7 +412,10 @@ const Navbar = () => {
                 gap: "10px",
               }}
             >
-              <IconButton onClick={() => toggleDrawer(false)}>
+              <IconButton
+                sx={{ position: "absolute", top: "2%", right: "10%" }}
+                onClick={() => toggleDrawer(false)}
+              >
                 <AiOutlineClose />
               </IconButton>
               <List sx={{ padding: "50px 0" }}>
@@ -404,7 +532,7 @@ const Navbar = () => {
               </div>
               <button onClick={handleOpen}>Login</button>
               <div className="creator">
-                <span>Creator</span>
+                <Link>Creator</Link>
                 <button>Get App</button>
               </div>
             </div>
@@ -563,7 +691,7 @@ const Container = styled.div`
         align-items: center;
         gap: 16px;
         position: relative;
-        span {
+        a {
           color: #3c3c3c;
           font-family: Poppins;
           font-size: 14px;
@@ -684,7 +812,7 @@ const Container = styled.div`
           display: flex;
           padding: 20px;
 
-          span {
+          a {
             display: none;
             color: #3c3c3c;
             font-family: Poppins;
@@ -790,7 +918,7 @@ const Container = styled.div`
         .creator {
           border-left: 1px solid gray;
           display: flex;
-          span {
+          a {
             color: #3c3c3c;
             font-family: Poppins;
             font-size: 14px;
