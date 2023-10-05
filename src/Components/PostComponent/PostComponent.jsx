@@ -418,7 +418,7 @@ const PostContainer = styled.div`
       grid-template-columns: 95%;
       grid-template-rows: 470px auto;
       gap: 21px;
-      padding: 0 5px;
+
       .status {
         width: 100%;
         justify-content: space-around;
