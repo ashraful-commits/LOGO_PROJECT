@@ -34,6 +34,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 import { app } from "../../firebase.confige";
 import { toast } from "react-toastify";
@@ -45,7 +46,11 @@ const Navbar = () => {
     setShowMenu(!showMenu);
   };
   const [loading, setLoading] = useState(true);
-
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    setUser(user);
+  }, [user]);
   useEffect(() => {
     // Simulate loading delay (you can replace this with actual data fetching logic)
     const timer = setTimeout(() => {
@@ -87,7 +92,7 @@ const Navbar = () => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log(user);
+
         toast("Login successful!", {
           position: "bottom-center",
           autoClose: 1000,
@@ -103,6 +108,7 @@ const Navbar = () => {
           email: "",
           password: "",
         });
+        localStorage.setItem("user", JSON.stringify(user));
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -166,7 +172,37 @@ const Navbar = () => {
       });
   };
   const [value, setValue] = useState("login");
-
+  //==========================handle login and register form change
+  const handleLogout = () => {
+    const auth = getAuth();
+    signOut(auth)
+      .then(() => {
+        localStorage.clear();
+        toast("Logout successfull!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      })
+      .catch((error) => {
+        const message = error.message;
+        toast(message, {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      });
+  };
   const handleChangeForm = (event, newValue) => {
     setValue(newValue);
   };
@@ -530,7 +566,12 @@ const Navbar = () => {
               <div className="logo">
                 <img src={logo} alt="" />
               </div>
-              <button onClick={handleOpen}>Login</button>
+
+              {user ? (
+                <button onClick={handleLogout}>Logout</button>
+              ) : (
+                <button onClick={handleOpen}>Login</button>
+              )}
               <div className="creator">
                 <Link>Creator</Link>
                 <button>Get App</button>
