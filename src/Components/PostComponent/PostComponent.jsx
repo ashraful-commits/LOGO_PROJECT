@@ -267,6 +267,8 @@ const PostContainer = styled.div`
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #eeeeee;
     .loading {
       background-color: #bcbcbc !important;
       .play-button {
@@ -457,6 +459,7 @@ const PostContainer = styled.div`
     }
     .img-status {
       grid-template-columns: 420px auto;
+      padding-bottom: 30px;
       .img {
         width: 100%;
         .loading {

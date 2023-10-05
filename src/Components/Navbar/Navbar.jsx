@@ -568,7 +568,9 @@ const Navbar = () => {
                 </form>
               </div>
               <div className="logo">
-                <img src={logo} alt="" />
+                <Link to="/">
+                  <img src={logo} alt="" />
+                </Link>
               </div>
 
               {user ? (
