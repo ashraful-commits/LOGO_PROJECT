@@ -1,5 +1,12 @@
 import styled from "styled-components";
-import { AiOutlineClose, AiOutlineLogout, AiOutlineMenu } from "react-icons/ai";
+import {
+  AiFillFacebook,
+  AiFillGoogleCircle,
+  AiFillInstagram,
+  AiOutlineClose,
+  AiOutlineLogout,
+  AiOutlineMenu,
+} from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
 import { useEffect, useState } from "react";
@@ -35,10 +42,16 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  FacebookAuthProvider,
 } from "firebase/auth";
 import { app } from "../../firebase.confige";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { GoogleAuthProvider } from "firebase/auth";
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -137,9 +150,36 @@ const Navbar = () => {
     console.log(email, password);
     await createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed up
         const user = userCredential.user;
-        console.log(user);
+        const name = signUpForm.name;
+        updateProfile(auth.currentUser, {
+          displayName: name,
+          photoURL: "https://example.com/jane-q-user/profile.jpg",
+        })
+          .then(() => {
+            toast("User profoil successfully!", {
+              position: "bottom-center",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+          })
+          .catch((error) => {
+            toast(error.message, {
+              position: "bottom-center",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+          });
         toast("User created successfully!", {
           position: "bottom-center",
           autoClose: 1000,
@@ -208,7 +248,89 @@ const Navbar = () => {
   const handleChangeForm = (event, newValue) => {
     setValue(newValue);
   };
+  // const navigate = useNavigate();
+  const handleGoogleSignin = async () => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
+        const user = result.user;
 
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
+        toast("Login successful!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        // const errorCode = error.code;
+        const errorMessage = error.message;
+        toast(errorMessage, {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        // The email of the user's account used.
+        // const email = error.customData.email;
+        // The AuthCredential type that was used.
+        // const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
+  const handleFacebookSignin = async () => {
+    const auth = getAuth(app);
+    const provider = new FacebookAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // The signed-in user info.
+        const user = result.user;
+
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
+        toast("Login successful", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        const credential = FacebookAuthProvider.credentialFromResult(result);
+        const accessToken = credential.accessToken;
+
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = FacebookAuthProvider.credentialFromError(error);
+
+        // ...
+      });
+  };
+  const handleInstagramSignin = async () => {};
   return (
     <>
       {loading ? (
@@ -432,6 +554,51 @@ const Navbar = () => {
                           Register
                         </Button>
                       </Typography>
+                      <Button
+                        onClick={handleGoogleSignin}
+                        variant="outlined"
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          width: "100%",
+
+                          marginBottom: "6px",
+                        }}
+                      >
+                        <AiFillGoogleCircle fill="red" size={"24"} />
+                        Sign in with Google
+                      </Button>
+                      <Button
+                        onClick={handleFacebookSignin}
+                        variant="outlined"
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          width: "100%",
+
+                          marginBottom: "6px",
+                        }}
+                      >
+                        <AiFillFacebook fill="blue" size={"24"} />
+                        Sign in with facebook
+                      </Button>
+                      <Button
+                        onClick={handleInstagramSignin}
+                        variant="outlined"
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          width: "100%",
+
+                          marginBottom: "6px",
+                        }}
+                      >
+                        <AiFillInstagram fill="orange" size={"24"} />
+                        Sign in with instagram
+                      </Button>
                     </TabPanel>
                   </TabContext>
                 </Box>
