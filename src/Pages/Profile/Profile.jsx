@@ -78,12 +78,21 @@ const Profile = () => {
                     alignItems: "center",
                   }}
                 >
-                  <ListItemAvatar>
+                  <ListItemAvatar
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
                     <FaUserFriends color="#71bb42" size={"32"} />
                   </ListItemAvatar>
                   <ListItemText
                     primary="Friends"
-                    sx={{ color: "#71bb42", fontSize: "13", fontWeight: "700" }}
+                    sx={{
+                      color: "#71bb42",
+                      fontSize: "13",
+                      fontWeight: "700",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
                     secondary={`${dummyData.friends}`}
                   />
                 </ListItem>
@@ -95,11 +104,20 @@ const Profile = () => {
                     alignItems: "center",
                   }}
                 >
-                  <ListItemAvatar>
+                  <ListItemAvatar
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
                     <FaImage color="#71bb42" size={"32"} />
                   </ListItemAvatar>
                   <ListItemText
-                    sx={{ color: "#71bb42", fontSize: "13", fontWeight: "700" }}
+                    sx={{
+                      color: "#71bb42",
+                      fontSize: "13",
+                      fontWeight: "700",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
                     primary="Photos"
                     secondary={`${dummyData.photos}`}
                   />
@@ -112,11 +130,20 @@ const Profile = () => {
                     alignItems: "center",
                   }}
                 >
-                  <ListItemAvatar>
+                  <ListItemAvatar
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
                     <FaRegThumbsUp color="#71bb42" size={"32"} />
                   </ListItemAvatar>
                   <ListItemText
-                    sx={{ color: "#71bb42", fontSize: "13", fontWeight: "700" }}
+                    sx={{
+                      color: "#71bb42",
+                      fontSize: "13",
+                      fontWeight: "700",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
                     primary="Posts"
                     secondary={`${dummyData.posts}`}
                   />
