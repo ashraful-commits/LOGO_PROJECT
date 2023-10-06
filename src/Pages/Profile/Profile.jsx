@@ -7,7 +7,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { AiOutlineMenu } from "react-icons/ai";
-import PostComponent from "../../Components/PostComponent/PostComponent";
+import PostComponent from "../../Components/ProfilePost/ProfilePost";
+import { Box, Tab } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import StandardImageList from "../../Components/ImageList/ImgaeList";
+import Friends from "../../Components/Friends/Friends";
 
 const dummyData = {
   // Replace with your Google Photos image links
@@ -37,23 +41,16 @@ const Profile = () => {
   const toggleMobileSidebar = () => {
     setMobileSidebarOpen(!isMobileSidebarOpen);
   };
+  const [value, setValue] = React.useState("1");
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <Container>
       {/* Left sidebar for desktop and tablet */}
-      <LeftSidebar>
-        {/* Add your left sidebar content here */}
-        <List>
-          <ListItem button>
-            <ListItemText primary="Left Sidebar Item 1" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="Left Sidebar Item 2" />
-          </ListItem>
-        </List>
-      </LeftSidebar>
 
-      <Content>
+      <Content sx={{ position: "sticky", top: 0 }}>
         {isLoading ? (
           <SkeletonContainer>
             <SkeletonCoverPhoto />
@@ -78,14 +75,94 @@ const Profile = () => {
                 <FaThumbsUp /> {dummyData.posts} Posts
               </InfoItem>
             </ProfileInfo>
-            <Post>
-              <PostComponent />
-              <PostComponent />
-              <PostComponent />
-              <PostComponent />
-              <PostComponent />
-              <PostComponent />
-            </Post>
+
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <TabList
+                  onChange={handleChange}
+                  aria-label="lab API tabs example"
+                >
+                  <Tab label="Post" value="1" />
+                  <Tab label="Photo" value="2" />
+                  <Tab label="Friends" value="3" />
+                </TabList>
+              </Box>
+              <TabPanel value="1">
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 2fr",
+                    "@media (max-width: 768px)": {
+                      gridTemplateColumns: "1fr",
+                    },
+                  }}
+                >
+                  <LeftSidebar>
+                    {/* Add your left sidebar content here */}
+                    <List>
+                      <ListItem button>
+                        <ListItemText primary="Left Sidebar Item 1" />
+                      </ListItem>
+                      <ListItem button>
+                        <ListItemText primary="Left Sidebar Item 2" />
+                      </ListItem>
+                    </List>
+                  </LeftSidebar>
+                  <Post>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "50px",
+                      }}
+                    >
+                      <PostComponent />
+                      <PostComponent />
+                      <PostComponent />
+                      <PostComponent />
+                      <PostComponent />
+                    </Box>
+                  </Post>
+                </Box>
+              </TabPanel>
+              <TabPanel value="2">
+                <StandardImageList />
+              </TabPanel>
+              <TabPanel value="3">
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                  <Friends />
+                </Box>
+              </TabPanel>
+            </TabContext>
           </>
         )}
 
@@ -178,7 +255,6 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 2rem auto;
   overflow: hidden;
-  width: 100%; /* Make the container responsive */
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -191,16 +267,22 @@ const Container = styled.div`
 `;
 
 const LeftSidebar = styled.div`
-  width: 250px;
-  background-color: #f0f0f0;
-  overflow-y: auto;
-
+  width: 100%;
+  height: 100vh;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  border: 1px solid #eee;
+  margin-top: 30px;
+  border-radius: 10px;
   @media (max-width: 768px) {
     display: none;
   }
 `;
 
 const Content = styled.div`
+  width: 100%;
   flex: 1;
   padding: 20px;
 `;
@@ -242,17 +324,20 @@ const InfoItem = styled.li`
 
 const Post = styled.div`
   margin-top: 20px;
-  padding-top: 20px;
+  width: 100%;
+  padding: 10px 10px;
   background-color: #fff;
-  border: 1px solid #ccc;
+
   border-radius: 5px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 35px;
+  box-shadow: "0 0 10px gray";
   align-items: center;
 `;
 
 const MobileSidebarButton = styled.button`
-  position: absolute;
+  position: fixed;
   top: 8%;
   right: 0px;
   background-color: transparent;
