@@ -321,12 +321,18 @@ const CoverPhoto = styled.img`
   width: 100%;
   height: 300px;
   object-fit: cover;
+  border-radius: 10px;
+
+  margin-top: 20px;
   @media (max-width: 768px) {
     flex-direction: column;
     width: 100%;
-    padding: 0 1rem;
     height: 220px;
-    margin-top: 20px;
+    border-radius: 40px;
+  }
+  @media (max-width: 1024px) {
+    padding: 0 20px;
+    border-radius: 50px;
   }
 `;
 
@@ -342,6 +348,9 @@ const Avatar = styled.img`
 const UserName = styled.h1`
   font-size: 24px;
   margin-top: 10px;
+  @media (max-width: 1024px) {
+    padding: 0 20px;
+  }
 `;
 
 const ProfileInfo = styled.div`
