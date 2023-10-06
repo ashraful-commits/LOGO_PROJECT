@@ -294,16 +294,16 @@ const Navbar = () => {
       });
   };
   const handleFacebookSignin = async () => {
-    const auth = getAuth(app);
-    const provider = new FacebookAuthProvider();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // The signed-in user info.
-        const user = result.user;
+    const auth = getAuth(app); // Get the Firebase Authentication instance.
+    const provider = new FacebookAuthProvider(); // Create a FacebookAuthProvider instance.
 
-        setUser(user);
-        localStorage.setItem("user", JSON.stringify(user));
-        toast("Login successful", {
+    signInWithPopup(auth, provider) // Sign in with a popup.
+      .then((result) => {
+        // Handle a successful login.
+        const user = result.user; // Get the signed-in user info.
+        // Display a success message using a toast notification.
+        toast("Login successfull!", {
+          // Toast configuration options.
           position: "bottom-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -313,31 +313,24 @@ const Navbar = () => {
           progress: undefined,
           theme: "dark",
         });
+        // This gives you a Facebook Access Token, which can be used to access the Facebook API.
         const credential = FacebookAuthProvider.credentialFromResult(result);
         const accessToken = credential.accessToken;
 
-        // IdP data available using getAdditionalUserInfo(result)
+        // You can access additional user information using getAdditionalUserInfo(result).
         // ...
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        console.log(errorMessage);
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
+        // Handle errors that occur during the login process.
+        const errorCode = error.code; // Get the error code.
+        const errorMessage = error.message; // Get the error message.
+        const email = error.customData.email; // Get the email of the user's account (if available).
+        console.log(errorMessage); // Log the error message.
+
+        // Get the AuthCredential type that was used.
         const credential = FacebookAuthProvider.credentialFromError(error);
-        toast(errorMessage, {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+
+        // Handle the error appropriately.
         // ...
       });
   };
