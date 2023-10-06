@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { FaUserFriends, FaImage, FaThumbsUp, FaComment } from "react-icons/fa";
+import {
+  FaUserFriends,
+  FaImage,
+  FaThumbsUp,
+  FaComment,
+  FaRegThumbsUp,
+} from "react-icons/fa";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -8,7 +14,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { AiOutlineMenu } from "react-icons/ai";
 import PostComponent from "../../Components/ProfilePost/ProfilePost";
-import { Box, Tab } from "@mui/material";
+import { Box, ListItemAvatar, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import StandardImageList from "../../Components/ImageList/ImgaeList";
 import Friends from "../../Components/Friends/Friends";
@@ -65,15 +71,35 @@ const Profile = () => {
             <Avatar src={dummyData.profileImage} alt="Avatar" />
             <UserName>{dummyData.name}</UserName>
             <ProfileInfo>
-              <InfoItem>
-                <FaUserFriends /> {dummyData.friends} Friends
-              </InfoItem>
-              <InfoItem>
-                <FaImage /> {dummyData.photos} Photos
-              </InfoItem>
-              <InfoItem>
-                <FaThumbsUp /> {dummyData.posts} Posts
-              </InfoItem>
+              <List sx={{ display: "flex", gap: "40px" }}>
+                <ListItem>
+                  <ListItemAvatar>
+                    <FaUserFriends size={"32"} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary="Friends"
+                    secondary={`${dummyData.friends}`}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemAvatar>
+                    <FaImage size={"32"} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary="Photos"
+                    secondary={`${dummyData.photos}`}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemAvatar>
+                    <FaRegThumbsUp size={"32"} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary="Posts"
+                    secondary={`${dummyData.posts}`}
+                  />
+                </ListItem>
+              </List>
             </ProfileInfo>
 
             <TabContext value={value}>
@@ -307,19 +333,14 @@ const UserName = styled.h1`
   margin-top: 10px;
 `;
 
-const ProfileInfo = styled.ul`
+const ProfileInfo = styled.div`
+  width: 100%;
   list-style: none;
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-  padding: 0;
-`;
-
-const InfoItem = styled.li`
-  margin: 0 20px;
-  font-size: 18px;
-  display: flex;
   align-items: center;
+  margin-top: 20px;
+  padding: 2rem 0;
 `;
 
 const Post = styled.div`
