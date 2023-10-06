@@ -127,78 +127,8 @@ const Navbar = () => {
       })
       .catch((error) => {
         const errorCode = error.code;
-        console.log(errorCode);
-        const errorMessage = error.message;
-        console.log(errorMessage);
-        toast(errorMessage, {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      });
-  };
-  //==============================handle register
-  const handleSubmitRegister = async (e) => {
-    e.preventDefault();
-    const auth = getAuth(app);
-    const email = signUpForm.email;
-    const password = signUpForm.password;
-    console.log(email, password);
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        const name = signUpForm.name;
-        updateProfile(auth.currentUser, {
-          displayName: name,
-          photoURL: "https://example.com/jane-q-user/profile.jpg",
-        })
-          .then(() => {
-            toast("User profoil successfully!", {
-              position: "bottom-center",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          })
-          .catch((error) => {
-            toast(error.message, {
-              position: "bottom-center",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          });
-        toast("User created successfully!", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-
-        const errorMessage = error.message;
-
-        if (errorCode == 400) {
-          toast(errorMessage, {
+        if (errorCode === "auth/invalid-login-credentials") {
+          toast("Email and password not match", {
             position: "bottom-center",
             autoClose: 1000,
             hideProgressBar: false,
@@ -209,9 +139,75 @@ const Navbar = () => {
             theme: "dark",
           });
         }
-
-        // ..
       });
+  };
+  //==============================handle register
+  const handleSubmitRegister = async (e) => {
+    e.preventDefault();
+    const auth = getAuth(app);
+    const email = signUpForm.email;
+    const password = signUpForm.password;
+
+    if (signUpForm.password !== signUpForm.confirmPassword) {
+      toast("Password and confirm password not match!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } else {
+      await createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          const name = signUpForm.name;
+          toast.success("Registration successful!", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          updateProfile(auth.currentUser, {
+            displayName: name,
+            photoURL: "https://example.com/jane-q-user/profile.jpg",
+          })
+            .then(() => {})
+            .catch((error) => {
+              const errorMessage = error.message;
+              toast(errorMessage, {
+                position: "bottom-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
+            });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          if (errorCode === "auth/email-already-in-use")
+            toast.success("Email already exist.", {
+              position: "bottom-center",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+        });
+    }
   };
   const [value, setValue] = useState("login");
   //==========================handle login and register form change
