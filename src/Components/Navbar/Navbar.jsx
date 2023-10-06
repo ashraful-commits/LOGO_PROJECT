@@ -324,10 +324,20 @@ const Navbar = () => {
         const errorCode = error.code;
         const errorMessage = error.message;
         // The email of the user's account used.
+        console.log(errorMessage);
         const email = error.customData.email;
         // The AuthCredential type that was used.
         const credential = FacebookAuthProvider.credentialFromError(error);
-
+        toast(errorMessage, {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
         // ...
       });
   };
