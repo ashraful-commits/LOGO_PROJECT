@@ -1,15 +1,17 @@
+// Import necessary dependencies and components
+import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+import Header from "../Header/Header";
 import styled from "styled-components";
 import {
   AiFillFacebook,
   AiFillGoogleCircle,
-  AiFillInstagram,
   AiOutlineClose,
   AiOutlineLogout,
   AiOutlineMenu,
 } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
-import { useEffect, useState } from "react";
 import avtar1 from "../../../public/avatar1.png";
 import avtar2 from "../../../public/avatar2.png";
 import avtar3 from "../../../public/avatar3.png";
@@ -36,7 +38,8 @@ import {
 } from "@mui/material";
 import TabPanel from "@mui/lab/TabPanel";
 import { TabContext, TabList } from "@mui/lab";
-//================================= firebase auth
+
+// Import Firebase Authentication functions and configuration
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -44,39 +47,52 @@ import {
   signOut,
   updateProfile,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   FacebookAuthProvider,
 } from "firebase/auth";
-import { app } from "../../firebase.confige";
+import { app } from "../../firebase.confige"; // Ensure that your Firebase configuration is correctly set up
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { GoogleAuthProvider } from "firebase/auth";
+
+// Import additional icons
 import { BsFacebook } from "react-icons/bs";
 
+// Define the Navbar component
 const Navbar = () => {
+  // State to manage menu visibility
   const [showMenu, setShowMenu] = useState(false);
+
+  // Function to toggle the menu
   const toggleDrawer = () => {
     setShowMenu(!showMenu);
   };
+
+  // State to manage loading state
   const [loading, setLoading] = useState(true);
+
+  // State to manage user authentication status
   const [user, setUser] = useState(null);
+
+  // Effect to retrieve user data from local storage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     setUser(user);
   }, []);
+
+  // Simulate loading delay (replace with actual data fetching)
   useEffect(() => {
-    // Simulate loading delay (you can replace this with actual data fetching logic)
     const timer = setTimeout(() => {
       setLoading(false);
     }, 2000); // Adjust the delay as needed
-
     return () => clearTimeout(timer);
   }, []);
+
+  // State and functions for login and registration forms
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  //================================
+
+  // State for login and registration form data
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -87,27 +103,58 @@ const Navbar = () => {
     password: "",
     confirmPassword: "",
   });
-  //===============================handle register form change
+
+  // Handle changes in the registration form
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSignUpForm({ ...signUpForm, [name]: value });
   };
+
+  // Handle changes in the login form
   const handleChangeLogin = (e) => {
     const { name, value } = e.target;
     setLoginForm({ ...loginForm, [name]: value });
   };
-  //===========================login
+
+  // Handle login form submission
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
     const auth = getAuth(app);
     const email = loginForm.email;
     const password = loginForm.password;
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
 
-        toast("Login successful!", {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // Display a success message using a toast notification
+      toast("Login successful!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+
+      // Close the login modal, clear the form, and store user data
+      setOpen(false);
+      setLoginForm({
+        email: "",
+        password: "",
+      });
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+    } catch (error) {
+      // Handle login errors
+      if (error.code === "auth/invalid-login-credentials") {
+        toast("Email and password do not match", {
           position: "bottom-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -117,39 +164,20 @@ const Navbar = () => {
           progress: undefined,
           theme: "dark",
         });
-        setOpen(false);
-        setLoginForm({
-          email: "",
-          password: "",
-        });
-        localStorage.setItem("user", JSON.stringify(user));
-        setUser(user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        if (errorCode === "auth/invalid-login-credentials") {
-          toast("Email and password not match", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-        }
-      });
+      }
+    }
   };
-  //==============================handle register
+
+  // Handle registration form submission
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
     const auth = getAuth(app);
     const email = signUpForm.email;
     const password = signUpForm.password;
 
+    // Check if password and confirm password match
     if (signUpForm.password !== signUpForm.confirmPassword) {
-      toast("Password and confirm password not match!", {
+      toast("Password and confirm password do not match!", {
         position: "bottom-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -160,11 +188,36 @@ const Navbar = () => {
         theme: "dark",
       });
     } else {
-      await createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          const name = signUpForm.name;
-          toast.success("Registration successful!", {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userCredential.user;
+        const name = signUpForm.name;
+
+        // Display a success message using a toast notification
+        toast.success("Registration successful!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+
+        // Update the user's profile with their name
+        await updateProfile(auth.currentUser, {
+          displayName: name,
+          photoURL: "https://example.com/jane-q-user/profile.jpg",
+        });
+      } catch (error) {
+        // Handle registration errors
+        if (error.code === "auth/email-already-in-use") {
+          toast.success("Email already exists.", {
             position: "bottom-center",
             autoClose: 1000,
             hideProgressBar: false,
@@ -174,49 +227,26 @@ const Navbar = () => {
             progress: undefined,
             theme: "dark",
           });
-          updateProfile(auth.currentUser, {
-            displayName: name,
-            photoURL: "https://example.com/jane-q-user/profile.jpg",
-          })
-            .then(() => {})
-            .catch((error) => {
-              const errorMessage = error.message;
-              toast(errorMessage, {
-                position: "bottom-center",
-                autoClose: 1000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-              });
-            });
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          if (errorCode === "auth/email-already-in-use")
-            toast.success("Email already exist.", {
-              position: "bottom-center",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-        });
+        }
+      }
     }
   };
+
+  // State for the currently active tab in the login/registration form
   const [value, setValue] = useState("login");
-  //==========================handle login and register form change
+
+  // Handle tab changes in the login/registration form
+  const handleChangeForm = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  // Handle user logout
   const handleLogout = () => {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
         localStorage.clear();
-        toast("Logout successfull!", {
+        toast("Logout successful!", {
           position: "bottom-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -242,93 +272,87 @@ const Navbar = () => {
         });
       });
   };
-  const handleChangeForm = (event, newValue) => {
-    setValue(newValue);
-  };
-  // const navigate = useNavigate();
-  const handleGoogleSignin = async () => {
-    const auth = getAuth();
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
-        const user = result.user;
 
-        setUser(user);
-        localStorage.setItem("user", JSON.stringify(user));
-        toast("Login successful!", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        // const errorCode = error.code;
-        const errorMessage = error.message;
-        toast(errorMessage, {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-        // The email of the user's account used.
-        // const email = error.customData.email;
-        // The AuthCredential type that was used.
-        // const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
+  // Handle Google sign-in
+  const handleGoogleSignin = async () => {
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Display a success message using a toast notification
+      toast("Login successful!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
       });
+
+      // Store user data
+      setUser(user);
+      localStorage.setItem("user", JSON.stringify(user));
+    } catch (error) {
+      // Handle Google sign-in errors
+      const errorMessage = error.message;
+      toast(errorMessage, {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
   };
+
+  // Handle Facebook sign-in
   const handleFacebookSignin = async () => {
     const auth = getAuth(app); // Get the Firebase Authentication instance.
     const provider = new FacebookAuthProvider(); // Create a FacebookAuthProvider instance.
 
-    signInWithPopup(auth, provider) // Sign in with a popup.
-      .then((result) => {
-        // Handle a successful login.
-        const user = result.user; // Get the signed-in user info.
-        // Display a success message using a toast notification.
-        toast("Login successfull!", {
-          // Toast configuration options.
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-        // This gives you a Facebook Access Token, which can be used to access the Facebook API.
-        const credential = FacebookAuthProvider.credentialFromResult(result);
-        const accessToken = credential.accessToken;
+    try {
+      const result = await signInWithPopup(auth, provider); // Sign in with a popup.
+      const user = result.user; // Get the signed-in user info.
 
-        // You can access additional user information using getAdditionalUserInfo(result).
-        // ...
-      })
-      .catch((error) => {
-        // Handle errors that occur during the login process.
-        const errorCode = error.code; // Get the error code.
-        const errorMessage = error.message; // Get the error message.
-        const email = error.customData.email; // Get the email of the user's account (if available).
-        console.log(errorMessage); // Log the error message.
-
-        // Get the AuthCredential type that was used.
-        const credential = FacebookAuthProvider.credentialFromError(error);
-
-        // Handle the error appropriately.
-        // ...
+      // Display a success message using a toast notification.
+      toast("Login successful!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
       });
+
+      // This gives you a Facebook Access Token, which can be used to access the Facebook API.
+      const credential = FacebookAuthProvider.credentialFromResult(result);
+      const accessToken = credential.accessToken;
+
+      // You can access additional user information using getAdditionalUserInfo(result).
+      // ...
+    } catch (error) {
+      // Handle errors that occur during the login process.
+      const errorCode = error.code; // Get the error code.
+      const errorMessage = error.message; // Get the error message.
+      const email = error.customData.email; // Get the email of the user's account (if available).
+      console.log(errorMessage); // Log the error message.
+
+      // Get the AuthCredential type that was used.
+      const credential = FacebookAuthProvider.credentialFromError(error);
+
+      // Handle the error appropriately.
+      // ...
+    }
   };
 
   return (
@@ -753,7 +777,7 @@ const Navbar = () => {
     </>
   );
 };
-
+/* Your container styles */
 const Container = styled.div`
   width: 100%;
   height: 75px;
@@ -1219,7 +1243,7 @@ const Container = styled.div`
     }
   }
 `;
-
+/* Your skeleton content styles */
 const SkeletonContent = styled.div`
   width: 1442px;
   display: flex;
@@ -1237,7 +1261,7 @@ const SkeletonContent = styled.div`
     width: 100%;
   }
 `;
-
+/* Your small menu button styles */
 const SmallMenuButton = styled.button`
   display: flex;
   align-items: center;
@@ -1246,34 +1270,34 @@ const SmallMenuButton = styled.button`
   background-color: transparent;
   padding: 10px;
 `;
-
+/* Your search field styles */
 const SearchField = styled.div`
   margin-left: 25px;
   @media (max-width: 768px) {
     display: none;
   }
 `;
-
+/* Your logo styles */
 const Logo = styled.div`
   margin-left: 25px;
 `;
-
+/* Your creator styles */
 const Creator = styled.div`
   margin-left: 25px;
 `;
-
+/* Your skeleton logo styles */
 const SkeletonLogo = styled.div`
   width: 56px;
   height: 30px;
   background-color: #ddd; /* Placeholder background color */
 `;
-
+/* Your skeleton search styles */
 const SkeletonSearch = styled.div`
   width: 200px;
   height: 40px;
   background-color: #ddd; /* Placeholder background color */
 `;
-
+/* Your skeleton creator button styles */
 const SkeletonCreatorButton = styled.div`
   width: 50px;
   height: 40px;

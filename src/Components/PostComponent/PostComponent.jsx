@@ -1,55 +1,68 @@
 import styled from "styled-components";
 import avatar1 from "../../../public/avatar1.png";
-import postImg1 from "../../../public/postImg1.png";
 import ReactPlayer from "react-player";
 import { BsChat, BsHeart, BsPause, BsPlay, BsShare } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
+
+// Define the 'PostComponent' functional component.
 const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
+  // State to control video playback.
   const [playing, setPlaying] = useState(false);
 
+  // Reference to the video element for IntersectionObserver.
   const videoRef = useRef();
+
+  // Function to toggle video playback.
   const togglePlay = () => {
     setPlaying(!playing);
   };
+
+  // Effect to set up IntersectionObserver for video.
   useEffect(() => {
     const options = {
-      root: null, // use the viewport as the root
-      rootMargin: "0px", // no margin
-      threshold: 0.5, // 50% of the video element must be visible
+      root: null, // Use the viewport as the root.
+      rootMargin: "0px", // No margin.
+      threshold: 0.5, // 50% of the video element must be visible.
     };
 
+    // Callback function for IntersectionObserver.
     const handleIntersection = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // Video is in view, play it
+          // Video is in view, play it.
           setPlaying(true);
-          videoRef.current?.seekTo(0);
+          videoRef.current?.seekTo(0); // Reset video to the beginning.
         } else {
-          // Video is out of view, pause it
+          // Video is out of view, pause it.
           setPlaying(false);
         }
       });
     };
 
+    // Create an IntersectionObserver instance.
     const observer = new IntersectionObserver(handleIntersection, options);
 
+    // Observe the video element when it's available.
     if (videoRef.current) {
       observer.observe(videoRef.current);
     }
 
+    // Cleanup function to unobserve the video element.
     return () => {
       if (videoRef.current) {
         observer.unobserve(videoRef.current);
       }
     };
   }, []);
+
+  // State to manage loading state.
   const [loading, setLoading] = useState(true);
 
+  // Simulate loading data with a delay (replace with your actual data loading logic).
   useEffect(() => {
-    // Simulate a delay, e.g., while fetching data
     setTimeout(() => {
-      setLoading(false); // Set loading to false when your data is ready
-    }, 2000); // Replace with your actual data loading logic
+      setLoading(false); // Set loading to false when data is ready.
+    }, 2000); // Adjust the delay as needed.
   }, []);
 
   return (
@@ -161,6 +174,7 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
     </>
   );
 };
+/* ... (Styles for the main container) */
 const PostContainer = styled.div`
   width: 545.112px;
   height: 671.334px;
@@ -276,7 +290,7 @@ const PostContainer = styled.div`
     .loading {
       background-color: #bcbcbc !important;
       .play-button {
-        display: none!;
+        display: none;
       }
       .desc {
         display: none;
@@ -300,7 +314,9 @@ const PostContainer = styled.div`
       border-radius: 24.731px;
       margin-left: 62px;
       z-index: 1;
+
       .play-button {
+        opacity: 0;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -318,10 +334,15 @@ const PostContainer = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
+        transition: all 0.5s ease-in-out;
       }
-
       .play-button:hover {
         background-color: rgba(0, 0, 0, 0.7);
+      }
+      &:hover {
+        .play-button {
+          opacity: 1;
+        }
       }
       .desc {
         position: absolute;
