@@ -52,6 +52,7 @@ import { app } from "../../firebase.confige";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleAuthProvider } from "firebase/auth";
+import { BsFacebook } from "react-icons/bs";
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -312,25 +313,22 @@ const Navbar = () => {
           progress: undefined,
           theme: "dark",
         });
-        const credential = FacebookAuthProvider.credentialFromResult(result);
-        const accessToken = credential.accessToken;
-
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
         const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = FacebookAuthProvider.credentialFromError(error);
-
-        // ...
+        toast(errorMessage, {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
       });
   };
-  const handleInstagramSignin = async () => {};
+
   return (
     <>
       {loading ? (
@@ -556,12 +554,17 @@ const Navbar = () => {
                       </Typography>
                       <Button
                         onClick={handleGoogleSignin}
-                        variant="outlined"
                         sx={{
                           display: "flex",
                           alignItems: "center",
                           gap: "5px",
+                          color: "#71bb42",
                           width: "100%",
+                          boxShadow: " 0 0 2px#71bb42",
+                          "&:hover": {
+                            backgroundColor: "#71bb42",
+                            color: "white",
+                          },
 
                           marginBottom: "6px",
                         }}
@@ -571,33 +574,23 @@ const Navbar = () => {
                       </Button>
                       <Button
                         onClick={handleFacebookSignin}
-                        variant="outlined"
                         sx={{
                           display: "flex",
                           alignItems: "center",
                           gap: "5px",
+                          color: "#71bb42",
                           width: "100%",
+                          boxShadow: " 0 0 2px#71bb42",
+                          "&:hover": {
+                            backgroundColor: "#71bb42",
+                            color: "white",
+                          },
 
                           marginBottom: "6px",
                         }}
                       >
-                        <AiFillFacebook fill="blue" size={"24"} />
+                        <BsFacebook fill="blue" size={"24"} />
                         Sign in with facebook
-                      </Button>
-                      <Button
-                        onClick={handleInstagramSignin}
-                        variant="outlined"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          width: "100%",
-
-                          marginBottom: "6px",
-                        }}
-                      >
-                        <AiFillInstagram fill="orange" size={"24"} />
-                        Sign in with instagram
                       </Button>
                     </TabPanel>
                   </TabContext>
