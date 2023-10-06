@@ -40,6 +40,7 @@ const Post = () => {
             thumbnailUrl={item.thumbnailUrl}
             videoUrl={item.videoUrl}
             title={item.title}
+            id={item.id}
           />
         );
       })}

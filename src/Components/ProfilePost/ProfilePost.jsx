@@ -17,7 +17,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import Skeleton from "@mui/material/Skeleton";
 import ReactPlayer from "react-player";
 import avatar1 from "../../../public/avatar1.png";
-import { Pause, PauseCircle, PauseCircleOutline } from "@mui/icons-material";
+
 import { Box } from "@mui/material";
 const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
   const [playing, setPlaying] = useState(false);
@@ -158,13 +158,17 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
                     top: "40%",
                     left: "44%",
                     color: "#71bb42",
+                    opacity: 0,
+                    "&:hover": {
+                      opacity: 1,
+                    },
                   }}
                   onClick={togglePlay}
                 >
                   {playing ? (
-                    <PauseCircleOutlineSharpIcon sx={{ fontSize: "3rem" }} />
+                    <PauseCircleOutlineSharpIcon sx={{ fontSize: "2.4rem" }} />
                   ) : (
-                    <PlayArrowIcon sx={{ fontSize: "3rem" }} />
+                    <PlayArrowIcon sx={{ fontSize: "2.4rem" }} />
                   )}
                 </Button>
                 <ReactPlayer

@@ -3,9 +3,10 @@ import avatar1 from "../../../public/avatar1.png";
 import ReactPlayer from "react-player";
 import { BsChat, BsHeart, BsPause, BsPlay, BsShare } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 // Define the 'PostComponent' functional component.
-const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
+const PostComponent = ({ desc, thumbnailUrl, videoUrl, title, id }) => {
   // State to control video playback.
   const [playing, setPlaying] = useState(false);
 
@@ -116,7 +117,9 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
           <div className="post-user-details">
             <div className="user-details">
               <div className="avatar">
-                <img src={avatar1} alt="" />
+                <Link to={`/${id}`}>
+                  <img src={avatar1} alt="" />
+                </Link>
               </div>
               <div className="details">
                 <p>Makenna Rosser</p>

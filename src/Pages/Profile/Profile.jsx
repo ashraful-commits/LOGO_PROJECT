@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import {
-  FaUserFriends,
-  FaImage,
-  FaThumbsUp,
-  FaComment,
-  FaRegThumbsUp,
-} from "react-icons/fa";
-import Drawer from "@mui/material/Drawer";
+import { FaUserFriends, FaImage, FaRegThumbsUp } from "react-icons/fa";
+
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
+
 import ListItemText from "@mui/material/ListItemText";
-import { AiOutlineMenu } from "react-icons/ai";
+
 import PostComponent from "../../Components/ProfilePost/ProfilePost";
 import { Box, ListItemAvatar, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
@@ -32,7 +26,6 @@ const dummyData = {
 };
 
 const Profile = () => {
-  const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
   // Simulate loading for 2 seconds
@@ -44,9 +37,6 @@ const Profile = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const toggleMobileSidebar = () => {
-    setMobileSidebarOpen(!isMobileSidebarOpen);
-  };
   const [value, setValue] = React.useState("1");
 
   const handleChange = (event, newValue) => {
@@ -56,7 +46,7 @@ const Profile = () => {
     <Container>
       {/* Left sidebar for desktop and tablet */}
 
-      <Content sx={{ position: "sticky", top: 0 }}>
+      <Content>
         {isLoading ? (
           <SkeletonContainer>
             <SkeletonCoverPhoto />
@@ -71,30 +61,33 @@ const Profile = () => {
             <Avatar src={dummyData.profileImage} alt="Avatar" />
             <UserName>{dummyData.name}</UserName>
             <ProfileInfo>
-              <List sx={{ display: "flex", gap: "40px" }}>
+              <List sx={{ display: "flex", gap: "10px" }}>
                 <ListItem>
                   <ListItemAvatar>
-                    <FaUserFriends size={"32"} />
+                    <FaUserFriends color="#71bb42" size={"32"} />
                   </ListItemAvatar>
                   <ListItemText
                     primary="Friends"
+                    sx={{ color: "#71bb42", fontSize: "13", fontWeight: "700" }}
                     secondary={`${dummyData.friends}`}
                   />
                 </ListItem>
                 <ListItem>
                   <ListItemAvatar>
-                    <FaImage size={"32"} />
+                    <FaImage color="#71bb42" size={"32"} />
                   </ListItemAvatar>
                   <ListItemText
+                    sx={{ color: "#71bb42", fontSize: "13", fontWeight: "700" }}
                     primary="Photos"
                     secondary={`${dummyData.photos}`}
                   />
                 </ListItem>
                 <ListItem>
                   <ListItemAvatar>
-                    <FaRegThumbsUp size={"32"} />
+                    <FaRegThumbsUp color="#71bb42" size={"32"} />
                   </ListItemAvatar>
                   <ListItemText
+                    sx={{ color: "#71bb42", fontSize: "13", fontWeight: "700" }}
                     primary="Posts"
                     secondary={`${dummyData.posts}`}
                   />
@@ -191,41 +184,6 @@ const Profile = () => {
             </TabContext>
           </>
         )}
-
-        {/* Mobile sidebar button */}
-        <MobileSidebarButton onClick={toggleMobileSidebar}>
-          <AiOutlineMenu size={"20"} />
-        </MobileSidebarButton>
-
-        {/* Mobile sidebar */}
-        <Drawer
-          anchor="right"
-          open={isMobileSidebarOpen}
-          onClose={toggleMobileSidebar}
-        >
-          <SidebarContent>
-            <List>
-              <ListItem button>
-                <ListItemIcon>
-                  <FaUserFriends />
-                </ListItemIcon>
-                <ListItemText primary="Friends" />
-              </ListItem>
-              <ListItem button>
-                <ListItemIcon>
-                  <FaImage />
-                </ListItemIcon>
-                <ListItemText primary="Photos" />
-              </ListItem>
-              <ListItem button>
-                <ListItemIcon>
-                  <FaThumbsUp />
-                </ListItemIcon>
-                <ListItemText primary="Posts" />
-              </ListItem>
-            </List>
-          </SidebarContent>
-        </Drawer>
       </Content>
     </Container>
   );
@@ -355,22 +313,6 @@ const Post = styled.div`
   gap: 35px;
   box-shadow: "0 0 10px gray";
   align-items: center;
-`;
-
-const MobileSidebarButton = styled.button`
-  position: fixed;
-  top: 8%;
-  right: 0px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 100;
-  background-color: #fff;
-  padding: 5px 10px;
-`;
-
-const SidebarContent = styled.div`
-  padding: 20px;
 `;
 
 export default Profile;
