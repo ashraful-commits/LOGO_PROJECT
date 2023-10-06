@@ -75,7 +75,7 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
       }}
     >
       {loading ? (
-        <Skeleton variant="rectangular" width={545} height={671.334} />
+        <Skeleton variant="rectangular" width={"100%"} height={671.334} />
       ) : (
         <Box>
           <CardHeader

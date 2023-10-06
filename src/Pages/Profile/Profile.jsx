@@ -61,8 +61,23 @@ const Profile = () => {
             <Avatar src={dummyData.profileImage} alt="Avatar" />
             <UserName>{dummyData.name}</UserName>
             <ProfileInfo>
-              <List sx={{ display: "flex", gap: "10px" }}>
-                <ListItem>
+              <List
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  gap: "12px",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <ListItem
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
                   <ListItemAvatar>
                     <FaUserFriends color="#71bb42" size={"32"} />
                   </ListItemAvatar>
@@ -72,7 +87,14 @@ const Profile = () => {
                     secondary={`${dummyData.friends}`}
                   />
                 </ListItem>
-                <ListItem>
+                <ListItem
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
                   <ListItemAvatar>
                     <FaImage color="#71bb42" size={"32"} />
                   </ListItemAvatar>
@@ -82,7 +104,14 @@ const Profile = () => {
                     secondary={`${dummyData.photos}`}
                   />
                 </ListItem>
-                <ListItem>
+                <ListItem
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
                   <ListItemAvatar>
                     <FaRegThumbsUp color="#71bb42" size={"32"} />
                   </ListItemAvatar>
@@ -96,8 +125,11 @@ const Profile = () => {
             </ProfileInfo>
 
             <TabContext value={value}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Box
+                sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}
+              >
                 <TabList
+                  sx={{ width: "100%" }}
                   onChange={handleChange}
                   aria-label="lab API tabs example"
                 >
@@ -243,6 +275,7 @@ const Container = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     width: 100%;
+    padding: 0 1rem;
   }
   @media (max-width: 1024px) {
     flex-direction: row;
@@ -268,7 +301,7 @@ const LeftSidebar = styled.div`
 const Content = styled.div`
   width: 100%;
   flex: 1;
-  padding: 20px;
+  margin: 0 auto;
 `;
 
 const CoverPhoto = styled.img`
@@ -293,12 +326,12 @@ const UserName = styled.h1`
 
 const ProfileInfo = styled.div`
   width: 100%;
-  list-style: none;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
   padding: 2rem 0;
+  margin: 0 auto;
 `;
 
 const Post = styled.div`
@@ -310,7 +343,7 @@ const Post = styled.div`
   border-radius: 5px;
   display: flex;
   flex-direction: row;
-  gap: 35px;
+  row-gap: 35px;
   box-shadow: "0 0 10px gray";
   align-items: center;
 `;
