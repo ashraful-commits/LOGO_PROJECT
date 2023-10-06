@@ -313,19 +313,22 @@ const Navbar = () => {
           progress: undefined,
           theme: "dark",
         });
+        const credential = FacebookAuthProvider.credentialFromResult(result);
+        const accessToken = credential.accessToken;
+
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
       })
       .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
         const errorMessage = error.message;
-        toast(errorMessage, {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = FacebookAuthProvider.credentialFromError(error);
+
+        // ...
       });
   };
 
