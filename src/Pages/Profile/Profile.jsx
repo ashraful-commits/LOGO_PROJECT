@@ -321,6 +321,13 @@ const CoverPhoto = styled.img`
   width: 100%;
   height: 300px;
   object-fit: cover;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 1rem;
+    height: 220px;
+    margin-top: 20px;
+  }
 `;
 
 const Avatar = styled.img`
