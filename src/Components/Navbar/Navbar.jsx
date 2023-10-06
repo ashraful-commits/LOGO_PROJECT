@@ -564,9 +564,9 @@ const Navbar = () => {
                           display: "flex",
                           alignItems: "center",
                           gap: "5px",
-                          color: "#71bb42",
+                          color: "white",
                           width: "100%",
-                          boxShadow: " 0 0 2px#71bb42",
+                          backgroundColor: "red",
                           "&:hover": {
                             backgroundColor: "#71bb42",
                             color: "white",
@@ -575,7 +575,7 @@ const Navbar = () => {
                           marginBottom: "6px",
                         }}
                       >
-                        <AiFillGoogleCircle fill="red" size={"24"} />
+                        <AiFillGoogleCircle fill="white" size={"24"} />
                         Sign in with Google
                       </Button>
                       <Button
@@ -584,9 +584,9 @@ const Navbar = () => {
                           display: "flex",
                           alignItems: "center",
                           gap: "5px",
-                          color: "#71bb42",
+                          color: "white",
                           width: "100%",
-                          boxShadow: " 0 0 2px#71bb42",
+                          backgroundColor: "#0059fd",
                           "&:hover": {
                             backgroundColor: "#71bb42",
                             color: "white",
@@ -595,7 +595,7 @@ const Navbar = () => {
                           marginBottom: "6px",
                         }}
                       >
-                        <BsFacebook fill="blue" size={"24"} />
+                        <BsFacebook fill="white" size={"24"} />
                         Sign in with facebook
                       </Button>
                     </TabPanel>
