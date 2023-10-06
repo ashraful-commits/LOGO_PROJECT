@@ -6,6 +6,7 @@ import { BsChat, BsHeart, BsPause, BsPlay, BsShare } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
 const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
   const [playing, setPlaying] = useState(false);
+
   const videoRef = useRef();
   const togglePlay = () => {
     setPlaying(!playing);
@@ -50,6 +51,7 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
       setLoading(false); // Set loading to false when your data is ready
     }, 2000); // Replace with your actual data loading logic
   }, []);
+
   return (
     <>
       {loading ? (
@@ -117,6 +119,7 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
           </div>
           <div className="img-status">
             <div ref={videoRef} className="img">
+              {!playing ? <img src={thumbnailUrl} alt="" /> : ""}
               <ReactPlayer
                 url={videoUrl}
                 width="100%"
@@ -268,6 +271,7 @@ const PostContainer = styled.div`
     justify-content: center;
     overflow: hidden;
     padding-bottom: 30px;
+    overflow: hidden;
     border-bottom: 1px solid #eeeeee;
     .loading {
       background-color: #bcbcbc !important;
@@ -277,6 +281,11 @@ const PostContainer = styled.div`
       .desc {
         display: none;
       }
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .img {
       width: 100%;
