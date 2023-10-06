@@ -126,7 +126,12 @@ const Profile = () => {
 
             <TabContext value={value}>
               <Box
-                sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}
+                sx={{
+                  width: "100%",
+                  borderBottom: 1,
+                  padding: "0px",
+                  borderColor: "divider",
+                }}
               >
                 <TabList
                   sx={{ width: "100%" }}
@@ -138,13 +143,19 @@ const Profile = () => {
                   <Tab label="Friends" value="3" />
                 </TabList>
               </Box>
-              <TabPanel value="1">
+              <TabPanel
+                sx={{
+                  width: "100%",
+                }}
+                value="1"
+              >
                 <Box
                   sx={{
                     display: "grid",
                     gridTemplateColumns: "1fr 2fr",
                     "@media (max-width: 768px)": {
                       gridTemplateColumns: "1fr",
+                      width: "100%",
                     },
                   }}
                 >
@@ -165,7 +176,7 @@ const Profile = () => {
                         width: "100%",
                         display: "flex",
                         flexDirection: "column",
-                        gap: "50px",
+                        rowGap: "50px",
                       }}
                     >
                       <PostComponent />
@@ -177,10 +188,10 @@ const Profile = () => {
                   </Post>
                 </Box>
               </TabPanel>
-              <TabPanel value="2">
+              <TabPanel sx={{ width: "100%" }} value="2">
                 <StandardImageList />
               </TabPanel>
-              <TabPanel value="3">
+              <TabPanel sx={{ width: "100%" }} value="3">
                 <Box
                   sx={{
                     display: "flex",
@@ -337,15 +348,17 @@ const ProfileInfo = styled.div`
 const Post = styled.div`
   margin-top: 20px;
   width: 100%;
-  padding: 10px 10px;
+
   background-color: #fff;
 
   border-radius: 5px;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   row-gap: 35px;
   box-shadow: "0 0 10px gray";
   align-items: center;
+  margin: 0 auto;
 `;
 
 export default Profile;

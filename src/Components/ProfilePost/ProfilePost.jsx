@@ -137,7 +137,7 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
                   height: "570px",
                   position: "relative",
 
-                  padding: "20px",
+                  padding: "0px",
                 }}
                 // 16:9 aspect ratio
               >
