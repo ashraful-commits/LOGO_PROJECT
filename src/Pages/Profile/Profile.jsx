@@ -152,9 +152,11 @@ const Profile = () => {
                 <Box
                   sx={{
                     display: "grid",
+                    gap: "20px",
                     gridTemplateColumns: "1fr 2fr",
                     "@media (max-width: 768px)": {
                       gridTemplateColumns: "1fr",
+
                       width: "100%",
                     },
                   }}
@@ -302,7 +304,7 @@ const LeftSidebar = styled.div`
   justify-content: center;
   align-items: flex-start;
   border: 1px solid #eee;
-  margin-top: 30px;
+
   border-radius: 10px;
   @media (max-width: 768px) {
     display: none;
@@ -341,7 +343,7 @@ const ProfileInfo = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  padding: 2rem 0;
+  /* padding: 2rem 0; */
   margin: 0 auto;
 `;
 

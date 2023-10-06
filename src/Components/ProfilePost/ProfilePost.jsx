@@ -134,10 +134,8 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title }) => {
                 ref={videoRef}
                 sx={{
                   width: "100%",
-                  height: "570px",
+                  height: "500px",
                   position: "relative",
-
-                  padding: "0px",
                 }}
                 // 16:9 aspect ratio
               >
