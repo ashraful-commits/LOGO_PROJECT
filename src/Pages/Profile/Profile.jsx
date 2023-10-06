@@ -8,25 +8,17 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
 import PostComponent from "../../Components/ProfilePost/ProfilePost";
-import { Box, ListItemAvatar, Tab } from "@mui/material";
+import { Box, Input, ListItemAvatar, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import StandardImageList from "../../Components/ImageList/ImgaeList";
 import Friends from "../../Components/Friends/Friends";
-
-const dummyData = {
-  // Replace with your Google Photos image links
-  coverImage:
-    "https://marketplace.canva.com/EAFMUqABEj8/1/0/1600w/canva-pink-minimalist-motivational-quote-facebook-cover-4i1_4CirhhQ.jpg",
-  profileImage:
-    "https://media.istockphoto.com/id/1327685828/photo/hand-holding-heart-against-a-sun.jpg?s=612x612&w=0&k=20&c=sByMgbqvtec1-LeOmtscSQXH_SZV1jT0Xbct4E2u1kE=",
-  name: "John Doe",
-  friends: 500,
-  posts: 100,
-  photos: 300,
-};
-
+import { AiFillFileImage } from "react-icons/ai";
+import { getAuth, updateProfile } from "firebase/auth";
+import { app } from "../../firebase.confige";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 const Profile = () => {
   const [isLoading, setLoading] = useState(true);
+  const [user, setUser] = useState({});
 
   // Simulate loading for 2 seconds
   useEffect(() => {
@@ -41,6 +33,62 @@ const Profile = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    setUser(user);
+  }, [user]);
+  //================================
+  const handleProfile = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      // Initialize Firebase Authentication
+      const auth = getAuth(app);
+
+      // Get the currently signed-in user
+      const user = auth?.currentUser;
+      console.log(user);
+      // Create a reference to the Firebase Storage bucket
+      const storage = getStorage();
+      const storageRef = ref(
+        storage,
+        "profilePhotos/" + user?.uid + "/" + file.name
+      );
+
+      // Upload the file to Firebase Storage
+      uploadBytes(storageRef, file)
+        .then((snapshot) => {
+          console.log("Uploaded a blob or file!");
+
+          // Get the download URL of the uploaded file
+          getDownloadURL(storageRef)
+            .then((downloadURL) => {
+              // Update the user's profile photoURL with the download URL
+              const user = JSON.parse(localStorage.getItem("user"));
+              user.photoURL = downloadURL;
+              localStorage.setItem("user", JSON.parse(user));
+
+              updateProfile(user, {
+                photoURL: downloadURL,
+              })
+                .then(() => {
+                  console.log("Profile photo updated!");
+                  console.log(auth.currentUser);
+                })
+                .catch((error) => {
+                  console.error("Error updating profile:", error);
+                });
+            })
+            .catch((error) => {
+              console.error("Error getting download URL:", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error uploading file:", error);
+        });
+    }
   };
   return (
     <Container>
@@ -57,9 +105,57 @@ const Profile = () => {
           </SkeletonContainer>
         ) : (
           <>
-            <CoverPhoto src={dummyData.coverImage} alt="Cover" />
-            <Avatar src={dummyData.profileImage} alt="Avatar" />
-            <UserName>{dummyData.name}</UserName>
+            {user?.coverImage ? (
+              <CoverPhoto src={user?.coverImage} alt="Cover" />
+            ) : (
+              <CoverPhoto
+                src="https://2.bp.blogspot.com/-nfvjMm5r4HE/UAEzYD80HII/AAAAAAAAARA/CASgQfzOD3w/s1600/free-facebook-cover-photo-make-your-own.jpg"
+                alt="Cover"
+              />
+            )}
+            <Box sx={{ position: "relative" }}>
+              {user?.photoURL ? (
+                <Avatar src={user?.photoURL} alt="Avatar" />
+              ) : (
+                <Avatar
+                  src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png"
+                  alt="Avatar"
+                />
+              )}
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  left: 50,
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "white",
+                  padding: "4px",
+                  borderRadius: "40px",
+                  boxShadow: "0 0 10px gray",
+                  cursor: "pointer",
+                  "&:hover": {
+                    bgcolor: "#5a9600",
+                    color: "white",
+                  },
+                }}
+              >
+                <label htmlFor="profile">
+                  <FaImage size={"20"} />
+                </label>
+                <Input
+                  onChange={handleProfile}
+                  sx={{ display: "none" }}
+                  type="file"
+                  id="profile"
+                />
+              </Box>
+            </Box>
+
+            <UserName>{user?.displayName}</UserName>
             <ProfileInfo>
               <List
                 sx={{
@@ -93,7 +189,7 @@ const Profile = () => {
                       flexDirection: "column",
                       alignItems: "center",
                     }}
-                    secondary={`${dummyData.friends}`}
+                    secondary={`${user?.friends}`}
                   />
                 </ListItem>
                 <ListItem
@@ -119,7 +215,7 @@ const Profile = () => {
                       alignItems: "center",
                     }}
                     primary="Photos"
-                    secondary={`${dummyData.photos}`}
+                    secondary={`${user?.photos}`}
                   />
                 </ListItem>
                 <ListItem
@@ -145,7 +241,7 @@ const Profile = () => {
                       alignItems: "center",
                     }}
                     primary="Posts"
-                    secondary={`${dummyData.posts}`}
+                    secondary={`${user?.posts}`}
                   />
                 </ListItem>
               </List>
@@ -349,7 +445,6 @@ const CoverPhoto = styled.img`
   height: 300px;
   object-fit: cover;
   border-radius: 10px;
-
   margin-top: 20px;
   @media (max-width: 768px) {
     flex-direction: column;
