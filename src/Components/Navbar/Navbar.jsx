@@ -382,8 +382,8 @@ const Navbar = () => {
                   sx={{
                     color: "white",
                     position: "absolute",
-                    top: "10%",
-                    right: "5%",
+                    top: "1%",
+                    right: "2%",
                     fontSize: "24px",
                   }}
                 >
