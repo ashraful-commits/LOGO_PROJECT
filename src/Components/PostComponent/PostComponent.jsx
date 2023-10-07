@@ -245,6 +245,10 @@ const PostContainer = styled.div`
           font-weight: 400;
           line-height: normal;
           cursor: pointer;
+          width: 60px !important; /* Adjust the width as needed */
+          white-space: nowrap; /* Prevent text from wrapping to the next line */
+          overflow: hidden; /* Hide any overflowing text */
+          text-overflow: ellipsis; /* Add ellipsis (...) for truncated text */
         }
       }
     }
@@ -465,10 +469,18 @@ const PostContainer = styled.div`
   @media (max-width: 768px) {
     width: 98vw;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 10px;
     height: 671.334px;
     .post-user-details {
-      width: 95%;
+      width: 100%;
+    }
+    .details {
+      span {
+        width: 150px; /* Adjust the width as needed */
+        white-space: nowrap; /* Prevent text from wrapping to the next line */
+        overflow: hidden; /* Hide any overflowing text */
+        text-overflow: ellipsis;
+      }
     }
     .img-status {
       width: 100%;
@@ -502,7 +514,7 @@ const PostContainer = styled.div`
       }
     }
     .title {
-      width: 65%;
+      width: 75%;
     }
   }
 
