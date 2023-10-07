@@ -4,6 +4,9 @@ import ReactPlayer from "react-player";
 import { BsChat, BsHeart, BsPause, BsPlay, BsShare } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { arrayUnion, doc, getFirestore, updateDoc } from "firebase/firestore";
+import { app } from "../../firebase.confige";
+import { getAuth } from "firebase/auth";
 
 // Define the 'PostComponent' functional component.
 const PostComponent = ({
@@ -74,6 +77,19 @@ const PostComponent = ({
       setLoading(false); // Set loading to false when data is ready.
     }, 2000); // Adjust the delay as needed.
   }, []);
+  const handleFollow = async (id) => {
+    const db = getFirestore(app);
+    const auth = getAuth();
+    const followingData = doc(db, "users", `${auth?.currentUser?.uid}`);
+    const follwerData = doc(db, "users", `${id}`);
+
+    await updateDoc(follwerData, {
+      following: arrayUnion(id),
+    });
+    await updateDoc(followingData, {
+      followers: arrayUnion(auth?.currentUser?.uid),
+    });
+  };
 
   return (
     <>
@@ -136,7 +152,7 @@ const PostComponent = ({
               </div>
             </div>
             <div className="follow">
-              <button>Follow</button>
+              <button onClick={() => handleFollow(id)}>Follow</button>
             </div>
           </div>
           <div className="title">

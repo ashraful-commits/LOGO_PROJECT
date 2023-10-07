@@ -367,19 +367,19 @@ const Navbar = () => {
   const auth = getAuth(app);
   useEffect(() => {
     // Listen for changes in authentication state
-    // const unsubscribe = onAuthStateChanged(auth, (user) => {
-    //   if (user) {
-    //     // User is signed in.
-    //     setUser(user);
-    //   } else {
-    //     // No user is signed in.
-    //     setUser(null);
-    //   }
-    // });
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in.
+        setUser(user);
+        console.log(user);
+      } else {
+        // No user is signed in.
+        setUser(null);
+      }
+    });
 
-    // // Unsubscribe from the listener when the component unmounts
-    // return () => unsubscribe();
-    setUser(auth?.currentUser?.user);
+    // Unsubscribe from the listener when the component unmounts
+    return () => unsubscribe();
   }, [auth]);
   return (
     <>
@@ -992,8 +992,8 @@ const Container = styled.div`
       }
       .loginavater {
         overflow: hidden;
-        width: "100%";
-        height: "100%";
+        width: "45px";
+        height: "45px";
         margin-top: 10px;
         border: 2px solid white;
         background-color: white;

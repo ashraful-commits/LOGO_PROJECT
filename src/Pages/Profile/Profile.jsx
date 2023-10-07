@@ -14,7 +14,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import StandardImageList from "../../Components/ImageList/ImgaeList";
 import Friends from "../../Components/Friends/Friends";
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { app } from "../../firebase.confige";
 import {
   getDownloadURL,
@@ -138,7 +138,9 @@ const Profile = () => {
             setIsProfileLoading(false);
             // Get the download URL of the uploaded file
             const downloadURL = await getDownloadURL(storageRef);
-
+            await updateProfile(auth?.currentUser, {
+              photoURL: downloadURL,
+            });
             // Update the user's profile photoURL with the download URL
             try {
               const db = getFirestore(app);

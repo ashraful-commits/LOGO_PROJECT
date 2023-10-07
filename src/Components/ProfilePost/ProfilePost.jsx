@@ -423,7 +423,7 @@ const PostComponent = ({ LoggedInUser }) => {
                       },
                       "@media (min-width: 1025px) and (min-width: 1442px)": {
                         display: "grid",
-                        gridTemplateColumns: "auto 60px",
+                        gridTemplateColumns: "auto 80px",
                         gridTemplateRows: "3fr",
                       },
                     }}
