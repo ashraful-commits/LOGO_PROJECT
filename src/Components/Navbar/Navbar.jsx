@@ -304,6 +304,9 @@ const Navbar = () => {
         progress: undefined,
         theme: "dark",
       });
+
+      // Store user data
+      setUser(user);
     } catch (error) {
       // Handle Google sign-in errors
       const errorMessage = error.message;
@@ -364,18 +367,19 @@ const Navbar = () => {
   const auth = getAuth(app);
   useEffect(() => {
     // Listen for changes in authentication state
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in.
-        setUser(user);
-      } else {
-        // No user is signed in.
-        setUser(null);
-      }
-    });
+    // const unsubscribe = onAuthStateChanged(auth, (user) => {
+    //   if (user) {
+    //     // User is signed in.
+    //     setUser(user);
+    //   } else {
+    //     // No user is signed in.
+    //     setUser(null);
+    //   }
+    // });
 
-    // Unsubscribe from the listener when the component unmounts
-    return () => unsubscribe();
+    // // Unsubscribe from the listener when the component unmounts
+    // return () => unsubscribe();
+    setUser(auth?.currentUser?.user);
   }, [auth]);
   return (
     <>
@@ -796,7 +800,7 @@ const Navbar = () => {
                 </div>
               )}
 
-              {auth.currentUser.user ? (
+              {user ? (
                 <button className="logout" onClick={handleLogout}>
                   <AiOutlineLogout />
                 </button>
