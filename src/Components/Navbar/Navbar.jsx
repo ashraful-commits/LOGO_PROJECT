@@ -146,8 +146,6 @@ const Navbar = () => {
         email: "",
         password: "",
       });
-      localStorage.setItem("user", JSON.stringify(user));
-      setUser(user);
     } catch (error) {
       // Handle login errors
       if (error.code === "auth/invalid-login-credentials") {
@@ -306,10 +304,6 @@ const Navbar = () => {
         progress: undefined,
         theme: "dark",
       });
-
-      // Store user data
-      setUser(user);
-      localStorage.setItem("user", JSON.stringify(user));
     } catch (error) {
       // Handle Google sign-in errors
       const errorMessage = error.message;
@@ -333,7 +327,6 @@ const Navbar = () => {
 
     try {
       const result = await signInWithPopup(auth, provider); // Sign in with a popup.
-      const user = result.user; // Get the signed-in user info.
 
       // Display a success message using a toast notification.
       toast("Login successful!", {
@@ -803,7 +796,7 @@ const Navbar = () => {
                 </div>
               )}
 
-              {user ? (
+              {auth.currentUser.user ? (
                 <button className="logout" onClick={handleLogout}>
                   <AiOutlineLogout />
                 </button>
