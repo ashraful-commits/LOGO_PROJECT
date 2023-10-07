@@ -19,7 +19,23 @@ import ReactPlayer from "react-player";
 import avatar1 from "../../../public/avatar1.png";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-import { Box, Input, Modal } from "@mui/material";
+import { Box, Input, Modal, TextField } from "@mui/material";
+
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  setDoc,
+} from "firebase/firestore";
+import { app } from "../../firebase.confige";
+import { getAuth } from "firebase/auth";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 const PostComponent = ({
   desc,
   thumbnailUrl,
@@ -28,13 +44,79 @@ const PostComponent = ({
   LoggedInUser,
 }) => {
   const [playing, setPlaying] = useState(false);
-  const videoRef = useRef();
-  const [loading, setLoading] = useState(true);
+  const videoRef = useRef(null);
+  const [loader, setLoader] = useState(true);
   const [open, setOpen] = useState(false);
+  const [preview, setPreview] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(false);
+  const [input, setInput] = useState({
+    title: "",
+    desc: "",
+  });
+  const handleInput = (e) => {
+    setInput((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
   const togglePlay = () => {
     setPlaying(!playing);
   };
+  const handleProfile = async (e) => {
+    const file = e.target.files[0];
 
+    if (file) {
+      // Initialize Firebase Authentication
+      const auth = getAuth(app);
+      setLoading(true);
+
+      try {
+        // Get the currently signed-in user
+        const user = auth?.currentUser;
+
+        if (!user) {
+          console.error("User is not authenticated");
+          // Handle the case where the user is not authenticated
+          return;
+        }
+
+        // Create a reference to the Firebase Storage bucket
+        const storage = getStorage();
+        const storageRef = ref(
+          storage,
+          "postVideo/" + user.uid + "/" + file.name
+        );
+
+        // Upload the file to Firebase Storage
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        // Attach a 'state_changed' event listener to track progress
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgress(progress.toFixed(0)); // Update the progress state
+          },
+          (error) => {
+            setLoading(false); // Upload failed, set isUploading to false
+            console.error("Error uploading file:", error);
+          },
+          async () => {
+            // Upload complete, set isUploading to false
+            setLoading(false);
+            // Get the download URL of the uploaded file
+            const downloadURL = await getDownloadURL(storageRef);
+            setPreview(downloadURL);
+          }
+        );
+      } catch (error) {
+        setLoading(false);
+        console.error("Error:", error);
+      }
+    }
+  };
   useEffect(() => {
     const options = {
       root: null,
@@ -46,7 +128,7 @@ const PostComponent = ({
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           setPlaying(true);
-          videoRef.current?.seekTo(0);
+          videoRef?.current?.seekTo(0);
         } else {
           setPlaying(false);
         }
@@ -55,20 +137,20 @@ const PostComponent = ({
 
     const observer = new IntersectionObserver(handleIntersection, options);
 
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
+    if (videoRef?.current) {
+      observer.observe(videoRef?.current);
     }
 
     return () => {
       if (videoRef.current) {
-        observer.unobserve(videoRef.current);
+        observer.unobserve(videoRef?.current);
       }
     };
   }, []);
 
   useEffect(() => {
     setTimeout(() => {
-      setLoading(false);
+      setLoader(false);
     }, 2000);
   }, []);
   const handlePostModel = () => {
@@ -76,6 +158,21 @@ const PostComponent = ({
   };
   const handleClose = () => {
     setOpen(false);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    // Add a new document in collection "cities"
+    await addDoc(collection(db, "Posts"), {
+      id: auth?.currentUser?.uid,
+      email: auth?.currentUser?.email,
+      name: auth?.currentUser?.displayName,
+      avatar: auth?.currentUser?.photoURL,
+      title: input.title,
+      desc: input.desc,
+      video: preview,
+    });
   };
   return (
     <Card
@@ -86,7 +183,7 @@ const PostComponent = ({
         },
       }}
     >
-      {loading ? (
+      {loader ? (
         <Skeleton variant="rectangular" width={"100%"} height={671.334} />
       ) : (
         <>
@@ -109,20 +206,119 @@ const PostComponent = ({
                 justifyContent: "center",
                 alignItems: "center",
                 width: "400px",
-                height: "400px",
+                height: "500px",
                 bgcolor: "white",
               }}
             >
-              <form>
-                <Input />
-                <Button
-                  component="label"
-                  variant="contained"
-                  startIcon={<CloudUploadIcon />}
+              <form onSubmit={handleSubmit}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    padding: "15px",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
-                  Upload file
-                  <Input sx={{ display: "none" }} type="file" />
-                </Button>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      bgcolor: "#71bb42",
+                      width: "100%",
+                      textAlign: "center",
+                      padding: "5px 0",
+                      color: "white",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Add New Post
+                  </Typography>
+
+                  <label htmlFor="postVide">
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: "200px",
+                      }}
+                    >
+                      {preview ? (
+                        <ReactPlayer
+                          style={{ width: "100%", bgcolor: "black" }}
+                          url={preview}
+                          width="100%"
+                          height="100%"
+                          controls={true}
+                          playing={true}
+                        />
+                      ) : (
+                        <img
+                          style={{ width: "100%", objectFit: "cover" }}
+                          src="https://i.ytimg.com/vi/AYjOyQhZiK0/maxresdefault.jpg"
+                          alt="preview"
+                        />
+                      )}
+                    </Box>
+                  </label>
+                  <TextField
+                    id="outlined-multiline-flexible"
+                    label="Title"
+                    multiline
+                    maxRows={4}
+                    name="title"
+                    value={input.title}
+                    onChange={handleInput}
+                    sx={{ width: "100%", marginBottom: "10px" }}
+                  />
+                  <TextField
+                    id="outlined-multiline-flexible"
+                    label="Description"
+                    multiline
+                    maxRows={4}
+                    sx={{ width: "100%" }}
+                    name="desc"
+                    value={input.desc}
+                    onChange={handleInput}
+                  />
+                  <Button
+                    sx={{
+                      width: "100%",
+                      bgcolor: "#71bb42",
+                      marginTop: "10px",
+                      color: "white",
+                      "&:hover": {
+                        color: "#068a02",
+                      },
+                    }}
+                    component="label"
+                    startIcon={<CloudUploadIcon />}
+                  >
+                    Upload file
+                    <Input
+                      sx={{ display: "none" }}
+                      type="file"
+                      id="postVide0"
+                      onChange={handleProfile}
+                    />
+                  </Button>
+                  <Button
+                    type="submit"
+                    sx={{
+                      bgcolor: "#71bb42",
+                      width: "100%",
+                      textAlign: "center",
+                      padding: "5px 0",
+                      color: "white",
+                      marginTop: "10px",
+                      "&:hover": {
+                        color: "#068a02",
+                      },
+                    }}
+                  >
+                    Post
+                  </Button>
+                </Box>
               </form>
             </Box>
           </Modal>
@@ -244,6 +440,7 @@ const PostComponent = ({
                     )}
                   </Button>
                   <ReactPlayer
+                    ref={videoRef}
                     url={videoUrl}
                     width="100%"
                     height="100%"

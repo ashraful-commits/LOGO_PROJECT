@@ -1,8 +1,24 @@
 import styled from "styled-components";
 import SideBar from "../../Components/SideBar/SideBar";
 import Post from "../../Components/Post/Post";
+import { useEffect } from "react";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 
 const Home = () => {
+  // Use the useEffect hook to fetch data when the component mounts.
+  useEffect(() => {
+    const getAllPost = async () => {
+      const db = getFirestore();
+      const querySnapshot = await getDocs(collection(db, "posts"));
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.data());
+      });
+    };
+    getAllPost();
+  }, []); // The empty dependency array ensures this effect runs only once.
+
+  // Render the 'Post' component.
   return (
     <Container>
       {/*sidebar container  */}

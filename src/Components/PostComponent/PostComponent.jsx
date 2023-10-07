@@ -6,7 +6,16 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 // Define the 'PostComponent' functional component.
-const PostComponent = ({ desc, thumbnailUrl, videoUrl, title, id }) => {
+const PostComponent = ({
+  desc,
+  thumbnailUrl,
+  videoUrl,
+  title,
+  id,
+  name,
+  email,
+  avatar,
+}) => {
   // State to control video playback.
   const [playing, setPlaying] = useState(false);
 
@@ -117,13 +126,13 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title, id }) => {
           <div className="post-user-details">
             <div className="user-details">
               <div className="avatar">
-                <Link to={`/${id}`}>
-                  <img src={avatar1} alt="" />
+                <Link to={`/${name}`}>
+                  <img src={avatar} alt="" />
                 </Link>
               </div>
               <div className="details">
-                <p>Makenna Rosser</p>
-                <span>@rosser_makenna</span>
+                <p>{name}</p>
+                <span>{email}</span>
               </div>
             </div>
             <div className="follow">
@@ -135,7 +144,7 @@ const PostComponent = ({ desc, thumbnailUrl, videoUrl, title, id }) => {
           </div>
           <div className="img-status">
             <div ref={videoRef} className="img">
-              {!playing ? <img src={thumbnailUrl} alt="" /> : ""}
+              {/* {!playing && <img src={thumbnailUrl} alt="" />} */}
               <ReactPlayer
                 url={videoUrl}
                 width="100%"
@@ -203,10 +212,13 @@ const PostContainer = styled.div`
         align-items: center;
         cursor: pointer;
 
-        img {
+        a{
+          img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          border-radius: 100%;
+        }
         }
       }
       .details {
@@ -299,10 +311,7 @@ const PostContainer = styled.div`
         display: none;
       }
     }
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    object-fit: cover;
     }
     .img {
       width: 100%;
@@ -317,7 +326,11 @@ const PostContainer = styled.div`
       border-radius: 24.731px;
       margin-left: 62px;
       z-index: 1;
-
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
       .play-button {
         opacity: 0;
         position: absolute;
@@ -555,10 +568,15 @@ const SkeletonLoader = styled.div`
         display: flex;
         justify-content: start;
         align-items: center;
+        overflow: hidden;
         cursor: pointer;
         border-radius: 100%;
         background-color: #ccc; /* Placeholder color */
-
+        a {
+          img {
+            border-radius: 100%;
+          }
+        }
         img {
           width: 100%;
           height: 100%;
@@ -628,6 +646,7 @@ const SkeletonLoader = styled.div`
 
   .img-status {
     height: 570px;
+    width: 100%;
     flex-shrink: 0;
     display: grid;
     margin-top: 9px;
@@ -645,6 +664,7 @@ const SkeletonLoader = styled.div`
       background-color: #ccc8c8; /* Placeholder color */
       display: flex;
       justify-content: center;
+      flex-direction: column;
       align-items: center;
       background-color: #e2e2e2;
       border-radius: 24.731px;

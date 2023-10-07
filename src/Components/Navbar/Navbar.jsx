@@ -258,6 +258,7 @@ const Navbar = () => {
     signOut(auth)
       .then(() => {
         localStorage.clear();
+        setUser(null);
         toast("Logout successful!", {
           position: "bottom-center",
           autoClose: 1000,
@@ -767,6 +768,7 @@ const Navbar = () => {
                   <AiOutlineMenu />
                   <span>Menu</span>
                 </button>
+
                 <Link to={"/"}>
                   <img src={logo} alt="" />
                 </Link>
@@ -786,6 +788,13 @@ const Navbar = () => {
                   <img src={logo} alt="" />
                 </Link>
               </div>
+              {user && (
+                <div className="loginavater">
+                  <Link to={`/${user?.displayName}`}>
+                    <img src={user?.photoURL} alt="avatar" />
+                  </Link>
+                </div>
+              )}
 
               {user ? (
                 <button className="logout" onClick={handleLogout}>
@@ -884,8 +893,9 @@ const Container = styled.div`
     }
     .right {
       display: grid;
-
-      grid-template-columns: 1fr 780px 1fr 1fr;
+      align-items: center;
+      justify-content: center;
+      grid-template-columns: 1fr 780px 1fr 1fr 1fr;
       button {
         width: 93px;
         height: 40px;
@@ -976,6 +986,24 @@ const Container = styled.div`
           margin-right: 132px;
         }
       }
+      .loginavater {
+        overflow: hidden;
+        width: "100%";
+        height: "100%";
+        margin-top: 10px;
+        border: 2px solid white;
+        background-color: white;
+        a {
+          width: 70%;
+          border-radius: 100%;
+          overflow: hidden;
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+      }
       .creator {
         border-left: 1px solid gray;
         padding-left: 25px;
@@ -1045,7 +1073,7 @@ const Container = styled.div`
       .right {
         display: grid;
         justify-content: space-between;
-        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
         align-items: center;
         button {
           width: 65px;
@@ -1208,7 +1236,7 @@ const Container = styled.div`
             background-image: linear-gradient(#71bb42, #8fdd5d);
           }
         }
-        grid-template-columns: 3fr 1fr 1fr;
+        grid-template-columns: 3fr 1fr 1fr 1fr;
         .search-field {
           display: flex;
           justify-content: end;

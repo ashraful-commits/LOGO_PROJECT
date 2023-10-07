@@ -18,13 +18,7 @@ import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
 import { useEffect, useState } from "react";
-import {
-  collection,
-  getDocs,
-  getFirestore,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, getFirestore, query } from "firebase/firestore";
 import { app } from "../../firebase.confige";
 import { getAuth } from "firebase/auth";
 
@@ -40,11 +34,8 @@ const SideBar = () => {
   useEffect(() => {
     const getAllUser = async () => {
       const db = getFirestore(app);
-      const auth = getAuth(app);
-      const q = query(
-        collection(db, "users"),
-        where("id", "!==", `${auth?.currentUser?.uid}`)
-      );
+
+      const q = query(collection(db, "users"));
 
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {

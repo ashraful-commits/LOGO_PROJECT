@@ -3,6 +3,8 @@ import styled from "styled-components";
 import PostComponent from "../PostComponent/PostComponent";
 import { useEffect, useState } from "react";
 
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+
 // Define the 'Post' component.
 const Post = () => {
   // State to hold the post data fetched from an API.
@@ -10,22 +12,15 @@ const Post = () => {
 
   // Use the useEffect hook to fetch data when the component mounts.
   useEffect(() => {
-    // Fetch post data from a JSON API.
-    fetch(
-      "https://gist.githubusercontent.com/poudyalanil/ca84582cbeb4fc123a13290a586da925/raw/14a27bd0bcd0cd323b35ad79cf3b493dddf6216b/videos.json"
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        // Log the fetched data to the console (for debugging).
-        console.log(data);
-
-        // Update the 'post' state with the fetched data.
-        setPost(data);
-      })
-      .catch((error) => {
-        // Handle any errors that occur during the fetch operation.
-        console.error("Error:", error);
+    const getAllPost = async () => {
+      const db = getFirestore();
+      const querySnapshot = await getDocs(collection(db, "Posts"));
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        setPost((prev) => [...prev, doc.data()]);
       });
+    };
+    getAllPost();
   }, []); // The empty dependency array ensures this effect runs only once.
 
   // Render the 'Post' component.
@@ -36,9 +31,12 @@ const Post = () => {
         return (
           <PostComponent
             key={index} // Unique 'key' prop is essential for efficient rendering.
-            desc={item.description}
-            thumbnailUrl={item.thumbnailUrl}
-            videoUrl={item.videoUrl}
+            desc={item.desc}
+            thumbnailUrl=""
+            videoUrl={item.video}
+            avatar={item.avatar}
+            email={item.email}
+            name={item.name}
             title={item.title}
             id={item.id}
           />
