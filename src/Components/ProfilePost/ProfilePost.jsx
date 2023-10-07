@@ -25,6 +25,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDocs,
   getFirestore,
   setDoc,
 } from "firebase/firestore";
@@ -36,13 +37,8 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-const PostComponent = ({
-  desc,
-  thumbnailUrl,
-  videoUrl,
-  title,
-  LoggedInUser,
-}) => {
+import { toast } from "react-toastify";
+const PostComponent = ({ LoggedInUser }) => {
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef(null);
   const [loader, setLoader] = useState(true);
@@ -172,8 +168,36 @@ const PostComponent = ({
       title: input.title,
       desc: input.desc,
       video: preview,
+    }).then(() => {
+      toast("Post Created!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setOpen(false);
     });
   };
+  // State to hold the post data fetched from an API.
+  const [posts, setPost] = useState([]);
+
+  // Use the useEffect hook to fetch data when the component mounts.
+  useEffect(() => {
+    const getAllPost = async () => {
+      const db = getFirestore();
+      const querySnapshot = await getDocs(collection(db, "Posts"));
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        setPost((prev) => [...prev, doc.data()]);
+      });
+    };
+    getAllPost();
+  }, []); // The empty dependency array ensures this effect runs only once.
+
   return (
     <Card
       sx={{
@@ -206,7 +230,7 @@ const PostComponent = ({
                 justifyContent: "center",
                 alignItems: "center",
                 width: "400px",
-                height: "500px",
+
                 bgcolor: "white",
               }}
             >
@@ -239,19 +263,33 @@ const PostComponent = ({
                   <label htmlFor="postVide">
                     <Box
                       sx={{
-                        width: "100%",
+                        width: "380px",
                         height: "200px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginBottom: "10px",
                       }}
                     >
-                      {preview ? (
-                        <ReactPlayer
-                          style={{ width: "100%", bgcolor: "black" }}
-                          url={preview}
-                          width="100%"
-                          height="100%"
-                          controls={true}
-                          playing={true}
-                        />
+                      {loading ? (
+                        <Typography sx={{ fontSize: "24px" }}>
+                          {progress}
+                        </Typography>
+                      ) : preview ? (
+                        <Box sx={{ width: "100%", height: "100%" }}>
+                          <ReactPlayer
+                            style={{
+                              width: "100%",
+                              bgcolor: "black",
+                              height: "100%",
+                            }}
+                            url={preview}
+                            width="100%"
+                            height="100%"
+                            controls={true}
+                            playing={true}
+                          />
+                        </Box>
                       ) : (
                         <img
                           style={{ width: "100%", objectFit: "cover" }}
@@ -342,215 +380,223 @@ const PostComponent = ({
               </Button>
             </Box>
 
-            <CardHeader
-              sx={{
-                width: "100%",
-                borderBottom: "1px solid #eeeeee",
-              }}
-              avatar={<Avatar alt="User Avatar" src={avatar1} />}
-              title="Makenna Rosser"
-              subheader="@rosser_makenna"
-              action={
-                <Button
-                  sx={{
-                    backgroundColor: "#71bb42",
-                    color: "white",
-                    borderRadius: "50px",
-                    fontSize: "12px",
-
-                    padding: "8px 15px",
-                    "&:hover": {
-                      bgcolor: "#5a9600",
-                    },
-                  }}
-                >
-                  Follow
-                </Button>
-              }
-            />
-            <Box
-              sx={{
-                "@media (max-width: 768px)": {
-                  display: "grid",
-                  width: "100%",
-                  gridTemplateColumns: "1fr",
-                },
-                "@media (max-width: 1024px) and (min-width: 769px)": {
-                  display: "grid",
-                  gridTemplateColumns: "auto 60px",
-                  gridTemplateRows: "1fr",
-                },
-                "@media (min-width: 1025px) and (min-width: 1442px)": {
-                  display: "grid",
-                  gridTemplateColumns: "auto 60px",
-                  gridTemplateRows: "3fr",
-                },
-              }}
-            >
-              <Box>
-                <CardContent sx={{ width: "100%" }}>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {title}
-                  </Typography>
-                </CardContent>
-                <CardMedia
-                  component="div"
-                  ref={videoRef}
-                  sx={{
-                    width: "100%",
-                    height: "500px",
-                    position: "relative",
-                  }}
-                  // 16:9 aspect ratio
-                >
-                  {!playing ? (
-                    <img
-                      src={thumbnailUrl}
-                      alt=""
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ) : null}
-                  <Button
+            {posts.map((item, index) => {
+              return (
+                <div key={index}>
+                  <CardHeader
                     sx={{
-                      position: "absolute",
-                      top: "40%",
-                      left: "44%",
-                      color: "#71bb42",
-                      opacity: 0,
-                      "&:hover": {
-                        opacity: 1,
+                      width: "100%",
+                      borderBottom: "1px solid #eeeeee",
+                    }}
+                    avatar={<Avatar alt="User Avatar" src={item.avatar} />}
+                    title={item.name}
+                    subheader={item.email}
+                    action={
+                      <Button
+                        sx={{
+                          backgroundColor: "#71bb42",
+                          color: "white",
+                          borderRadius: "50px",
+                          fontSize: "12px",
+
+                          padding: "8px 15px",
+                          "&:hover": {
+                            bgcolor: "#5a9600",
+                          },
+                        }}
+                      >
+                        Follow
+                      </Button>
+                    }
+                  />
+                  <Box
+                    sx={{
+                      "@media (max-width: 768px)": {
+                        display: "grid",
+                        width: "100%",
+                        gridTemplateColumns: "1fr",
+                      },
+                      "@media (max-width: 1024px) and (min-width: 769px)": {
+                        display: "grid",
+                        gridTemplateColumns: "auto 80px",
+                        gridTemplateRows: "1fr",
+                      },
+                      "@media (min-width: 1025px) and (min-width: 1442px)": {
+                        display: "grid",
+                        gridTemplateColumns: "auto 60px",
+                        gridTemplateRows: "3fr",
                       },
                     }}
-                    onClick={togglePlay}
                   >
-                    {playing ? (
-                      <PauseCircleOutlineSharpIcon
-                        sx={{ fontSize: "2.4rem" }}
-                      />
-                    ) : (
-                      <PlayArrowIcon sx={{ fontSize: "2.4rem" }} />
-                    )}
-                  </Button>
-                  <ReactPlayer
-                    ref={videoRef}
-                    url={videoUrl}
-                    width="100%"
-                    height="100%"
-                    controls={false}
-                    playing={playing}
-                  />
-                </CardMedia>
-              </Box>
-              <CardActions
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-around",
-                  borderTop: "1px solid #ece9e9",
-                  "@media (max-width: 1024px) and (min-width: 769px)": {
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "end",
-                    alignItems: "end",
-                  },
-                  "@media (min-width: 1025px) and (min-width: 1442px)": {
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "end",
-                    alignItems: "end",
-                  },
-                }}
-              >
-                <Button
-                  sx={{
-                    "@media (max-width: 1024px) and (min-width: 769px)": {
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "end",
-                      alignItems: "center",
-                    },
-                    "@media (min-width: 1025px) and (min-width: 1442px)": {
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "end",
-                      alignItems: "center",
-                    },
-                  }}
-                >
-                  <IconButton>
-                    <FavoriteIcon />
-                  </IconButton>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="span"
-                  >
-                    22 M
-                  </Typography>
-                </Button>
-                <Button
-                  sx={{
-                    "@media (max-width: 1024px) and (min-width: 769px)": {
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "end",
-                      alignItems: "center",
-                    },
-                    "@media (min-width: 1025px) and (min-width: 1442px)": {
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "end",
-                      alignItems: "center",
-                    },
-                  }}
-                >
-                  <IconButton>
-                    <ChatIcon />
-                  </IconButton>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="span"
-                  >
-                    15.5 k
-                  </Typography>
-                </Button>
-                <Button
-                  sx={{
-                    "@media (max-width: 1024px) and (min-width: 769px)": {
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "end",
-                      alignItems: "center",
-                    },
-                    "@media (min-width: 1025px) and (min-width: 1442px)": {
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "end",
-                      alignItems: "center",
-                    },
-                  }}
-                >
-                  <IconButton>
-                    <ShareIcon />
-                  </IconButton>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="span"
-                  >
-                    3.5 k
-                  </Typography>
-                </Button>
-              </CardActions>
-            </Box>
+                    <Box>
+                      <CardContent sx={{ width: "100%" }}>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          component="p"
+                        >
+                          {item.title}
+                        </Typography>
+                      </CardContent>
+                      <CardMedia
+                        ref={videoRef}
+                        component="div"
+                        sx={{
+                          width: "100%",
+                          height: "500px",
+                          position: "relative",
+                        }}
+                        // 16:9 aspect ratio
+                      >
+                        {!playing && item.thumbnailUrl ? (
+                          <img
+                            src={item.thumbnailUrl}
+                            alt=""
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : null}
+                        <Button
+                          sx={{
+                            position: "absolute",
+                            top: "40%",
+                            left: "44%",
+                            color: "#71bb42",
+                            opacity: 0,
+                            "&:hover": {
+                              opacity: 1,
+                            },
+                          }}
+                          onClick={togglePlay}
+                        >
+                          {playing ? (
+                            <PauseCircleOutlineSharpIcon
+                              sx={{ fontSize: "2.4rem" }}
+                            />
+                          ) : (
+                            <PlayArrowIcon sx={{ fontSize: "2.4rem" }} />
+                          )}
+                        </Button>
+                        <ReactPlayer
+                          url={item.video}
+                          width="100%"
+                          height="100%"
+                          controls={true}
+                          playing={playing}
+                        />
+                      </CardMedia>
+                    </Box>
+                    <CardActions
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        borderTop: "1px solid #ece9e9",
+                        "@media (max-width: 1024px) and (min-width: 769px)": {
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "end",
+                          alignItems: "end",
+                        },
+                        "@media (min-width: 1025px) and (min-width: 1442px)": {
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "end",
+                          alignItems: "end",
+                        },
+                      }}
+                    >
+                      <Button
+                        sx={{
+                          "@media (max-width: 1024px) and (min-width: 769px)": {
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "end",
+                            alignItems: "center",
+                          },
+                          "@media (min-width: 1025px) and (min-width: 1442px)":
+                            {
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "end",
+                              alignItems: "center",
+                            },
+                        }}
+                      >
+                        <IconButton>
+                          <FavoriteIcon />
+                        </IconButton>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          component="span"
+                        >
+                          22 M
+                        </Typography>
+                      </Button>
+                      <Button
+                        sx={{
+                          "@media (max-width: 1024px) and (min-width: 769px)": {
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "end",
+                            alignItems: "center",
+                          },
+                          "@media (min-width: 1025px) and (min-width: 1442px)":
+                            {
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "end",
+                              alignItems: "center",
+                            },
+                        }}
+                      >
+                        <IconButton>
+                          <ChatIcon />
+                        </IconButton>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          component="span"
+                        >
+                          15.5 k
+                        </Typography>
+                      </Button>
+                      <Button
+                        sx={{
+                          "@media (max-width: 1024px) and (min-width: 769px)": {
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "end",
+                            alignItems: "center",
+                          },
+                          "@media (min-width: 1025px) and (min-width: 1442px)":
+                            {
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "end",
+                              alignItems: "center",
+                            },
+                        }}
+                      >
+                        <IconButton>
+                          <ShareIcon />
+                        </IconButton>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          component="span"
+                        >
+                          3.5 k
+                        </Typography>
+                      </Button>
+                    </CardActions>
+                  </Box>
+                </div>
+              );
+            })}
           </Box>
         </>
       )}

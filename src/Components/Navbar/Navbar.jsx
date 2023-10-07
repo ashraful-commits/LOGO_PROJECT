@@ -214,7 +214,7 @@ const Navbar = () => {
           following: [],
           posts: [],
         });
-
+        setOpen(false);
         // Display a success message using a toast notification
         toast.success("Registration successful!", {
           position: "bottom-center",
@@ -294,7 +294,7 @@ const Navbar = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
+      setOpen(false);
       // Display a success message using a toast notification
       toast("Login successful!", {
         position: "bottom-center",
@@ -791,7 +791,14 @@ const Navbar = () => {
               {user && (
                 <div className="loginavater">
                   <Link to={`/${user?.displayName}`}>
-                    <img src={user?.photoURL} alt="avatar" />
+                    {user?.photoURL ? (
+                      <img src={user?.photoURL} alt="avatar" />
+                    ) : (
+                      <img
+                        src={`https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg`}
+                        alt="avatar"
+                      />
+                    )}
                   </Link>
                 </div>
               )}
@@ -1006,7 +1013,8 @@ const Container = styled.div`
       }
       .creator {
         border-left: 1px solid gray;
-        padding-left: 25px;
+        padding-left: 15px;
+        margin-left: 10px;
         display: flex;
         justify-content: start;
         align-items: center;

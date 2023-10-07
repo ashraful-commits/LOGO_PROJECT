@@ -3,7 +3,7 @@ import styled from "styled-components";
 import PostComponent from "../PostComponent/PostComponent";
 import { useEffect, useState } from "react";
 
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { collection, getDocs, getFirestore, limit } from "firebase/firestore";
 
 // Define the 'Post' component.
 const Post = () => {
