@@ -18,6 +18,15 @@ import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
 import { useEffect, useState } from "react";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
+import { app } from "../../firebase.confige";
+import { getAuth } from "firebase/auth";
 
 const SideBar = () => {
   const [loading, setLoading] = useState(true);
@@ -27,6 +36,23 @@ const SideBar = () => {
     setTimeout(() => {
       setLoading(false); // Set loading to false when your data is ready
     }, 2000); // Replace with your actual data loading logic
+  }, []);
+  useEffect(() => {
+    const getAllUser = async () => {
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+      const q = query(
+        collection(db, "users"),
+        where("id", "!==", `${auth?.currentUser?.uid}`)
+      );
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      });
+    };
+    getAllUser();
   }, []);
   return (
     <>

@@ -20,6 +20,7 @@ import avtar5 from "../../../public/avatar5.png";
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 import {
   Drawer,
   Box,
@@ -48,6 +49,7 @@ import {
   updateProfile,
   signInWithPopup,
   FacebookAuthProvider,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { app } from "../../firebase.confige"; // Ensure that your Firebase configuration is correctly set up
 import { toast } from "react-toastify";
@@ -71,13 +73,8 @@ const Navbar = () => {
   const [loading, setLoading] = useState(true);
 
   // State to manage user authentication status
-  const [user, setUser] = useState(null);
 
   // Effect to retrieve user data from local storage
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    setUser(user);
-  }, []);
 
   // Simulate loading delay (replace with actual data fetching)
   useEffect(() => {
@@ -195,7 +192,28 @@ const Navbar = () => {
           password
         );
         const user = userCredential.user;
-        const name = signUpForm.name;
+
+        const db = getFirestore(app);
+
+        updateProfile(user, {
+          displayName: signUpForm.name,
+        })
+          .then(() => {
+            console.log(user);
+          })
+          .catch((error) => {
+            console.log(error.message);
+          });
+        await setDoc(doc(db, "users", `${user.uid}`), {
+          id: user.uid,
+          name: signUpForm.name,
+          email: signUpForm.email,
+          photoURL: "",
+          coverPhotoUrl: "",
+          followers: [],
+          following: [],
+          posts: [],
+        });
 
         // Display a success message using a toast notification
         toast.success("Registration successful!", {
@@ -207,12 +225,6 @@ const Navbar = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-        });
-
-        // Update the user's profile with their name
-        await updateProfile(auth.currentUser, {
-          displayName: name,
-          photoURL: "https://example.com/jane-q-user/profile.jpg",
         });
       } catch (error) {
         // Handle registration errors
@@ -354,7 +366,23 @@ const Navbar = () => {
       // ...
     }
   };
+  const [user, setUser] = useState(null);
+  const auth = getAuth(app);
+  useEffect(() => {
+    // Listen for changes in authentication state
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in.
+        setUser(user);
+      } else {
+        // No user is signed in.
+        setUser(null);
+      }
+    });
 
+    // Unsubscribe from the listener when the component unmounts
+    return () => unsubscribe();
+  }, [auth]);
   return (
     <>
       {loading ? (

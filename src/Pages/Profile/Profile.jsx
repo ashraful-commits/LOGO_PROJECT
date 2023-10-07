@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { FaUserFriends, FaImage, FaRegThumbsUp } from "react-icons/fa";
+import { FaUserFriends, FaRegThumbsUp } from "react-icons/fa";
+import { MdPhotoCamera } from "react-icons/md";
 
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -8,18 +9,32 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
 import PostComponent from "../../Components/ProfilePost/ProfilePost";
-import { Box, Input, ListItemAvatar, Tab } from "@mui/material";
+import { Box, Input, ListItemAvatar, Tab, Typography } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import StandardImageList from "../../Components/ImageList/ImgaeList";
 import Friends from "../../Components/Friends/Friends";
-import { AiFillFileImage } from "react-icons/ai";
-import { getAuth, updateProfile } from "firebase/auth";
-import { app } from "../../firebase.confige";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-const Profile = () => {
-  const [isLoading, setLoading] = useState(true);
-  const [user, setUser] = useState({});
 
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../../firebase.confige";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { toast } from "react-toastify";
+import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
+import { useNavigate, useParams } from "react-router-dom";
+const Profile = () => {
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [isCoverUploading, setIsCoverUploading] = useState(false);
+  const [user, setUser] = useState({});
+  const [LoggedInUser, setLoggedInUser] = useState({});
+  const [isProfileProgress, setIsProfileProgress] = useState(0);
+  const [CoverUploadProgress, setCoverUploadProgress] = useState(0);
+  console.log(LoggedInUser);
   // Simulate loading for 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,68 +43,214 @@ const Profile = () => {
 
     return () => clearTimeout(timer);
   }, []);
+  useEffect(() => {
+    const auth = getAuth(app);
+    setUser(auth.currentUser);
+  }, []);
 
-  const [value, setValue] = React.useState("1");
+  const [value, setValue] = useState("1");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
+  const name = useParams();
+  console.log(name);
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    setUser(user);
-  }, [user]);
-  //================================
-  const handleProfile = (e) => {
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const fetchData = async () => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const userDocRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(userDocRef);
+
+          if (docSnap.exists()) {
+            setLoggedInUser(docSnap.data());
+          } else {
+            // Handle the case where the user document doesn't exist
+          }
+        } else {
+          // Handle the case where the user is not authenticated
+          navigate("/");
+          toast("Please Login!", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      });
+
+      return () => unsubscribe();
+    };
+
+    fetchData();
+  }, [navigate]);
+
+  //================================ profile photo upload
+  const handleProfile = async (e) => {
     const file = e.target.files[0];
 
     if (file) {
       // Initialize Firebase Authentication
       const auth = getAuth(app);
+      setIsProfileLoading(true);
 
-      // Get the currently signed-in user
-      const user = auth?.currentUser;
-      console.log(user);
-      // Create a reference to the Firebase Storage bucket
-      const storage = getStorage();
-      const storageRef = ref(
-        storage,
-        "profilePhotos/" + user?.uid + "/" + file.name
-      );
+      try {
+        // Get the currently signed-in user
+        const user = auth?.currentUser;
 
-      // Upload the file to Firebase Storage
-      uploadBytes(storageRef, file)
-        .then((snapshot) => {
-          console.log("Uploaded a blob or file!");
+        if (!user) {
+          console.error("User is not authenticated");
+          // Handle the case where the user is not authenticated
+          return;
+        }
 
-          // Get the download URL of the uploaded file
-          getDownloadURL(storageRef)
-            .then((downloadURL) => {
-              // Update the user's profile photoURL with the download URL
-              const user = JSON.parse(localStorage.getItem("user"));
-              user.photoURL = downloadURL;
-              localStorage.setItem("user", JSON.parse(user));
+        // Create a reference to the Firebase Storage bucket
+        const storage = getStorage();
+        const storageRef = ref(
+          storage,
+          "profilePhotos/" + user.uid + "/" + file.name
+        );
 
-              updateProfile(user, {
+        // Upload the file to Firebase Storage
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        // Attach a 'state_changed' event listener to track progress
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setIsProfileProgress(progress.toFixed(0)); // Update the progress state
+          },
+          (error) => {
+            setIsProfileLoading(false); // Upload failed, set isUploading to false
+            console.error("Error uploading file:", error);
+          },
+          async () => {
+            // Upload complete, set isUploading to false
+            setIsProfileLoading(false);
+            // Get the download URL of the uploaded file
+            const downloadURL = await getDownloadURL(storageRef);
+
+            // Update the user's profile photoURL with the download URL
+            try {
+              const db = getFirestore(app);
+              const userDb = doc(db, "users", `${user.uid}`);
+
+              await updateDoc(userDb, {
                 photoURL: downloadURL,
-              })
-                .then(() => {
-                  console.log("Profile photo updated!");
-                  console.log(auth.currentUser);
-                })
-                .catch((error) => {
-                  console.error("Error updating profile:", error);
-                });
-            })
-            .catch((error) => {
-              console.error("Error getting download URL:", error);
-            });
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", error);
-        });
+              });
+              setLoggedInUser((prev) => ({
+                ...prev,
+                photoURL: downloadURL,
+              }));
+              toast("Profile Photo uploaded!", {
+                position: "bottom-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
+              setIsProfileLoading(false);
+            } catch (error) {
+              console.error("Error updating profile:", error);
+            }
+          }
+        );
+      } catch (error) {
+        setIsProfileLoading(false);
+        console.error("Error:", error);
+      }
     }
   };
+  //================================ uplaod cover photo
+  const handleCover = async (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      // Initialize Firebase Authentication
+      const auth = getAuth(app);
+      setIsCoverUploading(true);
+
+      try {
+        // Get the currently signed-in user
+        const user = auth?.currentUser;
+
+        if (!user) {
+          console.error("User is not authenticated");
+          // Handle the case where the user is not authenticated
+          return;
+        }
+
+        // Create a reference to the Firebase Storage bucket for cover photos
+        const storage = getStorage();
+        const storageRef = ref(storage, `coverPhotos/${user.uid}/${file.name}`);
+
+        // Upload the cover photo to Firebase Storage
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        // Attach a 'state_changed' event listener to track progress
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setCoverUploadProgress(progress.toFixed(0)); // Update the progress state
+          },
+          (error) => {
+            setIsCoverUploading(false); // Upload failed, set isUploading to false
+            console.error("Error uploading cover photo:", error);
+          },
+          async () => {
+            setIsCoverUploading(false); // Upload complete, set isUploading to false
+
+            // Get the download URL of the uploaded cover photo
+            const downloadURL = await getDownloadURL(storageRef);
+
+            // Update the user's profile with the cover photo URL in Firebase Realtime Database
+            try {
+              const db = getFirestore(app);
+              const userDb = doc(db, "users", `${user.uid}`);
+
+              await updateDoc(userDb, {
+                coverPhotoUrl: downloadURL,
+              });
+              setLoggedInUser((prev) => ({
+                ...prev,
+                coverPhotoUrl: downloadURL,
+              }));
+              toast("Cover Photo uploaded!", {
+                position: "bottom-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
+            } catch (error) {
+              console.error("Error updating user profile:", error);
+            }
+          }
+        );
+      } catch (error) {
+        setIsCoverUploading(false);
+        console.error("Error:", error);
+      }
+    }
+  };
+
   return (
     <Container>
       {/* Left sidebar for desktop and tablet */}
@@ -105,57 +266,114 @@ const Profile = () => {
           </SkeletonContainer>
         ) : (
           <>
-            {user?.coverImage ? (
-              <CoverPhoto src={user?.coverImage} alt="Cover" />
-            ) : (
-              <CoverPhoto
-                src="https://2.bp.blogspot.com/-nfvjMm5r4HE/UAEzYD80HII/AAAAAAAAARA/CASgQfzOD3w/s1600/free-facebook-cover-photo-make-your-own.jpg"
-                alt="Cover"
-              />
-            )}
             <Box sx={{ position: "relative" }}>
-              {user?.photoURL ? (
-                <Avatar src={user?.photoURL} alt="Avatar" />
+              {isCoverUploading ? (
+                <CoverLoader component="div" color="text.secondary">
+                  <Typography> {`${CoverUploadProgress}%`}</Typography>
+                </CoverLoader>
+              ) : LoggedInUser?.coverPhotoUrl ? (
+                <CoverPhoto src={LoggedInUser?.coverPhotoUrl} alt="Cover" />
               ) : (
-                <Avatar
-                  src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png"
-                  alt="Avatar"
+                <CoverPhoto
+                  src="https://2.bp.blogspot.com/-nfvjMm5r4HE/UAEzYD80HII/AAAAAAAAARA/CASgQfzOD3w/s1600/free-facebook-cover-photo-make-your-own.jpg"
+                  alt="Cover"
                 />
               )}
               <Box
                 sx={{
+                  width: "40px",
+                  height: "40px",
                   position: "absolute",
-                  top: 10,
-                  left: 50,
-                  width: "35px",
-                  height: "35px",
+                  top: 50,
+                  right: 50,
+                  bgcolor: "white",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "white",
-                  padding: "4px",
-                  borderRadius: "40px",
-                  boxShadow: "0 0 10px gray",
+                  borderRadius: "100%",
+                  transition: "all 0.5s ease-in-out",
                   cursor: "pointer",
                   "&:hover": {
-                    bgcolor: "#5a9600",
+                    bgcolor: "#71bb42",
                     color: "white",
                   },
                 }}
               >
-                <label htmlFor="profile">
-                  <FaImage size={"20"} />
+                <label htmlFor="coverPhot">
+                  <MdPhotoCamera />
                 </label>
                 <Input
-                  onChange={handleProfile}
                   sx={{ display: "none" }}
+                  onChange={handleCover}
                   type="file"
-                  id="profile"
+                  id="coverPhot"
                 />
               </Box>
             </Box>
 
-            <UserName>{user?.displayName}</UserName>
+            <Box
+              sx={{
+                position: "relative",
+                bgcolor: "white",
+                width: "100px",
+                height: "100px",
+                marginLeft: "10px",
+                bgColor: "white",
+                borderRadius: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {isProfileLoading ? (
+                <Loader variant="h5" component="div" color="text.secondary">
+                  {`${isProfileProgress}%`}
+                </Loader>
+              ) : LoggedInUser?.photoURL ? (
+                <Avatar src={LoggedInUser?.photoURL} alt="Avatar" />
+              ) : (
+                <Avatar
+                  src="https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg"
+                  alt="avatar"
+                />
+              )}
+
+              {!isProfileLoading && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 40,
+                    left: 60,
+                    width: "35px",
+                    height: "35px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "white",
+                    padding: "4px",
+                    borderRadius: "40px",
+                    boxShadow: "0 0 10px gray",
+                    cursor: "pointer",
+                    "&:hover": {
+                      bgcolor: "#5a9600",
+                      color: "white",
+                    },
+                  }}
+                >
+                  <label htmlFor="profile">
+                    <MdPhotoCamera size={"20"} />
+                  </label>
+                  <Input
+                    onChange={handleProfile}
+                    sx={{ display: "none" }}
+                    type="file"
+                    id="profile"
+                  />
+                </Box>
+              )}
+            </Box>
+
+            <UserName>{LoggedInUser?.name}</UserName>
             <ProfileInfo>
               <List
                 sx={{
@@ -203,7 +421,7 @@ const Profile = () => {
                   <ListItemAvatar
                     sx={{ display: "flex", justifyContent: "center" }}
                   >
-                    <FaImage color="#71bb42" size={"32"} />
+                    <MdPhotoCamera color="#71bb42" size={"32"} />
                   </ListItemAvatar>
                   <ListItemText
                     sx={{
@@ -304,7 +522,7 @@ const Profile = () => {
                         rowGap: "50px",
                       }}
                     >
-                      <PostComponent />
+                      <PostComponent LoggedInUser={LoggedInUser} />
                       <PostComponent />
                       <PostComponent />
                       <PostComponent />
@@ -411,11 +629,11 @@ const Container = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     width: 100%;
-    padding: 0 1rem;
   }
   @media (max-width: 1024px) {
     flex-direction: row;
     width: 100%;
+    padding: 0 20px;
   }
 `;
 
@@ -459,12 +677,16 @@ const CoverPhoto = styled.img`
 `;
 
 const Avatar = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 50%;
   margin-top: -50px;
   border: 3px solid #fff;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const UserName = styled.h1`
@@ -484,7 +706,26 @@ const ProfileInfo = styled.div`
   /* padding: 2rem 0; */
   margin: 0 auto;
 `;
-
+const Loader = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -50px;
+  margin-left: 10px;
+  position: relative;
+`;
+const CoverLoader = styled.div`
+  width: 100%;
+  height: 320px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 const Post = styled.div`
   margin-top: 20px;
   width: 100%;
