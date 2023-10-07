@@ -12,9 +12,9 @@ const PostComponent = ({
   videoUrl,
   title,
   id,
-  name,
-  email,
   avatar,
+  email,
+  name,
 }) => {
   // State to control video playback.
   const [playing, setPlaying] = useState(false);
@@ -132,7 +132,7 @@ const PostComponent = ({
               </div>
               <div className="details">
                 <p>{name}</p>
-                <span>{email}</span>
+                <span>@{email}</span>
               </div>
             </div>
             <div className="follow">
@@ -144,7 +144,7 @@ const PostComponent = ({
           </div>
           <div className="img-status">
             <div ref={videoRef} className="img">
-              {/* {!playing && <img src={thumbnailUrl} alt="" />} */}
+              {!playing && thumbnailUrl && <img src={thumbnailUrl} alt="" />}
               <ReactPlayer
                 url={videoUrl}
                 width="100%"
@@ -211,14 +211,20 @@ const PostContainer = styled.div`
         justify-content: start;
         align-items: center;
         cursor: pointer;
+        border-radius: 100%;
+        overflow: hidden;
 
-        a{
-          img {
+        img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          border-radius: 100%;
         }
+        a {
+          border-radius: 100%;
+          img {
+            width: 100%;
+            height: 100%;
+          }
         }
       }
       .details {
@@ -311,7 +317,10 @@ const PostContainer = styled.div`
         display: none;
       }
     }
-    object-fit: cover;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .img {
       width: 100%;
@@ -568,15 +577,10 @@ const SkeletonLoader = styled.div`
         display: flex;
         justify-content: start;
         align-items: center;
-        overflow: hidden;
         cursor: pointer;
         border-radius: 100%;
         background-color: #ccc; /* Placeholder color */
-        a {
-          img {
-            border-radius: 100%;
-          }
-        }
+
         img {
           width: 100%;
           height: 100%;
