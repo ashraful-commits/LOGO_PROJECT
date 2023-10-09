@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { app } from "../../firebase.confige";
 import { getAuth } from "firebase/auth";
+import { toast } from "react-toastify";
 
 // Define the 'PostComponent' functional component.
 const PostComponent = ({
@@ -30,6 +31,7 @@ const PostComponent = ({
   const [loggedInUser, setLoggedInUser] = useState({});
   console.log(loggedInUser);
   const auth = getAuth(app);
+  console.log(auth.currentUser);
   useEffect(() => {
     const db = getFirestore(app);
     const fetchUserDataById = async () => {
@@ -113,58 +115,83 @@ const PostComponent = ({
     const db = getFirestore(app);
     const auth = getAuth();
 
-    try {
-      const followingRef = doc(db, "users", auth?.currentUser?.uid);
-      const followerRef = doc(db, "users", id);
+    if (auth.currentUser) {
+      try {
+        const followingRef = doc(db, "users", auth?.currentUser?.uid);
+        const followerRef = doc(db, "users", id);
 
-      await updateDoc(followerRef, {
-        followers: arrayUnion(auth?.currentUser?.uid),
-      });
-      await updateDoc(followingRef, {
-        following: arrayUnion(id),
-      });
+        await updateDoc(followerRef, {
+          followers: arrayUnion(auth?.currentUser?.uid),
+        });
+        await updateDoc(followingRef, {
+          following: arrayUnion(id),
+        });
 
-      // At this point, the documents are updated instantly
-    } catch (error) {
-      console.error("Error updating follower and following arrays:", error);
+        // At this point, the documents are updated instantly
+      } catch (error) {
+        console.error("Error updating follower and following arrays:", error);
+      }
+    } else {
+      toast("Please Login!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
   const handleUnfollow = async (id) => {
     const db = getFirestore(app);
-    const auth = getAuth();
+    const auth = getAuth(app);
+    if (auth.currentUser) {
+      try {
+        const followingRef = doc(db, "users", auth?.currentUser?.uid);
+        const followerRef = doc(db, "users", id);
 
-    try {
-      const followingRef = doc(db, "users", auth?.currentUser?.uid);
-      const followerRef = doc(db, "users", id);
+        // Fetch the current data from Firestore
+        const followingDoc = await getDoc(followingRef);
+        const followerDoc = await getDoc(followerRef);
 
-      // Fetch the current data from Firestore
-      const followingDoc = await getDoc(followingRef);
-      const followerDoc = await getDoc(followerRef);
+        // Modify the arrays in memory
+        const updatedFollowerArray = followerDoc
+          .data()
+          .followers.filter((item) => item !== id);
+        const updatedFollowingArray = followingDoc
+          .data()
+          .following.filter((item) => item !== id);
 
-      // Modify the arrays in memory
-      const updatedFollowerArray = followerDoc
-        .data()
-        .followers.filter((item) => item !== id);
-      const updatedFollowingArray = followingDoc
-        .data()
-        .following.filter((item) => item !== id);
+        // Update Firestore documents with the modified arrays
+        await setDoc(
+          followerRef,
+          { followers: updatedFollowerArray },
+          { merge: true }
+        );
+        await setDoc(
+          followingRef,
+          { following: updatedFollowingArray },
+          { merge: true }
+        );
 
-      // Update Firestore documents with the modified arrays
-      await setDoc(
-        followerRef,
-        { followers: updatedFollowerArray },
-        { merge: true }
-      );
-      await setDoc(
-        followingRef,
-        { following: updatedFollowingArray },
-        { merge: true }
-      );
-
-      // At this point, the documents are updated instantly
-    } catch (error) {
-      console.error("Error updating follower and following arrays:", error);
+        // At this point, the documents are updated instantly
+      } catch (error) {
+        console.error("Error updating follower and following arrays:", error);
+      }
+    } else {
+      toast("Please Login!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
@@ -214,7 +241,7 @@ const PostComponent = ({
             </div>
           </div>
         </SkeletonLoader>
-      ) : auth?.currentUser?.uid !== id ? (
+      ) : auth?.currentUser?.uid !== id || loggedInUser.id !== id ? (
         <PostContainer>
           <div className="post-user-details">
             <div className="user-details">
@@ -236,8 +263,9 @@ const PostComponent = ({
               </div>
             </div>
             <div className="follow">
-              {loggedInUser?.id !== id &&
-              loggedInUser?.following?.some((item) => item.id === id) ? (
+              {loggedInUser?.id !== id ||
+              (auth?.currentUser?.uid !== id &&
+                loggedInUser?.following?.some((item) => item.id === id)) ? (
                 <button onClick={() => handleFollow(id)}>unfollow</button>
               ) : (
                 <button onClick={() => handleUnfollow(id)}>follow</button>
