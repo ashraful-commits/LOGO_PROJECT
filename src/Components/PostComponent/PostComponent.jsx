@@ -236,8 +236,8 @@ const PostComponent = ({
               </div>
             </div>
             <div className="follow">
-              {loggedInUser.id !== id &&
-              loggedInUser?.following.some((item) => item.id === id) ? (
+              {loggedInUser?.id !== id &&
+              loggedInUser?.following?.some((item) => item.id === id) ? (
                 <button onClick={() => handleFollow(id)}>unfollow</button>
               ) : (
                 <button onClick={() => handleUnfollow(id)}>follow</button>
