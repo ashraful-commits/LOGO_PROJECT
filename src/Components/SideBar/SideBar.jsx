@@ -10,10 +10,7 @@ import {
 import appleStore from "../../../public/appleStore1.png";
 import playStore from "../../../public/palystore.png";
 import avtar1 from "../../../public/avatar1.png";
-import avtar2 from "../../../public/avatar2.png";
-import avtar3 from "../../../public/avatar3.png";
-import avtar4 from "../../../public/avatar4.png";
-import avtar5 from "../../../public/avatar5.png";
+
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
@@ -24,7 +21,8 @@ import { getAuth } from "firebase/auth";
 
 const SideBar = () => {
   const [loading, setLoading] = useState(true);
-
+  const [users, setUser] = useState([]);
+  const [showMore, setShowMore] = useState(false);
   useEffect(() => {
     // Simulate a delay, e.g., while fetching data
     setTimeout(() => {
@@ -36,12 +34,19 @@ const SideBar = () => {
       const db = getFirestore(app);
 
       const q = query(collection(db, "users"));
+      setLoading(true);
+      try {
+        const querySnapshot = await getDocs(q);
+        const usersData = [];
 
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-      });
+        querySnapshot.forEach((doc) => {
+          usersData.push(doc.data());
+        });
+        setLoading(false);
+        setUser(usersData);
+      } catch (error) {
+        console.error("Error getting users:", error);
+      }
     };
     getAllUser();
   }, []);
@@ -120,54 +125,34 @@ const SideBar = () => {
           <div className="popular">
             <h4>Popular Creators</h4>
             <ul className="popular-creators">
-              <li className="popular-creator">
-                <div className="avatar">
-                  <img src={avtar1} alt="avatar" />
-                </div>
-                <div className="creator-details">
-                  <p>Makenna Rosser</p>
-                  <span>@rosser_makenna</span>
-                </div>
-              </li>
-              <li className="popular-creator">
-                <div className="avatar">
-                  <img src={avtar2} alt="avatar" />
-                </div>
-                <div className="creator-details">
-                  <p>Desirae Bator</p>
-                  <span>@batorbaby</span>
-                </div>
-              </li>
-              <li className="popular-creator">
-                <div className="avatar">
-                  <img src={avtar3} alt="avatar" />
-                </div>
-                <div className="creator-details">
-                  <p>James Workman</p>
-                  <span>@workman</span>
-                </div>
-              </li>
-              <li className="popular-creator">
-                <div className="avatar">
-                  <img src={avtar4} alt="avatar" />
-                </div>
-                <div className="creator-details">
-                  <p>Talan Stanton</p>
-                  <span>@stanton</span>
-                </div>
-              </li>
-              <li className="popular-creator">
-                <div className="avatar">
-                  <img src={avtar5} alt="avatar" />
-                </div>
-                <div className="creator-details">
-                  <p>Madelyn</p>
-                  <span>@madelynbips</span>
-                </div>
-              </li>
+              {users
+                ?.slice(0, showMore ? users.length : 5)
+                .map((item, index) => {
+                  return (
+                    <li key={index} className="popular-creator">
+                      <Link to={`${item.id}`}>
+                        <div className="avatar">
+                          {item.photoURL ? (
+                            <img src={item?.photoURL} alt="avatar" />
+                          ) : (
+                            <img
+                              src="https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg"
+                              alt="avatar"
+                            />
+                          )}
+                        </div>
+                        <div className="creator-details">
+                          <p>{item?.name}</p>
+                          <span>@{item.email}</span>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
             </ul>
-            <Link>
-              See More <MdOutlineKeyboardArrowRight />
+            <Link onClick={() => setShowMore(!showMore)}>
+              {showMore ? "See Less" : "See More"}{" "}
+              <MdOutlineKeyboardArrowRight />
             </Link>
           </div>
           <div className="download-app">
@@ -253,11 +238,25 @@ const Sidebar = styled.div`
     border-radius: 50%;
     height: 50px;
     width: 50px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+    }
   }
 
   .creator-details {
     display: flex;
     flex-direction: column;
+    width: 70%;
+    margin-left: 10px;
+    span {
+      white-space: nowrap; /* Prevent text from wrapping to the next line */
+      overflow: hidden; /* Hide any overflowing content */
+      text-overflow: ellipsis; /* Show an ellipsis (...) when text overflows */
+      width: 100%;
+    }
     /* Adjust the spacing between creator name and username */
   }
 
@@ -299,6 +298,15 @@ const Sidebar = styled.div`
       }
     }
   }
+
+  h4 {
+    color: #000;
+    font-family: Poppins;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
   .popular {
     width: 100%;
     height: 380px;
@@ -307,19 +315,40 @@ const Sidebar = styled.div`
     justify-content: start;
     align-items: start;
     margin-top: 42px;
-    h4 {
-      color: #000;
-      font-family: Poppins;
-      font-size: 18px;
-      font-style: normal;
-      font-weight: 600;
-      line-height: normal;
-    }
+
     .popular-creators {
+      overflow: auto;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       gap: 16px;
       margin-top: 16px;
+
+      scrollbar-width: thin;
+      scrollbar-color: #888 #f1f1f1;
+
+      &::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 5px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+      }
+
+      &::-webkit-scrollbar-thumb:active {
+        background-color: #333;
+      }
+
       .popular-creator {
         cursor: pointer;
         display: flex;
@@ -327,50 +356,33 @@ const Sidebar = styled.div`
         position: relative;
         transition: all 0.5s ease-in-out;
         padding-right: 10px;
-        border-top-left-radius: 15px;
-        border-bottom-left-radius: 15px;
-        &:hover {
-          background-color: #71bb42;
-          .creator-details {
-            p {
-              color: white;
-            }
-            span {
-              color: white;
-            }
-          }
-        }
-        .avatar {
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+
+        a {
           display: flex;
-          justify-content: center;
+          width: 100%;
+          height: 100%;
           align-items: center;
-          width: 40px;
-          height: 40px;
-          img {
-            flex-shrink: 0;
+          justify-content: start;
+          .avatar {
+            width: 40px;
+            height: 40px;
+            .img {
+              width: 100%;
+              height: 100%;
+            }
           }
-        }
-        .creator-details {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: start;
-          p {
-            margin-bottom: 0;
-            color: #000;
-            font-family: Poppins;
-            font-size: 14px;
-            font-style: normal;
-            font-weight: 500;
-            line-height: normal;
-          }
-          span {
-            color: #4f4f4f;
-            font-family: Poppins;
-            font-size: 10px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
+          &:hover {
+            background-color: #71bb42;
+            .creator-details {
+              p {
+                color: white;
+              }
+              span {
+                color: white;
+              }
+            }
           }
         }
       }
@@ -566,7 +578,7 @@ const Sidebar = styled.div`
 
   @media (min-width: 769px) and (max-width: 1024px) {
     width: 100%;
-    top: 10%;
+    top: 12%;
     .trending-following-explore {
       width: 100%;
       height: fit-content;
@@ -615,42 +627,49 @@ const Sidebar = styled.div`
       .popular-creators {
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        margin-top: 16px;
+
         .popular-creator {
+          width: 100%;
+          height: 100%;
           display: flex;
-          gap: 7px;
-          .avatar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 40px;
-            height: 40px;
-            img {
-              flex-shrink: 0;
+          align-items: center;
+          justify-content: start;
+          a {
+            width: 100%;
+            height: 100%;
+            padding-bottom: 1px;
+            .avatar {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              width: 40px;
+              height: 40px;
+              img {
+                flex-shrink: 0;
+              }
             }
-          }
-          .creator-details {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: start;
-            p {
-              margin-bottom: 0;
-              color: #000;
-              font-family: Poppins;
-              font-size: 14px;
-              font-style: normal;
-              font-weight: 500;
-              line-height: normal;
-            }
-            span {
-              color: #4f4f4f;
-              font-family: Poppins;
-              font-size: 10px;
-              font-style: normal;
-              font-weight: 400;
-              line-height: normal;
+            .creator-details {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: start;
+              p {
+                margin-bottom: 0;
+                color: #000;
+                font-family: Poppins;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: normal;
+              }
+              span {
+                color: #4f4f4f;
+                font-family: Poppins;
+                font-size: 10px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+              }
             }
           }
         }
@@ -676,7 +695,7 @@ const Sidebar = styled.div`
       display: flex;
       flex-direction: column;
       width: 100%;
-      margin-top: -4px;
+      margin-top: 4px;
       gap: 5px;
       h4 {
         color: #000;

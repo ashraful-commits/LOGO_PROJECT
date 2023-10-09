@@ -12,7 +12,7 @@ const PublicRoute = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/:name",
+        path: "/:id",
         element: <Profile />,
       },
     ],

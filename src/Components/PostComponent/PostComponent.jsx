@@ -1,10 +1,17 @@
 import styled from "styled-components";
-import avatar1 from "../../../public/avatar1.png";
+
 import ReactPlayer from "react-player";
 import { BsChat, BsHeart, BsPause, BsPlay, BsShare } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { arrayUnion, doc, getFirestore, updateDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { app } from "../../firebase.confige";
 import { getAuth } from "firebase/auth";
 
@@ -19,9 +26,33 @@ const PostComponent = ({
   email,
   name,
 }) => {
-  // State to control video playback.
   const [playing, setPlaying] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState({});
+  console.log(loggedInUser);
+  const auth = getAuth(app);
+  useEffect(() => {
+    const db = getFirestore(app);
+    const fetchUserDataById = async () => {
+      const docRef = doc(db, "users", auth?.currentUser?.uid); // Assuming "users" is the collection name
+      const docSnap = await getDoc(docRef);
 
+      setLoggedInUser(docSnap.data());
+      if (docSnap.exists()) {
+        let user = [];
+        const userdata = docSnap.data();
+        userdata.following.forEach(async (item) => {
+          const followersRef = doc(db, "users", item);
+          const followSnp = await getDoc(followersRef);
+          user.push(followSnp.data());
+        });
+        setLoggedInUser((prev) => ({ ...prev, following: user }));
+      } else {
+        // Return null if the user document does not exist
+        return null;
+      }
+    };
+    fetchUserDataById();
+  }, [id]);
   // Reference to the video element for IntersectionObserver.
   const videoRef = useRef();
 
@@ -77,18 +108,64 @@ const PostComponent = ({
       setLoading(false); // Set loading to false when data is ready.
     }, 2000); // Adjust the delay as needed.
   }, []);
+
   const handleFollow = async (id) => {
     const db = getFirestore(app);
     const auth = getAuth();
-    const followingData = doc(db, "users", `${auth?.currentUser?.uid}`);
-    const follwerData = doc(db, "users", `${id}`);
 
-    await updateDoc(follwerData, {
-      following: arrayUnion(id),
-    });
-    await updateDoc(followingData, {
-      followers: arrayUnion(auth?.currentUser?.uid),
-    });
+    try {
+      const followingRef = doc(db, "users", auth?.currentUser?.uid);
+      const followerRef = doc(db, "users", id);
+
+      await updateDoc(followerRef, {
+        followers: arrayUnion(auth?.currentUser?.uid),
+      });
+      await updateDoc(followingRef, {
+        following: arrayUnion(id),
+      });
+
+      // At this point, the documents are updated instantly
+    } catch (error) {
+      console.error("Error updating follower and following arrays:", error);
+    }
+  };
+
+  const handleUnfollow = async (id) => {
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    try {
+      const followingRef = doc(db, "users", auth?.currentUser?.uid);
+      const followerRef = doc(db, "users", id);
+
+      // Fetch the current data from Firestore
+      const followingDoc = await getDoc(followingRef);
+      const followerDoc = await getDoc(followerRef);
+
+      // Modify the arrays in memory
+      const updatedFollowerArray = followerDoc
+        .data()
+        .followers.filter((item) => item !== id);
+      const updatedFollowingArray = followingDoc
+        .data()
+        .following.filter((item) => item !== id);
+
+      // Update Firestore documents with the modified arrays
+      await setDoc(
+        followerRef,
+        { followers: updatedFollowerArray },
+        { merge: true }
+      );
+      await setDoc(
+        followingRef,
+        { following: updatedFollowingArray },
+        { merge: true }
+      );
+
+      // At this point, the documents are updated instantly
+    } catch (error) {
+      console.error("Error updating follower and following arrays:", error);
+    }
   };
 
   return (
@@ -137,13 +214,20 @@ const PostComponent = ({
             </div>
           </div>
         </SkeletonLoader>
-      ) : (
+      ) : auth?.currentUser?.uid !== id ? (
         <PostContainer>
           <div className="post-user-details">
             <div className="user-details">
               <div className="avatar">
-                <Link to={`/${name}`}>
-                  <img src={avatar} alt="" />
+                <Link to={`/${id}`}>
+                  {avatar ? (
+                    <img src={avatar} alt="" />
+                  ) : (
+                    <img
+                      src={`https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg`}
+                      alt=""
+                    />
+                  )}
                 </Link>
               </div>
               <div className="details">
@@ -152,7 +236,84 @@ const PostComponent = ({
               </div>
             </div>
             <div className="follow">
-              <button onClick={() => handleFollow(id)}>Follow</button>
+              {loggedInUser.id !== id &&
+              loggedInUser?.following.some((item) => item.id === id) ? (
+                <button onClick={() => handleFollow(id)}>unfollow</button>
+              ) : (
+                <button onClick={() => handleUnfollow(id)}>follow</button>
+              )}
+            </div>
+          </div>
+          <div className="title">
+            <p>{title}</p>
+          </div>
+          <div className="img-status">
+            <div ref={videoRef} className="img">
+              {!playing && thumbnailUrl && <img src={thumbnailUrl} alt="" />}
+              <ReactPlayer
+                url={videoUrl}
+                width="100%"
+                height="100%"
+                controls={false}
+                playing={playing}
+              />
+              <div className="play-button" onClick={togglePlay}>
+                {playing ? <BsPause /> : <BsPlay />}
+              </div>
+              <div className="desc">
+                <p>{desc}</p>
+                <span>On the way - (alan walker) - music hip hop...</span>
+              </div>
+            </div>
+            <div className="status">
+              <div className="status-item">
+                <button>
+                  <BsHeart />
+                </button>
+                <span>22 M</span>
+              </div>
+              <div className="status-item">
+                <button>
+                  <BsChat />
+                </button>
+                <span>15.5 k</span>
+              </div>
+              <div className="status-item">
+                <button>
+                  <BsShare />
+                </button>
+                <span>3.5 k</span>
+              </div>
+            </div>
+          </div>
+        </PostContainer>
+      ) : (
+        <PostContainer>
+          <div className="post-user-details">
+            <div className="user-details">
+              <div className="avatar">
+                <Link to={`/${id}`}>
+                  {avatar ? (
+                    <img src={avatar} alt="" />
+                  ) : (
+                    <img
+                      src={`https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg`}
+                      alt=""
+                    />
+                  )}
+                </Link>
+              </div>
+              <div className="details">
+                <p>{name}</p>
+                <span>@{email}</span>
+              </div>
+            </div>
+            <div className="follow">
+              {loggedInUser.following.some((item) => item.id === id) ? (
+                <button onClick={() => handleFollow(id)}>Follow</button>
+              ) : (
+                <button onClick={() => handleUnfollow(id)}>Unfollow</button>
+              )}
             </div>
           </div>
           <div className="title">
@@ -209,7 +370,7 @@ const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 1px;
   .post-user-details {
     width: 545.112px;
     height: 50px;
@@ -571,24 +732,18 @@ const PostContainer = styled.div`
   }
 `;
 // Create a separate styled component for the skeleton
+
 const SkeletonLoader = styled.div`
-  width: 545.112px;
-  height: 671.334px;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
   animation: loading 1s infinite alternate;
-  @keyframes loading {
-    0% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
+
   .post-user-details {
-    width: 545.112px;
+    width: 100%;
     height: 50px;
     flex-shrink: 0;
     display: flex;
@@ -803,10 +958,18 @@ const SkeletonLoader = styled.div`
     }
   }
 
-  @media (max-width: 768px) {
-    width: 100vw;
-    margin: 0 auto;
+  @keyframes loading {
+    0% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 0 auto;
     height: 671.334px;
 
     .post-user-details {
@@ -820,7 +983,7 @@ const SkeletonLoader = styled.div`
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
-    width: 100vw;
+    width: 100%;
     top: 5%;
 
     .post-user-details {
@@ -829,7 +992,7 @@ const SkeletonLoader = styled.div`
 
     .img-status {
       grid-template-columns: 420px auto;
-      margin-right: 450px;
+      margin-right: 4px;
     }
 
     .title {

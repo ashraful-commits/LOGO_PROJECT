@@ -1,6 +1,6 @@
 // Import necessary dependencies and components
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Header from "../Header/Header";
 import styled from "styled-components";
 import {
@@ -342,45 +342,31 @@ const Navbar = () => {
         progress: undefined,
         theme: "dark",
       });
-
-      // This gives you a Facebook Access Token, which can be used to access the Facebook API.
-      const credential = FacebookAuthProvider.credentialFromResult(result);
-      const accessToken = credential.accessToken;
-
-      // You can access additional user information using getAdditionalUserInfo(result).
-      // ...
     } catch (error) {
-      // Handle errors that occur during the login process.
-      const errorCode = error.code; // Get the error code.
-      const errorMessage = error.message; // Get the error message.
-      const email = error.customData.email; // Get the email of the user's account (if available).
-      console.log(errorMessage); // Log the error message.
-
-      // Get the AuthCredential type that was used.
-      const credential = FacebookAuthProvider.credentialFromError(error);
-
-      // Handle the error appropriately.
-      // ...
+      const errorMessage = error.message;
+      console.log(errorMessage);
     }
   };
   const [user, setUser] = useState(null);
   const auth = getAuth(app);
+
+  const navigate = useNavigate();
   useEffect(() => {
     // Listen for changes in authentication state
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in.
         setUser(user);
-        console.log(user);
       } else {
         // No user is signed in.
         setUser(null);
+        navigate("/");
       }
     });
 
     // Unsubscribe from the listener when the component unmounts
     return () => unsubscribe();
-  }, [auth]);
+  }, [auth, user, navigate]);
   return (
     <>
       {loading ? (
@@ -786,8 +772,8 @@ const Navbar = () => {
                 </Link>
               </div>
               {user && (
-                <div className="loginavater">
-                  <Link to={`/${user?.displayName}`}>
+                <div className="loginAvatar">
+                  <Link to={`/${user?.uid}`}>
                     {user?.photoURL ? (
                       <img src={user?.photoURL} alt="avatar" />
                     ) : (
@@ -969,7 +955,7 @@ const Container = styled.div`
             line-height: 21px;
             letter-spacing: 0em;
             text-align: left;
-            padding: 0 5px;
+            padding: 5px 5px;
             border-left: 1px solid white;
 
             &:focus {
@@ -990,20 +976,22 @@ const Container = styled.div`
           margin-right: 132px;
         }
       }
-      .loginavater {
+      .loginAvatar {
         overflow: hidden;
-        width: "45px";
-        height: "45px";
         margin-top: 10px;
         border: 2px solid white;
         background-color: white;
         a {
-          width: 70%;
-          border-radius: 100%;
+          width: 100%;
+          height: 100%;
+
+          overflow: hidden;
           overflow: hidden;
           img {
-            width: 100%;
-            height: 100%;
+            width: 50%;
+            border-radius: 100%;
+            height: 50%;
+
             object-fit: cover;
           }
         }

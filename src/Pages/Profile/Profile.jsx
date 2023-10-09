@@ -12,7 +12,6 @@ import PostComponent from "../../Components/ProfilePost/ProfilePost";
 import { Box, Input, ListItemAvatar, Tab, Typography } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import StandardImageList from "../../Components/ImageList/ImgaeList";
-import Friends from "../../Components/Friends/Friends";
 
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { app } from "../../firebase.confige";
@@ -25,6 +24,8 @@ import {
 import { toast } from "react-toastify";
 import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
+import Following from "../../Components/Following/Following";
+import Followers from "../../Components/Followers/Followers";
 const Profile = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ const Profile = () => {
   const [LoggedInUser, setLoggedInUser] = useState({});
   const [isProfileProgress, setIsProfileProgress] = useState(0);
   const [CoverUploadProgress, setCoverUploadProgress] = useState(0);
-  console.log(LoggedInUser);
+
   // Simulate loading for 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -45,44 +46,48 @@ const Profile = () => {
   }, []);
   useEffect(() => {
     const auth = getAuth(app);
-    setUser(auth.currentUser);
-  }, []);
+    if (!auth.currentUser) {
+      navigate("/");
+      toast("Please Login!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+    setLoggedInUser(auth?.currentUser);
+  }, [navigate]);
 
   const [value, setValue] = useState("1");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  const name = useParams();
-  console.log(name);
+
+  const { id } = useParams();
+
   useEffect(() => {
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     const fetchData = async () => {
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const userDocRef = doc(db, "users", user.uid);
+      const unsubscribe = onAuthStateChanged(auth, async () => {
+        if (id) {
+          const userDocRef = doc(db, "users", id);
           const docSnap = await getDoc(userDocRef);
 
           if (docSnap.exists()) {
-            setLoggedInUser(docSnap.data());
+            setUser(docSnap.data());
           } else {
             // Handle the case where the user document doesn't exist
           }
         } else {
           // Handle the case where the user is not authenticated
           navigate("/");
-          toast("Please Login!", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
         }
       });
 
@@ -90,7 +95,7 @@ const Profile = () => {
     };
 
     fetchData();
-  }, [navigate]);
+  }, [navigate, id, user]);
 
   //================================ profile photo upload
   const handleProfile = async (e) => {
@@ -273,44 +278,46 @@ const Profile = () => {
                 <CoverLoader component="div" color="text.secondary">
                   <Typography> {`${CoverUploadProgress}%`}</Typography>
                 </CoverLoader>
-              ) : LoggedInUser?.coverPhotoUrl ? (
-                <CoverPhoto src={LoggedInUser?.coverPhotoUrl} alt="Cover" />
+              ) : user?.coverPhotoUrl ? (
+                <CoverPhoto src={user?.coverPhotoUrl} alt="Cover" />
               ) : (
                 <CoverPhoto
                   src="https://2.bp.blogspot.com/-nfvjMm5r4HE/UAEzYD80HII/AAAAAAAAARA/CASgQfzOD3w/s1600/free-facebook-cover-photo-make-your-own.jpg"
                   alt="Cover"
                 />
               )}
-              <Box
-                sx={{
-                  width: "40px",
-                  height: "40px",
-                  position: "absolute",
-                  top: 50,
-                  right: 50,
-                  bgcolor: "white",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: "100%",
-                  transition: "all 0.5s ease-in-out",
-                  cursor: "pointer",
-                  "&:hover": {
-                    bgcolor: "#71bb42",
-                    color: "white",
-                  },
-                }}
-              >
-                <label htmlFor="coverPhot">
-                  <MdPhotoCamera />
-                </label>
-                <Input
-                  sx={{ display: "none" }}
-                  onChange={handleCover}
-                  type="file"
-                  id="coverPhot"
-                />
-              </Box>
+              {id === LoggedInUser.uid && (
+                <Box
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                    position: "absolute",
+                    top: 50,
+                    right: 50,
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "100%",
+                    transition: "all 0.5s ease-in-out",
+                    cursor: "pointer",
+                    "&:hover": {
+                      bgcolor: "#71bb42",
+                      color: "white",
+                    },
+                  }}
+                >
+                  <label htmlFor="coverPhot">
+                    <MdPhotoCamera />
+                  </label>
+                  <Input
+                    sx={{ display: "none" }}
+                    onChange={handleCover}
+                    type="file"
+                    id="coverPhot"
+                  />
+                </Box>
+              )}
             </Box>
 
             <Box
@@ -331,8 +338,8 @@ const Profile = () => {
                 <Loader variant="h5" component="div" color="text.secondary">
                   {`${isProfileProgress}%`}
                 </Loader>
-              ) : LoggedInUser?.photoURL ? (
-                <Avatar src={LoggedInUser?.photoURL} alt="Avatar" />
+              ) : user?.photoURL ? (
+                <Avatar src={user?.photoURL} alt="Avatar" />
               ) : (
                 <Avatar
                   src="https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg"
@@ -340,7 +347,7 @@ const Profile = () => {
                 />
               )}
 
-              {!isProfileLoading && (
+              {!isProfileLoading && id === LoggedInUser?.uid && (
                 <Box
                   sx={{
                     position: "absolute",
@@ -375,7 +382,7 @@ const Profile = () => {
               )}
             </Box>
 
-            <UserName>{LoggedInUser?.name}</UserName>
+            <UserName>{user?.name}</UserName>
             <ProfileInfo>
               <List
                 sx={{
@@ -476,14 +483,11 @@ const Profile = () => {
                   borderColor: "divider",
                 }}
               >
-                <TabList
-                  sx={{ width: "100%" }}
-                  onChange={handleChange}
-                  aria-label="lab API tabs example"
-                >
+                <TabList sx={{ width: "100%" }} onChange={handleChange}>
                   <Tab label="Post" value="1" />
                   <Tab label="Photo" value="2" />
-                  <Tab label="Friends" value="3" />
+                  <Tab label="Follower" value="4" />
+                  <Tab label="Following" value="5" />
                 </TabList>
               </Box>
               <TabPanel
@@ -524,11 +528,7 @@ const Profile = () => {
                         rowGap: "50px",
                       }}
                     >
-                      <PostComponent LoggedInUser={LoggedInUser} />
-                      <PostComponent />
-                      <PostComponent />
-                      <PostComponent />
-                      <PostComponent />
+                      <PostComponent user={user} id={id} />
                     </Box>
                   </Post>
                 </Box>
@@ -536,7 +536,8 @@ const Profile = () => {
               <TabPanel sx={{ width: "100%" }} value="2">
                 <StandardImageList />
               </TabPanel>
-              <TabPanel sx={{ width: "100%" }} value="3">
+
+              <TabPanel sx={{ width: "100%" }} value="4">
                 <Box
                   sx={{
                     display: "flex",
@@ -545,28 +546,19 @@ const Profile = () => {
                     gap: "10px",
                   }}
                 >
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
-                  <Friends />
+                  <Followers user={user} id={id} />
+                </Box>
+              </TabPanel>
+              <TabPanel sx={{ width: "100%" }} value="5">
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <Following user={user} id={id} />
                 </Box>
               </TabPanel>
             </TabContext>
@@ -740,7 +732,6 @@ const Post = styled.div`
   justify-content: center;
   row-gap: 35px;
   box-shadow: "0 0 10px gray";
-  align-items: center;
   margin: 0 auto;
 `;
 

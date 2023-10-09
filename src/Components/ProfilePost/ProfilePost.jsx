@@ -16,18 +16,32 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import Skeleton from "@mui/material/Skeleton";
 import ReactPlayer from "react-player";
-import avatar1 from "../../../public/avatar1.png";
+
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-import { Box, Input, Modal, TextField } from "@mui/material";
+import {
+  Box,
+  Input,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  Modal,
+  TextField,
+} from "@mui/material";
 
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
-  getDocs,
   getFirestore,
-  setDoc,
+  onSnapshot,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
 } from "firebase/firestore";
 import { app } from "../../firebase.confige";
 import { getAuth } from "firebase/auth";
@@ -38,14 +52,21 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { toast } from "react-toastify";
-const PostComponent = ({ LoggedInUser }) => {
+import { AiOutlineMenu } from "react-icons/ai";
+import { Delete, Edit } from "@mui/icons-material";
+
+const PostComponent = ({ user, id }) => {
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef(null);
+
   const [loader, setLoader] = useState(true);
   const [open, setOpen] = useState(false);
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(false);
+  const [dropDown, setDropDrown] = useState(false);
+  const [Id, setId] = useState(null);
+  const auth = getAuth(app);
   const [input, setInput] = useState({
     title: "",
     desc: "",
@@ -81,7 +102,7 @@ const PostComponent = ({ LoggedInUser }) => {
         const storage = getStorage();
         const storageRef = ref(
           storage,
-          "postVideo/" + user.uid + "/" + file.name
+          "postVideo/" + user?.uid + "/" + file.name
         );
 
         // Upload the file to Firebase Storage
@@ -155,55 +176,131 @@ const PostComponent = ({ LoggedInUser }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleSubmit = async (e) => {
+  const handlePostSubmit = async (e) => {
     e.preventDefault();
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    // Add a new document in collection "cities"
-    await addDoc(collection(db, "Posts"), {
-      id: auth?.currentUser?.uid,
-      email: auth?.currentUser?.email,
-      name: auth?.currentUser?.displayName,
-      avatar: auth?.currentUser?.photoURL,
-      title: input.title,
-      desc: input.desc,
-      video: preview,
-    }).then(() => {
-      toast("Post Created!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-      setOpen(false);
-    });
-  };
-  // State to hold the post data fetched from an API.
-  const [posts, setPost] = useState([]);
-
-  // Use the useEffect hook to fetch data when the component mounts.
-  useEffect(() => {
-    const getAllPost = async () => {
+    if (Id) {
       const db = getFirestore();
-      const querySnapshot = await getDocs(collection(db, "Posts"));
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        setPost((prev) => [...prev, doc.data()]);
+      const postRef = doc(db, "Posts", Id);
+      const updatedData = {
+        title: input.title,
+        desc: input.desc,
+        video: preview,
+      };
+      try {
+        await updateDoc(postRef, updatedData);
+        // Optionally, update the local state with the updated data
+        setPost((prevPosts) =>
+          prevPosts.map((post) =>
+            post.postId === Id ? { ...post, ...updatedData } : post
+          )
+        );
+        setId(null);
+        setOpen(false);
+        toast.success("Post updated", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      } catch (error) {
+        console.error("Error updating post: ", error);
+      }
+    } else {
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+      // Add a new document in collection "cities"
+      await addDoc(collection(db, "Posts"), {
+        id: auth?.currentUser?.uid,
+        title: input.title,
+        desc: input.desc,
+        video: preview,
+        timestamp: serverTimestamp(),
+      }).then(() => {
+        toast("Post Created!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        setOpen(false);
+        setInput({
+          title: "",
+          desc: "",
+        });
+        setId(null);
+        setPreview(null);
       });
-    };
-    getAllPost();
-  }, []); // The empty dependency array ensures this effect runs only once.
+    }
+  };
+  const [posts, setPost] = useState([]);
+  useEffect(() => {
+    const db = getFirestore();
+    const postsRef = collection(db, "Posts");
+    const q = query(postsRef, where("id", "==", id));
 
+    try {
+      setLoader(true);
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const allPosts = [];
+        querySnapshot.forEach((doc) => {
+          const postData = doc.data();
+          const postId = doc.id; // Get the document ID as postId
+          const postWithId = { ...postData, postId }; // Add postId to the data
+          allPosts.push(postWithId);
+        });
+
+        setPost(allPosts);
+        setLoader(false); // Set to false when data is fetched
+      });
+
+      return () => {
+        // Unsubscribe from the snapshot listener when the component unmounts
+        unsubscribe();
+      };
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      setLoader(false); // Set loader to false in case of an error
+    }
+  }, [id]);
+
+  const handleEdit = (id) => {
+    setId(id);
+    setOpen(true);
+    const singlePost = posts.find((item) => item.postId === id);
+    setInput({
+      title: singlePost.title,
+      desc: singlePost.desc,
+    });
+    setPreview(singlePost.video);
+  };
+  const handleDelete = async (id) => {
+    const db = getFirestore();
+    const postRef = doc(db, "Posts", id);
+
+    try {
+      await deleteDoc(postRef);
+      // Optionally, update the local state to remove the deleted post
+      setPost((prevPosts) => prevPosts.filter((post) => post.postId !== id));
+    } catch (error) {
+      console.error("Error deleting post: ", error);
+    }
+  };
   return (
     <Card
       sx={{
         width: "100%",
+        boxShadow: "none",
         "@media (max-width: 768px)": {
-          paddingTop: "10px", // Adjust the aspect ratio for screens <= 768px width
+          paddingTop: "10px",
+          // Adjust the aspect ratio for screens <= 768px width
         },
       }}
     >
@@ -234,7 +331,7 @@ const PostComponent = ({ LoggedInUser }) => {
                 bgcolor: "white",
               }}
             >
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handlePostSubmit}>
                 <Box
                   sx={{
                     width: "100%",
@@ -257,7 +354,7 @@ const PostComponent = ({ LoggedInUser }) => {
                       marginBottom: "10px",
                     }}
                   >
-                    Add New Post
+                    {Id ? "Edit Post" : "Add new Post"}
                   </Typography>
 
                   <label htmlFor="postVide">
@@ -273,10 +370,16 @@ const PostComponent = ({ LoggedInUser }) => {
                     >
                       {loading ? (
                         <Typography sx={{ fontSize: "24px" }}>
-                          {progress}
+                          {progress}%
                         </Typography>
                       ) : preview ? (
-                        <Box sx={{ width: "100%", height: "100%" }}>
+                        <Box
+                          sx={{
+                            width: "100%",
+                            height: "100%",
+                            overflow: "hidden",
+                          }}
+                        >
                           <ReactPlayer
                             style={{
                               width: "100%",
@@ -292,8 +395,12 @@ const PostComponent = ({ LoggedInUser }) => {
                         </Box>
                       ) : (
                         <img
-                          style={{ width: "100%", objectFit: "cover" }}
-                          src="https://i.ytimg.com/vi/AYjOyQhZiK0/maxresdefault.jpg"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                          src="https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
                           alt="preview"
                         />
                       )}
@@ -332,7 +439,7 @@ const PostComponent = ({ LoggedInUser }) => {
                     component="label"
                     startIcon={<CloudUploadIcon />}
                   >
-                    Upload file
+                    {Id ? "Edit video" : "Upload video"}
                     <Input
                       sx={{ display: "none" }}
                       type="file"
@@ -354,249 +461,338 @@ const PostComponent = ({ LoggedInUser }) => {
                       },
                     }}
                   >
-                    Post
+                    {Id ? "Save" : "Post"}
                   </Button>
                 </Box>
               </form>
             </Box>
           </Modal>
           <Box>
+            {auth.currentUser.uid === id && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  bgcolor: "#71bb42",
+                  padding: "5px 10px",
+                  marginBottom: "20px",
+                }}
+              >
+                <Avatar alt="Remy Sharp" src={user?.photoURL} />
+                <Button
+                  onClick={handlePostModel}
+                  variant="normal"
+                  sx={{ width: "100%", color: "white", fontSize: "16px" }}
+                >
+                  Add New Post
+                </Button>
+              </Box>
+            )}
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
-                bgcolor: "#71bb42",
-                padding: "5px 10px",
-                marginBottom: "20px",
+                flexDirection: "column",
               }}
             >
-              <Avatar alt="Remy Sharp" src={LoggedInUser?.photoURL} />
-              <Button
-                onClick={handlePostModel}
-                variant="normal"
-                sx={{ width: "100%", color: "white", fontSize: "16px" }}
-              >
-                Add New Post
-              </Button>
-            </Box>
-
-            {posts.map((item, index) => {
-              return (
-                <div key={index}>
-                  <CardHeader
-                    sx={{
-                      width: "100%",
-                      borderBottom: "1px solid #eeeeee",
-                    }}
-                    avatar={<Avatar alt="User Avatar" src={item.avatar} />}
-                    title={item.name}
-                    subheader={item.email}
-                    action={
-                      <Button
+              {posts.length > 0 ? (
+                posts.map((item, index) => {
+                  return (
+                    <div
+                      style={{
+                        marginBottom: "20px",
+                        borderBottom: "1px solid #eee",
+                        border: "1px solid #eee",
+                      }}
+                      key={index}
+                    >
+                      <Box
                         sx={{
-                          backgroundColor: "#71bb42",
-                          color: "white",
-                          borderRadius: "50px",
-                          fontSize: "12px",
-
-                          padding: "8px 15px",
-                          "&:hover": {
-                            bgcolor: "#5a9600",
-                          },
-                        }}
-                      >
-                        Follow
-                      </Button>
-                    }
-                  />
-                  <Box
-                    sx={{
-                      "@media (max-width: 768px)": {
-                        display: "grid",
-                        width: "100%",
-                        gridTemplateColumns: "1fr",
-                      },
-                      "@media (max-width: 1024px) and (min-width: 769px)": {
-                        display: "grid",
-                        gridTemplateColumns: "auto 80px",
-                        gridTemplateRows: "1fr",
-                      },
-                      "@media (min-width: 1025px) and (min-width: 1442px)": {
-                        display: "grid",
-                        gridTemplateColumns: "auto 80px",
-                        gridTemplateRows: "3fr",
-                      },
-                    }}
-                  >
-                    <Box>
-                      <CardContent sx={{ width: "100%" }}>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="p"
-                        >
-                          {item.title}
-                        </Typography>
-                      </CardContent>
-                      <CardMedia
-                        ref={videoRef}
-                        component="div"
-                        sx={{
-                          width: "100%",
-                          height: "500px",
                           position: "relative",
                         }}
-                        // 16:9 aspect ratio
                       >
-                        {!playing && item.thumbnailUrl ? (
-                          <img
-                            src={item.thumbnailUrl}
-                            alt=""
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                          />
-                        ) : null}
-                        <Button
+                        <CardHeader
                           sx={{
-                            position: "absolute",
-                            top: "40%",
-                            left: "44%",
-                            color: "#71bb42",
-                            opacity: 0,
-                            "&:hover": {
-                              opacity: 1,
-                            },
+                            width: "100%",
+                            borderBottom: "1px solid #eeeeee",
+                            bgcolor: "#eee",
+                            position: "relative",
                           }}
-                          onClick={togglePlay}
-                        >
-                          {playing ? (
-                            <PauseCircleOutlineSharpIcon
-                              sx={{ fontSize: "2.4rem" }}
-                            />
-                          ) : (
-                            <PlayArrowIcon sx={{ fontSize: "2.4rem" }} />
-                          )}
-                        </Button>
-                        <ReactPlayer
-                          url={item.video}
-                          width="100%"
-                          height="100%"
-                          controls={true}
-                          playing={playing}
+                          variant="primary"
+                          avatar={
+                            <Avatar alt="User Avatar" src={user?.photoURL} />
+                          }
+                          title={user?.name}
+                          subheader={user?.email}
+                          action={
+                            <Button onClick={() => setDropDrown(!dropDown)}>
+                              <AiOutlineMenu size={"24"} />
+                            </Button>
+                          }
                         />
-                      </CardMedia>
-                    </Box>
-                    <CardActions
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-around",
-                        borderTop: "1px solid #ece9e9",
-                        "@media (max-width: 1024px) and (min-width: 769px)": {
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "end",
-                          alignItems: "end",
-                        },
-                        "@media (min-width: 1025px) and (min-width: 1442px)": {
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "end",
-                          alignItems: "end",
-                        },
-                      }}
-                    >
-                      <Button
+                        {dropDown && (
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: 40,
+                              right: 40,
+                              boxShadow: "0 0 10px gray",
+                              zIndex: "1",
+                            }}
+                          >
+                            <List
+                              sx={{
+                                width: "100%",
+                                maxWidth: 360,
+                                bgcolor: "background.paper",
+                              }}
+                              component="nav"
+                              aria-labelledby="nested-list-subheader"
+                              subheader={
+                                <ListSubheader
+                                  component="div"
+                                  id="nested-list-subheader"
+                                >
+                                  Options
+                                </ListSubheader>
+                              }
+                            >
+                              <ListItemButton
+                                onClick={() => handleEdit(item.postId)}
+                              >
+                                <ListItemIcon>
+                                  <Edit />
+                                </ListItemIcon>
+                                <ListItemText primary="Edit" />
+                              </ListItemButton>
+                              <ListItemButton
+                                onClick={() => handleDelete(item.postId)}
+                              >
+                                <ListItemIcon>
+                                  <Delete />
+                                </ListItemIcon>
+                                <ListItemText primary="Delete" />
+                              </ListItemButton>
+                            </List>
+                          </Box>
+                        )}
+                      </Box>
+                      <Box
                         sx={{
+                          display: "grid",
+                          width: "100%",
+                          gridTemplateColumns: "auto 80px",
+                          gridTemplateRows: "1fr 1fr",
+                          "@media (max-width: 768px)": {
+                            display: "grid",
+                            width: "100%",
+                            gridTemplateColumns: "1fr",
+                          },
                           "@media (max-width: 1024px) and (min-width: 769px)": {
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "end",
-                            alignItems: "center",
+                            display: "grid",
+                            gridTemplateColumns: "auto 80px",
+                            gridTemplateRows: "1fr",
                           },
                           "@media (min-width: 1025px) and (min-width: 1442px)":
                             {
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "end",
-                              alignItems: "center",
+                              display: "grid",
+                              gridTemplateColumns: "auto 80px",
+                              gridTemplateRows: "3fr",
                             },
                         }}
                       >
-                        <IconButton>
-                          <FavoriteIcon />
-                        </IconButton>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="span"
-                        >
-                          22 M
-                        </Typography>
-                      </Button>
-                      <Button
-                        sx={{
-                          "@media (max-width: 1024px) and (min-width: 769px)": {
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "end",
-                            alignItems: "center",
-                          },
-                          "@media (min-width: 1025px) and (min-width: 1442px)":
-                            {
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "end",
-                              alignItems: "center",
-                            },
-                        }}
-                      >
-                        <IconButton>
-                          <ChatIcon />
-                        </IconButton>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="span"
-                        >
-                          15.5 k
-                        </Typography>
-                      </Button>
-                      <Button
-                        sx={{
-                          "@media (max-width: 1024px) and (min-width: 769px)": {
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "end",
-                            alignItems: "center",
-                          },
-                          "@media (min-width: 1025px) and (min-width: 1442px)":
-                            {
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "end",
-                              alignItems: "center",
-                            },
-                        }}
-                      >
-                        <IconButton>
-                          <ShareIcon />
-                        </IconButton>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="span"
-                        >
-                          3.5 k
-                        </Typography>
-                      </Button>
-                    </CardActions>
-                  </Box>
-                </div>
-              );
-            })}
+                        <Box sx={{ minHeight: "100%", width: "100%" }}>
+                          <CardContent sx={{ width: "100%" }}>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              component="p"
+                            >
+                              {item.title}
+                            </Typography>
+                          </CardContent>
+                          <Box>
+                            <CardMedia
+                              ref={videoRef}
+                              component="div"
+                              sx={{
+                                width: "100%",
+                                height: "500px",
+                                position: "relative",
+                              }}
+                              // 16:9 aspect ratio
+                            >
+                              {!playing && item.thumbnailUrl ? (
+                                <img
+                                  src={item.thumbnailUrl}
+                                  alt=""
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              ) : null}
+                              <Button
+                                sx={{
+                                  position: "absolute",
+                                  top: "44%",
+                                  left: "44%",
+                                  color: "#71bb42",
+                                  opacity: 0,
+                                  borderRadius: "100%",
+                                  width: "50px",
+                                  height: "60px",
+                                  "&:hover": {
+                                    opacity: 1,
+                                    bgcolor: "#fff",
+                                  },
+                                  zIndex: 9999,
+                                }}
+                                onClick={togglePlay}
+                              >
+                                {playing ? (
+                                  <PauseCircleOutlineSharpIcon
+                                    sx={{ fontSize: "2.4rem" }}
+                                  />
+                                ) : (
+                                  <PlayArrowIcon sx={{ fontSize: "2.4rem" }} />
+                                )}
+                              </Button>
+                              <ReactPlayer
+                                url={item.video}
+                                width="100%"
+                                height="100%"
+                                controls={false}
+                                playing={playing}
+                              />
+                            </CardMedia>
+                            <CardActions
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-around",
+                                borderTop: "1px solid #ece9e9",
+                                "@media (max-width: 1024px) and (min-width: 769px)":
+                                  {
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "between",
+                                    alignItems: "end",
+                                  },
+                                "@media (min-width: 1025px) and (min-width: 1442px)":
+                                  {
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "between",
+                                    alignItems: "end",
+                                  },
+                              }}
+                            >
+                              <Button
+                                sx={{
+                                  "@media (max-width: 1024px) and (min-width: 769px)":
+                                    {
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "end",
+                                      alignItems: "center",
+                                    },
+                                  "@media (min-width: 1025px) and (min-width: 1442px)":
+                                    {
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "end",
+                                      alignItems: "center",
+                                    },
+                                }}
+                              >
+                                <IconButton>
+                                  <FavoriteIcon />
+                                </IconButton>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                  component="span"
+                                >
+                                  22 M
+                                </Typography>
+                              </Button>
+                              <Button
+                                sx={{
+                                  "@media (max-width: 1024px) and (min-width: 769px)":
+                                    {
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "end",
+                                      alignItems: "center",
+                                    },
+                                  "@media (min-width: 1025px) and (min-width: 1442px)":
+                                    {
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "end",
+                                      alignItems: "center",
+                                    },
+                                }}
+                              >
+                                <IconButton>
+                                  <ChatIcon />
+                                </IconButton>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                  component="span"
+                                >
+                                  15.5 k
+                                </Typography>
+                              </Button>
+                              <Button
+                                sx={{
+                                  "@media (max-width: 1024px) and (min-width: 769px)":
+                                    {
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "end",
+                                      alignItems: "center",
+                                    },
+                                  "@media (min-width: 1025px) and (min-width: 1442px)":
+                                    {
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "end",
+                                      alignItems: "center",
+                                    },
+                                }}
+                              >
+                                <IconButton>
+                                  <ShareIcon />
+                                </IconButton>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                  component="span"
+                                >
+                                  3.5 k
+                                </Typography>
+                              </Button>
+                            </CardActions>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </div>
+                  );
+                })
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    height: "10vh",
+                  }}
+                >
+                  <Typography>No result found</Typography>
+                </Box>
+              )}
+            </Box>
           </Box>
         </>
       )}
