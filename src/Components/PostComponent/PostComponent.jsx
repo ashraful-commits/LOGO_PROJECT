@@ -39,6 +39,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { AiOutlineClose } from "react-icons/ai";
 
 // Define the 'PostComponent' functional component.
 const PostComponent = ({
@@ -172,7 +173,7 @@ const PostComponent = ({
   const [loading, setLoading] = useState(false);
 
   const [message, setMessage] = useState("");
-  const [totalChat, setTotalChat] = useState(messages);
+
   const [postUid, setPostUid] = useState(null);
 
   useEffect(() => {
@@ -288,6 +289,7 @@ const PostComponent = ({
   };
   const [likeCount, setLikeCount] = useState(Like ? Like?.length : 0);
   const [msgCount, setMsgCount] = useState(messages ? messages?.length : 0);
+  const [totalChat, setTotalChat] = useState(messages ? messages : []);
   const [isLiked, setIsLiked] = useState(false);
   useEffect(() => {
     setIsLiked(Like?.some((item) => item === loggedInUser?.id) ? true : false);
@@ -295,80 +297,99 @@ const PostComponent = ({
 
   const handleLike = async (postId) => {
     const postDataRef = doc(db, "Posts", postId);
+    if (loggedInUser?.id) {
+      try {
+        const postDataSnapshot = await getDoc(postDataRef);
 
-    try {
-      const postDataSnapshot = await getDoc(postDataRef);
+        if (postDataSnapshot.exists()) {
+          const existingData = postDataSnapshot.data();
+          const updatedLikeArray = existingData.Like || [];
 
-      if (postDataSnapshot.exists()) {
-        const existingData = postDataSnapshot.data();
-        const updatedLikeArray = existingData.Like || [];
+          const likeIndex = updatedLikeArray.indexOf(loggedInUser?.id);
 
-        const likeIndex = updatedLikeArray.indexOf(loggedInUser?.id);
-
-        if (likeIndex !== -1) {
-          // If the user's ID exists in the Like array, remove it
-          updatedLikeArray.splice(likeIndex, 1);
-          if (likeCount > 0) {
-            setLikeCount((prev) => prev - 1);
+          if (likeIndex !== -1) {
+            // If the user's ID exists in the Like array, remove it
+            updatedLikeArray.splice(likeIndex, 1);
+            if (likeCount > 0) {
+              setLikeCount((prev) => prev - 1);
+            } else {
+              setLikeCount(0);
+            }
+            setIsLiked(false);
           } else {
-            setLikeCount(0);
+            // If the user's ID doesn't exist in the Like array, add it
+            updatedLikeArray.push(loggedInUser?.id);
+            setLikeCount((prev) => prev + 1);
+            setIsLiked(true);
           }
-          setIsLiked(false);
+
+          // Update the document with the modified Like array
+          await updateDoc(postDataRef, {
+            Like: updatedLikeArray,
+          });
+
+          console.log("Like array updated successfully!");
         } else {
-          // If the user's ID doesn't exist in the Like array, add it
-          updatedLikeArray.push(loggedInUser?.id);
-          setLikeCount((prev) => prev + 1);
-          setIsLiked(true);
+          console.log("Document does not exist");
         }
-
-        // Update the document with the modified Like array
-        await updateDoc(postDataRef, {
-          Like: updatedLikeArray,
-        });
-
-        console.log("Like array updated successfully!");
-      } else {
-        console.log("Document does not exist");
+      } catch (error) {
+        console.error("Error updating Like array:", error);
       }
-    } catch (error) {
-      console.error("Error updating Like array:", error);
+    } else {
+      toast.error("Please Login!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
   const handleChat = (postId) => {
-    if (postUid) {
-      setPostUid(null);
-      setChat(!chat);
-    } else {
-      setPostUid(postId);
-      setChat(!chat);
-    }
+    setPostUid(postId ? postId : null);
+    setChat(!chat);
   };
 
   const handleMessage = (e) => {
     e.preventDefault();
-    console.log(postUid, message, loggedInUser.id);
+    console.log(postUid, message);
     const addMessageToPost = async (postUid, userId, message) => {
       const postRef = doc(db, "Posts", postUid);
-
-      try {
-        // Use arrayUnion to add a new message to the 'messages' array in the post document
-        await updateDoc(postRef, {
-          messages: arrayUnion({ id: userId, text: message }),
-        });
-        if (totalChat.length > 0) {
-          setTotalChat((prev) => [...prev, { id: userId, text: message }]);
-          setMsgCount((prev) => prev + 1);
-        } else {
-          setTotalChat([{ id: userId, text: message }]);
-          setMsgCount((prev) => prev + 1);
+      if (userId) {
+        try {
+          // Use arrayUnion to add a new message to the 'messages' array in the post document
+          await updateDoc(postRef, {
+            messages: arrayUnion({ id: userId, text: message }),
+          }).then(() => {
+            if (totalChat.length > 0) {
+              setTotalChat((prev) => [...prev, { id: userId, text: message }]);
+              setMsgCount((prev) => prev + 1);
+            } else {
+              setTotalChat([{ id: userId, text: message }]);
+              setMsgCount((prev) => prev + 1);
+              setMessage("");
+            }
+          });
+        } catch (error) {
+          console.error("Error adding message to post:", error);
         }
-        console.log("Message added to post successfully!");
-      } catch (error) {
-        console.error("Error adding message to post:", error);
+      } else {
+        toast.error("Please Login!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
       }
     };
     addMessageToPost(postUid, loggedInUser.id, message);
-    setMessage("");
   };
   return (
     <>
@@ -527,6 +548,19 @@ const PostComponent = ({
                   borderRadius: "10px",
                 }}
               >
+                <Button
+                  variant="outlined"
+                  onClick={() => setChat(false)}
+                  sx={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    cursor: "pointer",
+                    zIndex: 999999,
+                  }}
+                >
+                  <AiOutlineClose />
+                </Button>
                 <List
                   sx={{
                     hight: "90%",
