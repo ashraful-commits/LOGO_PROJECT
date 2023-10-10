@@ -367,6 +367,7 @@ const PostComponent = ({
             if (totalChat.length > 0) {
               setTotalChat((prev) => [...prev, { id: userId, text: message }]);
               setMsgCount((prev) => prev + 1);
+              setMessage("");
             } else {
               setTotalChat([{ id: userId, text: message }]);
               setMsgCount((prev) => prev + 1);
