@@ -9,11 +9,26 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
 import PostComponent from "../../Components/ProfilePost/ProfilePost";
-import { Box, Input, ListItemAvatar, Tab, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Input,
+  ListItemAvatar,
+  Tab,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import StandardImageList from "../../Components/ImageList/ImgaeList";
 
-import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  updateEmail,
+  updatePassword,
+  updateProfile,
+} from "firebase/auth";
 import { app } from "../../firebase.confige";
 import {
   getDownloadURL,
@@ -35,7 +50,10 @@ const Profile = () => {
   const [LoggedInUser, setLoggedInUser] = useState({});
   const [isProfileProgress, setIsProfileProgress] = useState(0);
   const [CoverUploadProgress, setCoverUploadProgress] = useState(0);
-
+  const [input, setInput] = useState({
+    email: "",
+    password: "",
+  });
   // Simulate loading for 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -60,6 +78,10 @@ const Profile = () => {
       });
     }
     setLoggedInUser(auth?.currentUser);
+    setInput({
+      email: auth?.currentUser?.email,
+      password: auth?.currentUser?.password,
+    });
   }, [navigate]);
 
   const [value, setValue] = useState("1");
@@ -201,7 +223,10 @@ const Profile = () => {
 
         // Create a reference to the Firebase Storage bucket for cover photos
         const storage = getStorage();
-        const storageRef = ref(storage, `coverPhotos/${user.uid}/${file.name}`);
+        const storageRef = ref(
+          storage,
+          "profilePhotos/" + user.uid + "/" + file.name
+        );
 
         // Upload the cover photo to Firebase Storage
         const uploadTask = uploadBytesResumable(storageRef, file);
@@ -257,7 +282,39 @@ const Profile = () => {
       }
     }
   };
-
+  const handleInput = (e) => {
+    setInput((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+  const handleUpdateEmailAndPassword = (e) => {
+    const auth = getAuth(app);
+    e.preventDefault();
+    updateEmail(auth.currentUser, input.email)
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
+    updatePassword(auth.currentUser, input.password)
+      .then(() => {
+        toast.success("Email & password updated!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        signOut(app);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <Container>
       {/* Left sidebar for desktop and tablet */}
@@ -416,7 +473,7 @@ const Profile = () => {
                       flexDirection: "column",
                       alignItems: "center",
                     }}
-                    secondary={`${user?.friends}`}
+                    secondary={""}
                   />
                 </ListItem>
                 <ListItem
@@ -503,22 +560,79 @@ const Profile = () => {
                     gridTemplateColumns: "1fr 2fr",
                     "@media (max-width: 768px)": {
                       gridTemplateColumns: "1fr",
-
+                      borderRadius: "5px",
                       width: "100%",
                     },
                   }}
                 >
-                  <LeftSidebar>
-                    {/* Add your left sidebar content here */}
-                    <List>
-                      <ListItem button>
-                        <ListItemText primary="Left Sidebar Item 1" />
-                      </ListItem>
-                      <ListItem button>
-                        <ListItemText primary="Left Sidebar Item 2" />
-                      </ListItem>
-                    </List>
-                  </LeftSidebar>
+                  <Box sx={{ border: "1px solid #eee" }}>
+                    <Box
+                      sx={{
+                        borderBottom: "1px solid #eee",
+                        margin: "0 auto",
+                        textAlign: "center",
+                        bgcolor: "#71bb42",
+                        padding: "12px 0",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "white",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        About
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                      <List>
+                        <ListItem button>
+                          <Typography>{LoggedInUser.displayName}</Typography>
+                        </ListItem>
+                        <ListItem button>
+                          <Typography>{LoggedInUser.email}</Typography>
+                        </ListItem>
+                      </List>
+                      <form onSubmit={handleUpdateEmailAndPassword}>
+                        <LeftSidebar>
+                          <List>
+                            <ListItem button>
+                              <TextField
+                                type="email"
+                                name="email"
+                                value={input.email}
+                                required
+                                onChange={handleInput}
+                                id="outlined-required"
+                                label="Email"
+                              />
+                            </ListItem>
+                            <ListItem button>
+                              <TextField
+                                value={input.password}
+                                name="password"
+                                required
+                                type="password"
+                                onChange={handleInput}
+                                id="outlined-required"
+                                label="Password"
+                              />
+                            </ListItem>
+                            <ListItem>
+                              <Button
+                                type="submit"
+                                sx={{ width: "100%" }}
+                                variant="outlined"
+                              >
+                                Save
+                              </Button>
+                            </ListItem>
+                          </List>
+                        </LeftSidebar>
+                      </form>
+                    </Box>
+                  </Box>
                   <Post>
                     <Box
                       sx={{

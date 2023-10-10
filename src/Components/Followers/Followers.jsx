@@ -6,18 +6,10 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  query,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { app } from "../../firebase.confige";
-import { DockSharp } from "@mui/icons-material";
+
 import { Link } from "react-router-dom";
 
 const Followers = ({ user, id }) => {

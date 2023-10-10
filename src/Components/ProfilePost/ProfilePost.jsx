@@ -212,7 +212,7 @@ const PostComponent = ({ user, id }) => {
     } else {
       const db = getFirestore(app);
       const auth = getAuth(app);
-      // Add a new document in collection "cities"
+
       await addDoc(collection(db, "Posts"), {
         id: auth?.currentUser?.uid,
         title: input.title,
@@ -468,7 +468,7 @@ const PostComponent = ({ user, id }) => {
             </Box>
           </Modal>
           <Box>
-            {auth.currentUser.uid === id && (
+            {auth?.currentUser?.uid === id && (
               <Box
                 sx={{
                   display: "flex",
@@ -524,9 +524,15 @@ const PostComponent = ({ user, id }) => {
                           title={user?.name}
                           subheader={user?.email}
                           action={
-                            <Button onClick={() => setDropDrown(!dropDown)}>
-                              <AiOutlineMenu size={"24"} />
-                            </Button>
+                            auth?.currentUser?.uid === id ? (
+                              <Button onClick={() => setDropDrown(!dropDown)}>
+                                <AiOutlineMenu size={"24"} />
+                              </Button>
+                            ) : (
+                              <Button onClick={() => setDropDrown(!dropDown)}>
+                                Follow
+                              </Button>
+                            )
                           }
                         />
                         {dropDown && (
@@ -537,6 +543,7 @@ const PostComponent = ({ user, id }) => {
                               right: 40,
                               boxShadow: "0 0 10px gray",
                               zIndex: "1",
+                              border: "20px",
                             }}
                           >
                             <List
@@ -544,6 +551,7 @@ const PostComponent = ({ user, id }) => {
                                 width: "100%",
                                 maxWidth: 360,
                                 bgcolor: "background.paper",
+                                border: "10px",
                               }}
                               component="nav"
                               aria-labelledby="nested-list-subheader"

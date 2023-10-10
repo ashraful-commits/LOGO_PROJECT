@@ -977,6 +977,8 @@ const Container = styled.div`
         }
       }
       .loginAvatar {
+        width: 50px;
+        height: 50px;
         overflow: hidden;
         margin-top: 10px;
         border: 2px solid white;
@@ -988,9 +990,9 @@ const Container = styled.div`
           overflow: hidden;
           overflow: hidden;
           img {
-            width: 50%;
+            width: 40px;
             border-radius: 100%;
-            height: 50%;
+            height: 40px;
 
             object-fit: cover;
           }

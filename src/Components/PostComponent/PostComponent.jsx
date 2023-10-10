@@ -1,20 +1,44 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 import ReactPlayer from "react-player";
-import { BsChat, BsHeart, BsPause, BsPlay, BsShare } from "react-icons/bs";
+import {
+  BsChat,
+  BsHeart,
+  BsHeartFill,
+  BsPause,
+  BsPlay,
+  BsSend,
+  BsShare,
+} from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  arrayRemove,
   arrayUnion,
+  collection,
   doc,
+  endAt,
   getDoc,
   getFirestore,
+  onSnapshot,
   setDoc,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { app } from "../../firebase.confige";
 import { getAuth } from "firebase/auth";
 import { toast } from "react-toastify";
+import {
+  Avatar,
+  Box,
+  Button,
+  Input,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 
 // Define the 'PostComponent' functional component.
 const PostComponent = ({
@@ -26,44 +50,88 @@ const PostComponent = ({
   avatar,
   email,
   name,
+  postId,
+  Like,
+  posts,
+  messages,
 }) => {
   const [playing, setPlaying] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState({});
-  console.log(loggedInUser);
-  const auth = getAuth(app);
-  console.log(auth.currentUser);
-  useEffect(() => {
-    const db = getFirestore(app);
-    const fetchUserDataById = async () => {
-      const docRef = doc(db, "users", auth?.currentUser?.uid); // Assuming "users" is the collection name
-      const docSnap = await getDoc(docRef);
+  const [chat, setChat] = useState(false);
 
-      setLoggedInUser(docSnap.data());
-      if (docSnap.exists()) {
-        let user = [];
-        const userdata = docSnap.data();
-        userdata.following.forEach(async (item) => {
-          const followersRef = doc(db, "users", item);
-          const followSnp = await getDoc(followersRef);
-          user.push(followSnp.data());
-        });
-        setLoggedInUser((prev) => ({ ...prev, following: user }));
-      } else {
+  const auth = getAuth(app);
+
+  const db = getFirestore(app);
+
+  const [unsubscribe, setUnsubscribe] = useState(null);
+
+  useEffect(() => {
+    const fetchUserDataById = async () => {
+      const docRef = doc(db, "users", auth?.currentUser?.uid);
+
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
         // Return null if the user document does not exist
-        return null;
+        return;
+      }
+
+      const userdata = docSnap.data();
+      const user = [];
+
+      // Subscribe to real-time updates for the following list
+      const unsubscribeFollowing = onSnapshot(docRef, (doc) => {
+        const newUserData = doc.data();
+        setLoggedInUser((prev) => ({
+          ...prev,
+          ...newUserData,
+          id: auth?.currentUser?.uid,
+        }));
+      });
+
+      // Subscribe to real-time updates for the user's followers
+      userdata.following.forEach((item) => {
+        const followersRef = doc(db, "users", item);
+
+        const unsubscribeFollower = onSnapshot(followersRef, (followerDoc) => {
+          user.push({ id: item, ...followerDoc.data() });
+          setLoggedInUser((prev) => ({ ...prev, following: user }));
+        });
+
+        // Store the unsubscribe functions for each follower
+        setUnsubscribe((prev) => ({
+          ...prev,
+          [item]: unsubscribeFollower,
+        }));
+      });
+
+      // Store the main unsubscribe function
+      setUnsubscribe((prev) => ({
+        ...prev,
+        main: unsubscribeFollowing,
+      }));
+    };
+
+    fetchUserDataById();
+
+    return () => {
+      if (unsubscribe) {
+        // Call each unsubscribe function for followers
+        Object.values(unsubscribe).forEach((unsub) => unsub());
+
+        // Call the main unsubscribe function
+        if (unsubscribe.main) {
+          unsubscribe.main();
+        }
       }
     };
-    fetchUserDataById();
-  }, [id]);
-  // Reference to the video element for IntersectionObserver.
+  }, [id, auth?.currentUser?.uid, db, unsubscribe]);
+
   const videoRef = useRef();
 
-  // Function to toggle video playback.
   const togglePlay = () => {
     setPlaying(!playing);
   };
 
-  // Effect to set up IntersectionObserver for video.
   useEffect(() => {
     const options = {
       root: null, // Use the viewport as the root.
@@ -101,10 +169,12 @@ const PostComponent = ({
     };
   }, []);
 
-  // State to manage loading state.
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // Simulate loading data with a delay (replace with your actual data loading logic).
+  const [message, setMessage] = useState("");
+  const [totalChat, setTotalChat] = useState(messages);
+  const [postUid, setPostUid] = useState(null);
+
   useEffect(() => {
     setTimeout(() => {
       setLoading(false); // Set loading to false when data is ready.
@@ -113,7 +183,7 @@ const PostComponent = ({
 
   const handleFollow = async (id) => {
     const db = getFirestore(app);
-    const auth = getAuth();
+    const auth = getAuth(app);
 
     if (auth.currentUser) {
       try {
@@ -122,6 +192,17 @@ const PostComponent = ({
 
         await updateDoc(followerRef, {
           followers: arrayUnion(auth?.currentUser?.uid),
+        }).then(() => {
+          toast("Following!", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
         });
         await updateDoc(followingRef, {
           following: arrayUnion(id),
@@ -175,7 +256,18 @@ const PostComponent = ({
           followingRef,
           { following: updatedFollowingArray },
           { merge: true }
-        );
+        ).then(() => {
+          toast("Unfollow!", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        });
 
         // At this point, the documents are updated instantly
       } catch (error) {
@@ -194,127 +286,180 @@ const PostComponent = ({
       });
     }
   };
+  const [likeCount, setLikeCount] = useState(Like ? Like?.length : 0);
+  const [msgCount, setMsgCount] = useState(messages ? messages?.length : 0);
+  const [isLiked, setIsLiked] = useState(false);
+  useEffect(() => {
+    setIsLiked(Like?.some((item) => item === loggedInUser?.id) ? true : false);
+  }, [loggedInUser?.id, Like]);
 
+  const handleLike = async (postId) => {
+    const postDataRef = doc(db, "Posts", postId);
+
+    try {
+      const postDataSnapshot = await getDoc(postDataRef);
+
+      if (postDataSnapshot.exists()) {
+        const existingData = postDataSnapshot.data();
+        const updatedLikeArray = existingData.Like || [];
+
+        const likeIndex = updatedLikeArray.indexOf(loggedInUser?.id);
+
+        if (likeIndex !== -1) {
+          // If the user's ID exists in the Like array, remove it
+          updatedLikeArray.splice(likeIndex, 1);
+          if (likeCount > 0) {
+            setLikeCount((prev) => prev - 1);
+          } else {
+            setLikeCount(0);
+          }
+          setIsLiked(false);
+        } else {
+          // If the user's ID doesn't exist in the Like array, add it
+          updatedLikeArray.push(loggedInUser?.id);
+          setLikeCount((prev) => prev + 1);
+          setIsLiked(true);
+        }
+
+        // Update the document with the modified Like array
+        await updateDoc(postDataRef, {
+          Like: updatedLikeArray,
+        });
+
+        console.log("Like array updated successfully!");
+      } else {
+        console.log("Document does not exist");
+      }
+    } catch (error) {
+      console.error("Error updating Like array:", error);
+    }
+  };
+  const handleChat = (postId) => {
+    if (postUid) {
+      setPostUid(null);
+      setChat(!chat);
+    } else {
+      setPostUid(postId);
+      setChat(!chat);
+    }
+  };
+
+  const handleMessage = (e) => {
+    e.preventDefault();
+    console.log(postUid, message, loggedInUser.id);
+    const addMessageToPost = async (postUid, userId, message) => {
+      const postRef = doc(db, "Posts", postUid);
+
+      try {
+        // Use arrayUnion to add a new message to the 'messages' array in the post document
+        await updateDoc(postRef, {
+          messages: arrayUnion({ id: userId, text: message }),
+        });
+        if (totalChat.length > 0) {
+          setTotalChat((prev) => [...prev, { id: userId, text: message }]);
+          setMsgCount((prev) => prev + 1);
+        } else {
+          setTotalChat([{ id: userId, text: message }]);
+          setMsgCount((prev) => prev + 1);
+        }
+        console.log("Message added to post successfully!");
+      } catch (error) {
+        console.error("Error adding message to post:", error);
+      }
+    };
+    addMessageToPost(postUid, loggedInUser.id, message);
+    setMessage("");
+  };
   return (
     <>
       {loading ? (
-        <SkeletonLoader>
-          <div className="skeleton-loader">
+        <SkeletonPost>
+          {loading && (
+            <div className="skeleton-loading">
+              {/* You can customize the loading animation */}
+              Loading...
+            </div>
+          )}
+          {!loading && (
             <div className="post-user-details">
               <div className="user-details">
-                <div className="avatar"></div>
+                <div className="avatar">
+                  {/* Add an empty avatar */}
+                  <div className="skeleton-content"></div>
+                </div>
                 <div className="details">
-                  <div className="skeleton-item"></div>
-                  <div className="skeleton-item"></div>
+                  <p>
+                    {/* Add skeleton content for name */}
+                    <span className="skeleton-content"></span>
+                  </p>
+                  <span>
+                    {/* Add skeleton content for email */}
+                    <span className="skeleton-content"></span>
+                  </span>
                 </div>
               </div>
               <div className="follow">
-                <div className="skeleton-button"></div>
+                {/* Add skeleton content for the follow button */}
+                <button className="skeleton-content"></button>
               </div>
             </div>
+          )}
+          {!loading && (
             <div className="title">
-              <div className="skeleton-item"></div>
+              <p>
+                {/* Add skeleton content for title */}
+                <span className="skeleton-content"></span>
+              </p>
             </div>
+          )}
+          {!loading && (
             <div className="img-status">
-              <div className={`img ${loading ? "loading" : ""}`}>
-                <div className="skeleton-item"></div>
+              <div className="img">
+                {/* Add skeleton content for the image */}
+                <div className="skeleton-content"></div>
                 <div className="play-button"></div>
                 <div className="desc">
-                  <div className="skeleton-item"></div>
-                  <div className="skeleton-item"></div>
+                  <p>
+                    {/* Add skeleton content for description */}
+                    <span className="skeleton-content"></span>
+                  </p>
                 </div>
               </div>
               <div className="status">
                 <div className="status-item">
-                  <div className="skeleton-button"></div>
-                  <div className="skeleton-item"></div>
+                  <button>
+                    {/* Add skeleton content for like button */}
+                    <span className="skeleton-content"></span>
+                  </button>
+                  <span>
+                    {/* Add skeleton content for like count */}
+                    <span className="skeleton-content"></span>
+                  </span>
                 </div>
                 <div className="status-item">
-                  <div className="skeleton-button"></div>
-                  <div className="skeleton-item"></div>
+                  <button>
+                    {/* Add skeleton content for chat button */}
+                    <span className="skeleton-content"></span>
+                  </button>
+                  <span>
+                    {/* Add skeleton content for message count */}
+                    <span className="skeleton-content"></span>
+                  </span>
                 </div>
                 <div className="status-item">
-                  <div className="skeleton-button"></div>
-                  <div className="skeleton-item"></div>
+                  <button>
+                    {/* Add skeleton content for share button */}
+                    <span className="skeleton-content"></span>
+                  </button>
+                  <span>
+                    {/* Add skeleton content for share count */}
+                    <span className="skeleton-content"></span>
+                  </span>
                 </div>
               </div>
             </div>
-          </div>
-        </SkeletonLoader>
-      ) : auth?.currentUser?.uid !== id || loggedInUser.id !== id ? (
-        <PostContainer>
-          <div className="post-user-details">
-            <div className="user-details">
-              <div className="avatar">
-                <Link to={`/${id}`}>
-                  {avatar ? (
-                    <img src={avatar} alt="" />
-                  ) : (
-                    <img
-                      src={`https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg`}
-                      alt=""
-                    />
-                  )}
-                </Link>
-              </div>
-              <div className="details">
-                <p>{name}</p>
-                <span>@{email}</span>
-              </div>
-            </div>
-            <div className="follow">
-              {loggedInUser?.id !== id ||
-              (auth?.currentUser?.uid !== id &&
-                loggedInUser?.following?.some((item) => item.id === id)) ? (
-                <button onClick={() => handleFollow(id)}>unfollow</button>
-              ) : (
-                <button onClick={() => handleUnfollow(id)}>follow</button>
-              )}
-            </div>
-          </div>
-          <div className="title">
-            <p>{title}</p>
-          </div>
-          <div className="img-status">
-            <div ref={videoRef} className="img">
-              {!playing && thumbnailUrl && <img src={thumbnailUrl} alt="" />}
-              <ReactPlayer
-                url={videoUrl}
-                width="100%"
-                height="100%"
-                controls={false}
-                playing={playing}
-              />
-              <div className="play-button" onClick={togglePlay}>
-                {playing ? <BsPause /> : <BsPlay />}
-              </div>
-              <div className="desc">
-                <p>{desc}</p>
-                <span>On the way - (alan walker) - music hip hop...</span>
-              </div>
-            </div>
-            <div className="status">
-              <div className="status-item">
-                <button>
-                  <BsHeart />
-                </button>
-                <span>22 M</span>
-              </div>
-              <div className="status-item">
-                <button>
-                  <BsChat />
-                </button>
-                <span>15.5 k</span>
-              </div>
-              <div className="status-item">
-                <button>
-                  <BsShare />
-                </button>
-                <span>3.5 k</span>
-              </div>
-            </div>
-          </div>
-        </PostContainer>
+          )}
+        </SkeletonPost>
       ) : (
         <PostContainer>
           <div className="post-user-details">
@@ -337,10 +482,10 @@ const PostComponent = ({
               </div>
             </div>
             <div className="follow">
-              {loggedInUser.following.some((item) => item.id === id) ? (
-                <button onClick={() => handleFollow(id)}>Follow</button>
-              ) : (
+              {loggedInUser?.following?.some((item) => item.id === id) ? (
                 <button onClick={() => handleUnfollow(id)}>Unfollow</button>
+              ) : (
+                <button onClick={() => handleFollow(id)}>follow</button>
               )}
             </div>
           </div>
@@ -362,21 +507,90 @@ const PostComponent = ({
               </div>
               <div className="desc">
                 <p>{desc}</p>
-                <span>On the way - (alan walker) - music hip hop...</span>
               </div>
             </div>
+            {chat && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  bottom: "30%",
+                  right: "15%",
+                  zIndex: 999,
+                  width: "335px",
+                  height: "300px",
+                  boxShadow: "0 0 10px gray",
+                  bgcolor: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                  borderRadius: "10px",
+                }}
+              >
+                <List
+                  sx={{
+                    hight: "90%",
+                    overflow: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "start",
+                    alignItems: "center",
+                  }}
+                >
+                  {totalChat?.map((item, index) => {
+                    return (
+                      <ListItem
+                        sx={{ display: "flex", alignItems: "center" }}
+                        key={index}
+                        alignItems="flex-start"
+                      >
+                        <ListItemAvatar>
+                          <Avatar></Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary=""
+                          secondary={
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              color="textPrimary"
+                            >
+                              {item.text}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    );
+                  })}
+                </List>
+                <form onSubmit={handleMessage}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Input
+                      sx={{ width: "100%" }}
+                      type="text"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Comment please!"
+                    />
+                    <Button type="submit">
+                      <BsSend />
+                    </Button>
+                  </Box>
+                </form>
+              </Box>
+            )}
             <div className="status">
               <div className="status-item">
-                <button>
-                  <BsHeart />
+                <button onClick={() => handleLike(postId)}>
+                  {isLiked ? <BsHeartFill fill="#71bb42" /> : <BsHeart />}
                 </button>
-                <span>22 M</span>
+                <span>{likeCount}</span>
               </div>
               <div className="status-item">
-                <button>
-                  <BsChat />
+                <button onClick={() => handleChat(postId)}>
+                  <BsChat fill={chat ? "#71bb42" : ""} />
                 </button>
-                <span>15.5 k</span>
+                <span>{msgCount}</span>
               </div>
               <div className="status-item">
                 <button>
@@ -401,34 +615,33 @@ const PostContainer = styled.div`
   gap: 1px;
   .post-user-details {
     width: 545.112px;
-    height: 50px;
+    height: 70px;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     .user-details {
+      height: 100%;
       display: flex;
       gap: 5.4px;
       .avatar {
-        width: 52px;
-        height: 52px;
+        width: 50px;
+        height: 50px;
         flex-shrink: 0;
         display: flex;
-        justify-content: start;
+        justify-content: center;
         align-items: center;
         cursor: pointer;
         border-radius: 100%;
         overflow: hidden;
 
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
         a {
           border-radius: 100%;
+          width: 100%;
+          height: 100%;
           img {
             width: 100%;
             height: 100%;
+            object-fit: cover;
           }
         }
       }
@@ -504,6 +717,7 @@ const PostContainer = styled.div`
     }
   }
   .img-status {
+    position: "relative";
     width: 100%;
     height: 570px;
     flex-shrink: 0;
@@ -652,6 +866,7 @@ const PostContainer = styled.div`
           align-items: center;
           border: none;
           transition: all 0.5s ease-in-out;
+
           &:hover {
             background-color: #71bb42;
             svg {
@@ -688,6 +903,7 @@ const PostContainer = styled.div`
       }
     }
     .img-status {
+      position: "relative";
       width: 100%;
       grid-template-columns: 95%;
       grid-template-rows: 470px auto;
@@ -730,6 +946,7 @@ const PostContainer = styled.div`
       width: 550.112px;
     }
     .img-status {
+      position: "relative";
       grid-template-columns: 420px auto;
       padding-bottom: 30px;
       .img {
@@ -759,91 +976,69 @@ const PostContainer = styled.div`
     }
   }
 `;
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 // Create a separate styled component for the skeleton
-
-const SkeletonLoader = styled.div`
-  width: 100%;
-  height: 100%;
+const SkeletonPost = styled.div`
+  width: 545.112px;
+  height: 671.334px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  animation: loading 1s infinite alternate;
-
+  gap: 1px;
+  background-color: #f0f0f0; /* Adjust the background color for the skeleton */
+  animation: ${fadeIn} 0.5s ease-in-out;
+  /* Add skeleton styles for the user details */
   .post-user-details {
-    width: 100%;
-    height: 50px;
+    width: 545.112px;
+    height: 70px;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
+    background-color: #e0e0e0; /* Adjust the background color for the skeleton */
 
+    /* Add skeleton styles for user details */
     .user-details {
+      height: 100%;
       display: flex;
       gap: 5.4px;
+      align-items: center;
 
+      /* Add skeleton styles for avatar */
       .avatar {
-        width: 52px;
-        height: 52px;
+        width: 50px;
+        height: 50px;
         flex-shrink: 0;
-        display: flex;
-        justify-content: start;
-        align-items: center;
-        cursor: pointer;
-        border-radius: 100%;
-        background-color: #ccc; /* Placeholder color */
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+        background-color: #ccc; /* Adjust the background color for the skeleton */
+        border-radius: 50%;
+        overflow: hidden;
       }
 
+      /* Add skeleton styles for user name */
       .details {
         p {
-          width: 100px; /* Adjust width */
-          height: 20px; /* Adjust height */
-          background-color: #ccc; /* Placeholder color */
-          margin: 0;
+          background-color: #e0e0e0; /* Adjust the background color for the skeleton */
+          height: 20px; /* Adjust the height for the skeleton */
+          width: 100px; /* Adjust the width for the skeleton */
+          border-radius: 5px;
         }
-
         span {
-          width: 80px; /* Adjust width */
-          height: 14px; /* Adjust height */
-          background-color: #ccc; /* Placeholder color */
-          margin: 0;
-        }
-      }
-    }
-
-    .follow {
-      display: flex;
-      justify-content: flex-end;
-
-      button {
-        width: 75px;
-        height: 32px;
-        flex-shrink: 0;
-        background-color: #ccc; /* Placeholder color */
-        border-radius: 8px;
-        border: none;
-        color: #fff;
-        text-align: center;
-        font-family: Segoe UI;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 600;
-        line-height: normal;
-        position: relative;
-        transition: all 0.5s ease-in-out;
-
-        &:hover {
-          background-color: #71bb42;
+          background-color: #e0e0e0; /* Adjust the background color for the skeleton */
+          height: 10px; /* Adjust the height for the skeleton */
+          width: 60px; /* Adjust the width for the skeleton */
+          border-radius: 5px;
         }
       }
     }
   }
 
+  /* Add skeleton styles for title */
   .title {
     width: 80%;
     text-align: left;
@@ -852,93 +1047,43 @@ const SkeletonLoader = styled.div`
     margin-left: 5px;
     margin-top: 2px;
     p {
-      width: 150px; /* Adjust width */
-      height: 16px; /* Adjust height */
-      background-color: #ccc; /* Placeholder color */
-      margin: 0;
+      background-color: #e0e0e0; /* Adjust the background color for the skeleton */
+      height: 15px; /* Adjust the height for the skeleton */
+      width: 80%; /* Adjust the width for the skeleton */
+      border-radius: 5px;
     }
   }
 
+  /* Add skeleton styles for image and status */
   .img-status {
-    height: 570px;
+    position: "relative";
     width: 100%;
+    height: 570px;
     flex-shrink: 0;
     display: grid;
-    margin-top: 9px;
-    grid-template-columns: 320px auto;
     gap: 10px;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    padding-bottom: 30px;
+    overflow: hidden;
+    border-bottom: 1px solid #eeeeee;
 
+    /* Add skeleton styles for image */
     .img {
       width: 100%;
       position: relative;
       height: 100%;
-      overflow: hidden;
-      background-color: #ccc8c8; /* Placeholder color */
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-      background-color: #e2e2e2;
-      border-radius: 24.731px;
-      margin-left: 62px;
-      z-index: 1;
-
-      .play-button {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        font-size: 24px;
-        color: #fff;
-        background-color: rgba(0, 0, 0, 0.5);
-        border-radius: 50%;
-        padding: 10px;
-        z-index: 100;
-        transition: background-color 0.2s;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #ccc; /* Placeholder color */
-      }
-
-      .desc {
-        position: absolute;
-        overflow: hidden;
-        bottom: 0;
-        width: 300px;
-        height: 498px;
-        flex-shrink: 0;
-        border-radius: 24.731px;
-        opacity: 0.8;
-        display: flex;
-        flex-direction: column;
-        justify-content: end;
-        align-items: start;
-        background-color: transparent;
-        mix-blend-mode: normal;
-
-        p {
-          width: 100%; /* Adjust width */
-          height: 10px; /* Adjust height */
-          background-color: #ccc; /* Placeholder color */
-          margin: 0;
-        }
-
-        span {
-          width: 100%; /* Adjust width */
-          height: 8px; /* Adjust height */
-          background-color: #ccc; /* Placeholder color */
-          margin: 0;
-        }
+      background-color: #ccc; /* Adjust the background color for the skeleton */
+      border-radius: 10px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     }
 
+    /* Add skeleton styles for status */
     .status {
       height: 100%;
       width: 115px;
@@ -955,76 +1100,72 @@ const SkeletonLoader = styled.div`
         align-items: center;
         gap: 6px;
 
+        /* Add skeleton styles for buttons */
         button {
           width: 40px;
           height: 40px;
           display: flex;
           justify-content: center;
           align-items: center;
-          border: none;
-          transition: all 0.5s ease-in-out;
-          background-color: #ccc; /* Placeholder color */
-
-          &:hover {
-            background-color: #71bb42;
-            svg {
-              color: white;
-            }
-          }
-
-          border-radius: 100%;
-
-          svg {
-            font-size: 22px;
-          }
+          background-color: #e0e0e0; /* Adjust the background color for the skeleton */
+          border-radius: 50%;
         }
-
         span {
-          font-size: 0.6rem;
+          background-color: #e0e0e0; /* Adjust the background color for the skeleton */
+          height: 10px; /* Adjust the height for the skeleton */
+          width: 30px; /* Adjust the width for the skeleton */
+          border-radius: 5px;
         }
       }
     }
   }
 
-  @keyframes loading {
-    0% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
+  /* Add media queries for responsiveness */
   @media (max-width: 768px) {
-    width: 100%;
+    width: 98vw;
     margin: 0 auto;
+    padding: 0 10px;
     height: 671.334px;
-
+    animation: ${fadeIn} 0.5s ease-in-out;
+    /* Adjust skeleton styles for smaller screens if needed */
     .post-user-details {
-      width: 205.112px;
-      padding: 0 50px;
+      width: 100%;
     }
+    .details {
+      span {
+        width: 150px; /* Adjust the width for the skeleton */
+      }
+    }
+    .img-status {
+      position: "relative";
+      width: 100%;
+      grid-template-columns: 95%;
+      grid-template-rows: 470px auto;
+      gap: 21px;
 
+      /* Adjust skeleton styles for smaller screens if needed */
+      .status {
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+        flex-direction: row;
+      }
+      .img {
+        margin-left: 0px;
+      }
+    }
     .title {
-      width: 65%;
+      width: 75%;
     }
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
     width: 100%;
     top: 5%;
-
+    animation: ${fadeIn} 0.5s ease-in-out;
+    /* Adjust skeleton styles for medium-sized screens if needed */
     .post-user-details {
-      width: 100%;
-    }
-
-    .img-status {
-      grid-template-columns: 420px auto;
-      margin-right: 4px;
-    }
-
-    .title {
-      width: 70%;
+      width: 550.112px;
     }
   }
 `;

@@ -13,19 +13,23 @@ import {
 import styled from "styled-components";
 import PostComponent from "../PostComponent/PostComponent";
 import { Box, Typography } from "@mui/material";
+import { getAuth } from "firebase/auth";
+import { app } from "../../firebase.confige";
 
 const Post = () => {
-  const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [lastVisible, setLastVisible] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPoset, setTotalPoset] = useState(1);
+  const [totalPosts, setTotalPost] = useState(1);
+  const [posts, setPosts] = useState([]);
+
   const totalPost = async () => {
     const db = getFirestore();
     const postsRef = collection(db, "Posts");
     const querySnapshot = await getDocs(postsRef);
-    setTotalPoset(querySnapshot.docs.length);
+    setTotalPost(querySnapshot.docs.length);
   };
+
   const fetchMoreData = async () => {
     if (isLoading) {
       return;
@@ -39,7 +43,6 @@ const Post = () => {
       let queryPosts;
 
       if (lastVisible) {
-        // If we have a lastVisible document, use it to fetch the next batch
         queryPosts = query(
           postsRef,
           orderBy("timestamp", "desc"),
@@ -47,7 +50,6 @@ const Post = () => {
           limit(3 * currentPage)
         );
       } else {
-        // If there's no lastVisible document, fetch the initial data
         queryPosts = query(postsRef, orderBy("timestamp", "desc"), limit(3));
       }
 
@@ -56,12 +58,13 @@ const Post = () => {
       const allPosts = [];
 
       for (const docData of querySnapshot.docs) {
-        const postData = docData.data();
-
-        const userId = postData.id; // Assuming userId is a field in your post data
+        const postData = { postId: docData.id, ...docData.data() };
+        const userId = postData.id;
         const userDocRef = doc(db, "users", userId);
+
         const userSnapshot = await getDoc(userDocRef);
 
+        console.log(userSnapshot);
         if (userSnapshot.exists()) {
           const userData = userSnapshot.data();
           postData.user = userData;
@@ -70,14 +73,14 @@ const Post = () => {
           console.log("User does not exist for post with userId: ", userId);
         }
       }
-      if (totalPoset <= allPosts.length) {
+
+      if (allPosts.length > 0) {
         setPosts((prevPosts) => [...prevPosts, ...allPosts]);
         setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
 
         setIsLoading(false); // Change this to false
         setCurrentPage((prevPage) => prevPage + 1);
       } else {
-        setPosts(allPosts);
         setIsLoading(false); // This is correct
         setLastVisible(null);
       }
@@ -111,30 +114,37 @@ const Post = () => {
     fetchMoreData();
     totalPost();
   }, []); // This useEffect runs only once when the component mounts.
-
+  const auth = getAuth(app);
+  const uid = auth?.currentUser?.uid;
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <PostContainer>
         {posts.length > 0 ? (
-          posts.map((item, index) => (
-            <PostComponent
-              key={index}
-              desc={item.desc}
-              thumbnailUrl=""
-              videoUrl={item.video}
-              avatar={item.user.photoURL}
-              email={item.user.email}
-              name={item.user.name}
-              title={item.title}
-              id={item.id}
-            />
-          ))
+          posts.map(
+            (item, index) =>
+              item.id !== uid && (
+                <PostComponent
+                  key={index}
+                  desc={item.desc}
+                  thumbnailUrl=""
+                  videoUrl={item.video}
+                  avatar={item.user.photoURL}
+                  email={item.user.email}
+                  name={item.user.name}
+                  title={item.title}
+                  id={item.id}
+                  postId={item.postId}
+                  Like={item.Like}
+                  posts={posts}
+                  messages={item.messages}
+                />
+              )
+          )
         ) : (
           <Box>{!isLoading && <Typography>No post found</Typography>}</Box>
         )}
-
-        {/* Show loader while loading data */}
       </PostContainer>
+
       {isLoading && (
         <Box
           sx={{
