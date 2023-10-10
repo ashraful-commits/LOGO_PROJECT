@@ -535,7 +535,7 @@ const PostComponent = ({
                 sx={{
                   position: "fixed",
                   bottom: "30%",
-                  right: "15%",
+                  right: "12%",
                   zIndex: 999,
                   width: "335px",
                   height: "300px",
