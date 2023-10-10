@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "../Components/Layout/Layout";
 import Home from "../Pages/Home/Home";
 import Profile from "../Pages/Profile/Profile";
+import { Search } from "@mui/icons-material";
 
 const PublicRoute = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const PublicRoute = createBrowserRouter([
       {
         path: "/:id",
         element: <Profile />,
+      },
+      {
+        path: "/search/:search",
+        element: <Search />,
       },
     ],
   },

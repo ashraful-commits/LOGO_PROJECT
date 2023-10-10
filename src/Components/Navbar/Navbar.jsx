@@ -20,7 +20,15 @@ import avtar5 from "../../../public/avatar5.png";
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
-import { doc, getFirestore, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  getFirestore,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import {
   Drawer,
   Box,
@@ -367,6 +375,7 @@ const Navbar = () => {
     // Unsubscribe from the listener when the component unmounts
     return () => unsubscribe();
   }, [auth, user, navigate]);
+  const [search, setSearch] = useState("");
   return (
     <>
       {loading ? (
@@ -761,9 +770,16 @@ const Navbar = () => {
 
             <div className="right">
               <div className="search-field">
-                <form action="">
-                  <CiSearch />
-                  <input type="text" placeholder="Search" />
+                <form>
+                  <Link to={`/search/${search}`}>
+                    <CiSearch />
+                  </Link>
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    type="text"
+                    placeholder="Search"
+                  />
                 </form>
               </div>
               <div className="logo">
