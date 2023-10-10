@@ -315,6 +315,8 @@ const Profile = () => {
         console.log(error);
       });
   };
+  const auth = getAuth();
+
   return (
     <Container>
       {/* Left sidebar for desktop and tablet */}
@@ -343,7 +345,7 @@ const Profile = () => {
                   alt="Cover"
                 />
               )}
-              {id === LoggedInUser.uid && (
+              {id === LoggedInUser?.uid && (
                 <Box
                   sx={{
                     width: "40px",
@@ -588,49 +590,51 @@ const Profile = () => {
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <List>
                         <ListItem button>
-                          <Typography>{LoggedInUser.displayName}</Typography>
+                          <Typography>{user?.name}</Typography>
                         </ListItem>
                         <ListItem button>
-                          <Typography>{LoggedInUser.email}</Typography>
+                          <Typography>{user?.email}</Typography>
                         </ListItem>
                       </List>
-                      <form onSubmit={handleUpdateEmailAndPassword}>
-                        <LeftSidebar>
-                          <List>
-                            <ListItem button>
-                              <TextField
-                                type="email"
-                                name="email"
-                                value={input.email}
-                                required
-                                onChange={handleInput}
-                                id="outlined-required"
-                                label="Email"
-                              />
-                            </ListItem>
-                            <ListItem button>
-                              <TextField
-                                value={input.password}
-                                name="password"
-                                required
-                                type="password"
-                                onChange={handleInput}
-                                id="outlined-required"
-                                label="Password"
-                              />
-                            </ListItem>
-                            <ListItem>
-                              <Button
-                                type="submit"
-                                sx={{ width: "100%" }}
-                                variant="outlined"
-                              >
-                                Save
-                              </Button>
-                            </ListItem>
-                          </List>
-                        </LeftSidebar>
-                      </form>
+                      {id === auth.currentUser?.uid && (
+                        <form onSubmit={handleUpdateEmailAndPassword}>
+                          <LeftSidebar>
+                            <List>
+                              <ListItem button>
+                                <TextField
+                                  type="email"
+                                  name="email"
+                                  value={input.email}
+                                  required
+                                  onChange={handleInput}
+                                  id="outlined-required"
+                                  label="Email"
+                                />
+                              </ListItem>
+                              <ListItem button>
+                                <TextField
+                                  value={input.password}
+                                  name="password"
+                                  required
+                                  type="password"
+                                  onChange={handleInput}
+                                  id="outlined-required"
+                                  label="Password"
+                                />
+                              </ListItem>
+                              <ListItem>
+                                <Button
+                                  type="submit"
+                                  sx={{ width: "100%" }}
+                                  variant="outlined"
+                                >
+                                  Save
+                                </Button>
+                              </ListItem>
+                            </List>
+                          </LeftSidebar>
+                        </form>
+                      )}
                     </Box>
                   </Box>
                   <Post>

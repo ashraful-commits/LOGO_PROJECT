@@ -54,11 +54,11 @@ import {
 import { toast } from "react-toastify";
 import { AiOutlineMenu } from "react-icons/ai";
 import { Delete, Edit } from "@mui/icons-material";
-
+// Define the PostComponent functional component
 const PostComponent = ({ user, id }) => {
+  // State variables
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef(null);
-
   const [loader, setLoader] = useState(true);
   const [open, setOpen] = useState(false);
   const [preview, setPreview] = useState("");
