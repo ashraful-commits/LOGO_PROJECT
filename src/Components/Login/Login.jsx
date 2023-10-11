@@ -318,7 +318,7 @@ const LoginContainer = styled.div`
           gap: 5px;
         }
         input {
-          width: 15px;
+          width: 10px;
         }
         label {
           text-align: center;
