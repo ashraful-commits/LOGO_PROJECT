@@ -20,15 +20,7 @@ import avtar5 from "../../../public/avatar5.png";
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
-import {
-  collection,
-  doc,
-  getDocs,
-  getFirestore,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import {} from "firebase/firestore";
 import {
   Drawer,
   Box,
@@ -45,27 +37,16 @@ import {
   Button,
   Tab,
 } from "@mui/material";
-import TabPanel from "@mui/lab/TabPanel";
-import { TabContext, TabList } from "@mui/lab";
 
 // Import Firebase Authentication functions and configuration
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-  signInWithPopup,
-  FacebookAuthProvider,
-  onAuthStateChanged,
-} from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { app } from "../../firebase.confige"; // Ensure that your Firebase configuration is correctly set up
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { GoogleAuthProvider } from "firebase/auth";
 
-// Import additional icons
-import { BsFacebook } from "react-icons/bs";
+import Login from "../Login/Login";
+import Register from "../Register/Register";
 
 // Define the Navbar component
 const Navbar = () => {
@@ -96,167 +77,6 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  // State for login and registration form data
-  const [loginForm, setLoginForm] = useState({
-    email: "",
-    password: "",
-  });
-  const [signUpForm, setSignUpForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  // Handle changes in the registration form
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSignUpForm({ ...signUpForm, [name]: value });
-  };
-
-  // Handle changes in the login form
-  const handleChangeLogin = (e) => {
-    const { name, value } = e.target;
-    setLoginForm({ ...loginForm, [name]: value });
-  };
-
-  // Handle login form submission
-  const handleSubmitLogin = async (e) => {
-    e.preventDefault();
-    const auth = getAuth(app);
-    const email = loginForm.email;
-    const password = loginForm.password;
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      // Display a success message using a toast notification
-      toast("Login successful!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-
-      // Close the login modal, clear the form, and store user data
-      setOpen(false);
-      setLoginForm({
-        email: "",
-        password: "",
-      });
-    } catch (error) {
-      // Handle login errors
-      if (error.code === "auth/invalid-login-credentials") {
-        toast("Email and password do not match", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      }
-    }
-  };
-
-  // Handle registration form submission
-  const handleSubmitRegister = async (e) => {
-    e.preventDefault();
-    const auth = getAuth(app);
-    const email = signUpForm.email;
-    const password = signUpForm.password;
-
-    // Check if password and confirm password match
-    if (signUpForm.password !== signUpForm.confirmPassword) {
-      toast("Password and confirm password do not match!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    } else {
-      try {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        const user = userCredential.user;
-
-        const db = getFirestore(app);
-
-        updateProfile(user, {
-          displayName: signUpForm.name,
-        })
-          .then(() => {
-            console.log(user);
-          })
-          .catch((error) => {
-            console.log(error.message);
-          });
-        await setDoc(doc(db, "users", `${user.uid}`), {
-          id: user.uid,
-          name: signUpForm.name,
-          email: signUpForm.email,
-          photoURL: "",
-          coverPhotoUrl: "",
-          followers: [],
-          following: [],
-          posts: [],
-        });
-        setOpen(false);
-        // Display a success message using a toast notification
-        toast.success("Registration successful!", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      } catch (error) {
-        // Handle registration errors
-        if (error.code === "auth/email-already-in-use") {
-          toast.success("Email already exists.", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-        }
-      }
-    }
-  };
-
-  // State for the currently active tab in the login/registration form
-  const [value, setValue] = useState("login");
-
-  // Handle tab changes in the login/registration form
-  const handleChangeForm = (event, newValue) => {
-    setValue(newValue);
-  };
 
   // Handle user logout
   const handleLogout = () => {
@@ -292,88 +112,6 @@ const Navbar = () => {
       });
   };
 
-  // Handle Google sign-in
-  const handleGoogleSignin = async () => {
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      setOpen(false);
-      // Display a success message using a toast notification
-      toast("Login successful!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-
-      // Store user data
-      setUser(user);
-    } catch (error) {
-      // Handle Google sign-in errors
-      const errorMessage = error.message;
-      toast(errorMessage, {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    }
-  };
-
-  // Handle Facebook sign-in
-  const handleFacebookSignin = async () => {
-    try {
-      const provider = new FacebookAuthProvider();
-      const auth = getAuth(app);
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          const user = result.user;
-          console.log(user);
-          toast("facebook login successful!", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-
-          const credential = FacebookAuthProvider.credentialFromResult(result);
-          const accessToken = credential.accessToken;
-          console.log(accessToken);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode);
-          console.log(errorMessage);
-          const email = error.customData.email;
-          console.log(email);
-
-          const credential = FacebookAuthProvider.credentialFromError(error);
-
-          console.log(credential);
-          // ...
-        });
-    } catch (error) {
-      const errorMessage = error.message;
-      console.log(errorMessage);
-    }
-  };
-
   const [user, setUser] = useState(null);
   const auth = getAuth(app);
 
@@ -395,6 +133,7 @@ const Navbar = () => {
     return () => unsubscribe();
   }, [auth, user, navigate]);
   const [search, setSearch] = useState("");
+  const [redirect, setRedirect] = useState("Login");
   return (
     <>
       {loading ? (
@@ -421,7 +160,7 @@ const Navbar = () => {
         </Container>
       ) : (
         <Container>
-          <div>
+          <div className="nav-container">
             <Modal
               open={open}
               onClose={handleClose}
@@ -437,230 +176,15 @@ const Navbar = () => {
                   width: "100%",
                 }}
               >
-                <Button
-                  onClick={() => setOpen(false)}
-                  sx={{
-                    color: "white",
-                    position: "absolute",
-                    top: "1%",
-                    right: "2%",
-                    fontSize: "24px",
-                  }}
-                >
-                  <AiOutlineClose />
-                </Button>
-                <Box
-                  sx={{
-                    backgroundColor: "white",
-                    width: "380px",
-                    height: "490px",
-                    padding: "20px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <TabContext value={value}>
-                    <TabList
-                      sx={{
-                        width: "85%",
-                        display: "flex",
-                        margin: "0 auto",
-                        justifyContent: "center",
-                      }}
-                      onChange={handleChangeForm}
-                      aria-label="wrapped label tabs example"
-                      indicatorColor="secondary"
-                    >
-                      <Tab
-                        sx={{ width: "50%" }}
-                        value="login"
-                        label="Login"
-                        wrapped
-                      />
-                      <Tab
-                        sx={{ width: "50%" }}
-                        value="register"
-                        label="Register"
-                      />
-                    </TabList>
-                    <TabPanel value="register">
-                      <form onSubmit={handleSubmitRegister}>
-                        <Grid
-                          container
-                          spacing={2}
-                          justifyContent="center"
-                          alignItems="center"
-                        >
-                          <Grid item xs={12}>
-                            <TextField
-                              fullWidth
-                              label="Name"
-                              name="name"
-                              onChange={handleChange}
-                              // Add value and onChange as needed
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <TextField
-                              fullWidth
-                              label="Email"
-                              name="email"
-                              type="email"
-                              onChange={handleChange}
-                              // Add value and onChange as needed
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <TextField
-                              fullWidth
-                              label="Password"
-                              name="password"
-                              type="password"
-                              onChange={handleChange}
-                              // Add value and onChange as needed
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <TextField
-                              fullWidth
-                              label="Confirm Password"
-                              name="confirmPassword"
-                              type="password"
-                              onChange={handleChange}
-                              // Add value and onChange as needed
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Button
-                              type="submit"
-                              fullWidth
-                              sx={{
-                                bgcolor: "#71bb42",
-                                "&:hover": {
-                                  bgcolor: "#8fdd5d",
-                                },
-                                color: "white",
-                              }}
-                            >
-                              Register
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </form>
-                      <Typography sx={{ padding: "10px 0" }}>
-                        Already have an account?
-                        <Button
-                          sx={{ color: "#71bb42", textTransform: "capitalize" }}
-                          onClick={(event) => handleChangeForm(event, "login")}
-                        >
-                          Login
-                        </Button>
-                      </Typography>
-                    </TabPanel>
-                    <TabPanel value="login">
-                      <form onSubmit={handleSubmitLogin}>
-                        <Grid
-                          container
-                          spacing={2}
-                          justifyContent="center"
-                          alignItems="center"
-                        >
-                          <Grid item xs={12}>
-                            <TextField
-                              fullWidth
-                              label="Email"
-                              name="email"
-                              type="email"
-                              value={loginForm.email}
-                              onChange={handleChangeLogin}
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <TextField
-                              fullWidth
-                              label="Password"
-                              name="password"
-                              type="password"
-                              value={loginForm.password}
-                              onChange={handleChangeLogin}
-                              required
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Button
-                              type="submit"
-                              fullWidth
-                              sx={{
-                                bgcolor: "#71bb42",
-                                "&:hover": {
-                                  bgcolor: "#8fdd5d",
-                                },
-                                color: "white",
-                              }}
-                            >
-                              Login
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </form>
-                      <Typography sx={{ padding: "10px 0" }}>
-                        Don&apos;t have an account?
-                        <Button
-                          sx={{ color: "#71bb42", textTransform: "capitalize" }}
-                          onClick={(event) =>
-                            handleChangeForm(event, "register")
-                          }
-                        >
-                          Register
-                        </Button>
-                      </Typography>
-                      <Button
-                        onClick={handleGoogleSignin}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          color: "white",
-                          width: "100%",
-                          backgroundColor: "red",
-                          "&:hover": {
-                            backgroundColor: "#71bb42",
-                            color: "white",
-                          },
-
-                          marginBottom: "6px",
-                        }}
-                      >
-                        <AiFillGoogleCircle fill="white" size={"24"} />
-                        Sign in with Google
-                      </Button>
-                      <Button
-                        onClick={handleFacebookSignin}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          color: "white",
-                          width: "100%",
-                          backgroundColor: "#0059fd",
-                          "&:hover": {
-                            backgroundColor: "#71bb42",
-                            color: "white",
-                          },
-
-                          marginBottom: "6px",
-                        }}
-                      >
-                        <BsFacebook fill="white" size={"24"} />
-                        Sign in with facebook
-                      </Button>
-                    </TabPanel>
-                  </TabContext>
-                </Box>
+                {redirect === "Login" ? (
+                  <Login
+                    setUser={setUser}
+                    setOpen={setOpen}
+                    setRedirect={setRedirect}
+                  />
+                ) : (
+                  <Register setOpen={setOpen} setRedirect={setRedirect} />
+                )}
               </Box>
             </Modal>
           </div>
@@ -848,6 +372,15 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   position: relative;
+  .nav-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .login_container {
+      display: flex;
+      flex-direction: column;
+    }
+  }
   .MuiPaper-root {
     transition: all 0.5s ease-in-out !important;
     opacity: 0;
