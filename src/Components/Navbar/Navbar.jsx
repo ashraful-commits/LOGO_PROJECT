@@ -333,28 +333,47 @@ const Navbar = () => {
 
   // Handle Facebook sign-in
   const handleFacebookSignin = async () => {
-    const auth = getAuth(app); // Get the Firebase Authentication instance.
-    const provider = new FacebookAuthProvider(); // Create a FacebookAuthProvider instance.
-
     try {
-      const result = await signInWithPopup(auth, provider); // Sign in with a popup.
+      const provider = new FacebookAuthProvider();
+      const auth = getAuth(app);
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user = result.user;
+          console.log(user);
+          toast("facebook login successful!", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
 
-      // Display a success message using a toast notification.
-      toast("Login successful!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+          const credential = FacebookAuthProvider.credentialFromResult(result);
+          const accessToken = credential.accessToken;
+          console.log(accessToken);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+          const email = error.customData.email;
+          console.log(email);
+
+          const credential = FacebookAuthProvider.credentialFromError(error);
+
+          console.log(credential);
+          // ...
+        });
     } catch (error) {
       const errorMessage = error.message;
       console.log(errorMessage);
     }
   };
+
   const [user, setUser] = useState(null);
   const auth = getAuth(app);
 
