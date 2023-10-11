@@ -32,7 +32,7 @@ const Register = ({ setOpen, setRedirect }) => {
 
     // Check if password and confirm password match
     if (!signUpForm.name || !signUpForm.email || !signUpForm.password) {
-      toast.success("All Files are required!", {
+      toast.error("All Files are required!", {
         position: "bottom-center",
         autoClose: 1000,
         hideProgressBar: false,
