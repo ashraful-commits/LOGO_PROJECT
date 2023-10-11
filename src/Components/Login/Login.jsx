@@ -7,11 +7,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import React, { useState } from "react";
-import {
-  AiFillFacebook,
-  AiFillGoogleCircle,
-  AiOutlineClose,
-} from "react-icons/ai";
+import { AiFillGoogleCircle, AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { app } from "../../firebase.confige";
@@ -35,17 +31,8 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
     const auth = getAuth(app);
     const email = loginForm.email;
     const password = loginForm.password;
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      setUser(user);
-      // Display a success message using a toast notification
-      toast("Login successful!", {
+    if (!loginForm.email || !loginForm.password) {
+      toast.error("All Fields are required!", {
         position: "bottom-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -55,17 +42,17 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
         progress: undefined,
         theme: "dark",
       });
-
-      // Close the login modal, clear the form, and store user data
-      setOpen(false);
-      setLoginForm({
-        email: "",
-        password: "",
-      });
-    } catch (error) {
-      // Handle login errors
-      if (error.code === "auth/invalid-login-credentials") {
-        toast("Email and password do not match", {
+    } else {
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userCredential.user;
+        setUser(user);
+        // Display a success message using a toast notification
+        toast("Login successful!", {
           position: "bottom-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -75,6 +62,27 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
           progress: undefined,
           theme: "dark",
         });
+
+        // Close the login modal, clear the form, and store user data
+        setOpen(false);
+        setLoginForm({
+          email: "",
+          password: "",
+        });
+      } catch (error) {
+        // Handle login errors
+        if (error.code === "auth/invalid-login-credentials") {
+          toast("Email and password do not match", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
       }
     }
   };

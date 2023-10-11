@@ -31,40 +31,8 @@ const Register = ({ setOpen, setRedirect }) => {
     const password = signUpForm.password;
 
     // Check if password and confirm password match
-
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      const db = getFirestore(app);
-
-      updateProfile(user, {
-        displayName: signUpForm.name,
-      })
-        .then(() => {
-          console.log(user);
-          setRedirect("Login");
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-      await setDoc(doc(db, "users", `${user.uid}`), {
-        id: user.uid,
-        name: signUpForm.name,
-        email: signUpForm.email,
-        photoURL: "",
-        coverPhotoUrl: "",
-        followers: [],
-        following: [],
-        posts: [],
-      });
-      setOpen(false);
-      // Display a success message using a toast notification
-      toast.success("Registration successful!", {
+    if (!signUpForm.name || !signUpForm.email || !signUpForm.password) {
+      toast.success("All Files are required!", {
         position: "bottom-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -74,10 +42,40 @@ const Register = ({ setOpen, setRedirect }) => {
         progress: undefined,
         theme: "dark",
       });
-    } catch (error) {
-      // Handle registration errors
-      if (error.code === "auth/email-already-in-use") {
-        toast.success("Email already exists.", {
+    } else {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userCredential.user;
+
+        const db = getFirestore(app);
+
+        updateProfile(user, {
+          displayName: signUpForm.name,
+        })
+          .then(() => {
+            console.log(user);
+            setRedirect("Login");
+          })
+          .catch((error) => {
+            console.log(error.message);
+          });
+        await setDoc(doc(db, "users", `${user.uid}`), {
+          id: user.uid,
+          name: signUpForm.name,
+          email: signUpForm.email,
+          photoURL: "",
+          coverPhotoUrl: "",
+          followers: [],
+          following: [],
+          posts: [],
+        });
+        setOpen(false);
+        // Display a success message using a toast notification
+        toast.success("Registration successful!", {
           position: "bottom-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -87,6 +85,20 @@ const Register = ({ setOpen, setRedirect }) => {
           progress: undefined,
           theme: "dark",
         });
+      } catch (error) {
+        // Handle registration errors
+        if (error.code === "auth/email-already-in-use") {
+          toast.success("Email already exists.", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
       }
     }
   };
