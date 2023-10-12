@@ -322,6 +322,8 @@ const Sidebar = styled.div`
       height: 100%;
       display: flex;
       flex-direction: column;
+      justify-content: start;
+      align-items: start;
       gap: 16px;
       margin-top: 16px;
 
@@ -627,10 +629,11 @@ const Sidebar = styled.div`
       .popular-creators {
         display: flex;
         flex-direction: column;
-
+        justify-content: start;
+        align-items: start;
         .popular-creator {
           width: 100%;
-          height: 100%;
+
           display: flex;
           align-items: center;
           justify-content: start;

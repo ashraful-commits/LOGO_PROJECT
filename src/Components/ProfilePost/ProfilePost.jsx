@@ -38,6 +38,7 @@ import {
   doc,
   getFirestore,
   onSnapshot,
+  orderBy,
   query,
   serverTimestamp,
   updateDoc,
@@ -245,7 +246,11 @@ const PostComponent = ({ user, id }) => {
   useEffect(() => {
     const db = getFirestore();
     const postsRef = collection(db, "Posts");
-    const q = query(postsRef, where("id", "==", id));
+    const q = query(
+      postsRef,
+      where("id", "==", id),
+      orderBy("timestamp", "desc")
+    );
 
     try {
       setLoader(true);

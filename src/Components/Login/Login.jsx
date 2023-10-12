@@ -54,9 +54,9 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
         const db = getFirestore(app);
         await setDoc(doc(db, "users", `${user.uid}`), {
           id: user.uid,
-          name: user.name,
+          name: user.displayName,
           email: user.email,
-          photoURL: "",
+          photoURL: user.phoneURL,
           coverPhotoUrl: "",
           followers: [],
           following: [],
@@ -111,9 +111,9 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
       console.log(user);
       await setDoc(doc(db, "users", `${user?.uid}`), {
         id: user.uid,
-        name: user.name,
+        name: user.displayName,
         email: user.email,
-        photoURL: "",
+        photoURL: user.photoURL,
         coverPhotoUrl: "",
         followers: [],
         following: [],
