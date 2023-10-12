@@ -94,7 +94,7 @@ const Post = () => {
     const windowHeight = window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
 
-    if (scrollY + windowHeight >= documentHeight - 200) {
+    if (scrollY + windowHeight >= documentHeight - 500) {
       fetchMoreData();
     }
   };

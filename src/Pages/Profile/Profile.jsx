@@ -551,7 +551,10 @@ const Profile = () => {
                   <Tab label="Photo" value="2" />
                   <Tab label="Follower" value="4" />
                   <Tab label="Following" value="5" />
-                  {user.role == "admin" && <Tab label="Admin" value="6" />}
+                  {user.role == "admin" &&
+                    user.id === auth?.currentUser?.uid && (
+                      <Tab label="Admin" value="6" />
+                    )}
                 </TabList>
               </Box>
               <TabPanel

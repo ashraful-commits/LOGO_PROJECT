@@ -297,6 +297,7 @@ const PostComponent = ({
   }, [loggedInUser?.id, Like]);
 
   const handleLike = async (postId) => {
+    console.log(loggedInUser?.id);
     const postDataRef = doc(db, "Posts", postId);
     if (loggedInUser?.id) {
       try {
@@ -402,6 +403,7 @@ const PostComponent = ({
       "width=600, height=400"
     );
   };
+
   return (
     <>
       {loading ? (
@@ -559,38 +561,75 @@ const PostComponent = ({
                   borderRadius: "10px",
                 }}
               >
-                <Button
-                  variant="outlined"
+                <button
                   onClick={() => setChat(false)}
-                  sx={{
+                  style={{
                     position: "absolute",
                     top: 10,
+                    width: "20px",
+                    height: "20px",
+                    display: "flex",
                     right: 10,
+                    background: "transparent",
                     cursor: "pointer",
                     zIndex: 999999,
+                    border: "1px solid gray",
+                    borderRadius: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  <AiOutlineClose />
-                </Button>
+                  <AiOutlineClose fontSize={"13"} />
+                </button>
                 <List
                   sx={{
-                    hight: "90%",
-                    overflow: "auto",
+                    height: "100%",
+                    overflowY: "auto", // Enable vertical scrollbar
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "start",
-                    alignItems: "center",
+                    justifyContent: "space-between",
+                    alignItems: "start",
+                    padding: "5px 0 0 0",
+                    margin: "20px 0 0 0",
+                    gap: "10px",
+                    // Customize the scrollbar styles for WebKit-based browsers
+                    "&::-webkit-scrollbar": {
+                      width: "8px", // Adjust the scrollbar width
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#fefefe", // Color of the scrollbar thumb
+                      borderRadius: "4px", // Rounded corners
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#555", // Color when hovered
+                    },
                   }}
                 >
                   {totalChat?.map((item, index) => {
                     return (
                       <ListItem
-                        sx={{ display: "flex", alignItems: "center" }}
+                        sx={{
+                          display: "flex",
+                          flexDirection:
+                            loggedInUser?.id == item?.id
+                              ? "row-reverse"
+                              : "row",
+                          alignItems: "center",
+                          bgcolor:
+                            loggedInUser?.id == item?.id ? "#eee" : "#c6f7c9", // Apply different background colors
+                          width: "auto",
+                          justifyContent:
+                            loggedInUser?.id == item?.id
+                              ? "flex-end"
+                              : "flex-start", // Align to right for user, left for others
+                        }}
                         key={index}
                         alignItems="flex-start"
                       >
                         <ListItemAvatar>
-                          <Avatar></Avatar>
+                          <Avatar
+                            sx={{ width: "20px", height: "20px" }}
+                          ></Avatar>
                         </ListItemAvatar>
                         <ListItemText
                           primary=""
@@ -598,7 +637,7 @@ const PostComponent = ({
                             <Typography
                               component="span"
                               variant="body2"
-                              color="textPrimary"
+                              color="gray"
                             >
                               {item.text}
                             </Typography>
@@ -611,15 +650,29 @@ const PostComponent = ({
                 <form onSubmit={handleMessage}>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Input
-                      sx={{ width: "100%" }}
+                      sx={{
+                        width: "100%",
+                        backgroundColor: "#71b22a",
+                        padding: "0 7px",
+                        color: "white",
+                      }}
                       type="text"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Comment please!"
                     />
-                    <Button type="submit">
-                      <BsSend />
-                    </Button>
+                    <button
+                      className="send_btn"
+                      style={{
+                        width: "30px",
+                        height: "32px",
+                        backgroundColor: "#71b22a",
+                        border: "none",
+                      }}
+                      type="submit"
+                    >
+                      <BsSend color="white" />
+                    </button>
                   </Box>
                 </form>
               </Box>
@@ -658,6 +711,12 @@ const PostContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1px;
+  .send_btn {
+    width: "100%";
+    :hover {
+      background-color: #8fdd5d;
+    }
+  }
   .post-user-details {
     width: 545.112px;
     height: 70px;

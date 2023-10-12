@@ -53,15 +53,16 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { toast } from "react-toastify";
-import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { Delete, Edit } from "@mui/icons-material";
+import useOpen from "../../hooks/useOpen";
 // Define the PostComponent functional component
 const PostComponent = ({ user, id }) => {
   // State variables
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef(null);
   const [loader, setLoader] = useState(true);
-  const [open, setOpen] = useState(false);
+  const { open, setOpen } = useOpen();
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(false);
@@ -246,21 +247,14 @@ const PostComponent = ({ user, id }) => {
   useEffect(() => {
     const db = getFirestore();
     const postsRef = collection(db, "Posts");
-    const q = query(
-      postsRef,
-      where("id", "==", id),
-      orderBy("timestamp", "desc")
-    );
+    const q = query(postsRef, where("id", "==", id), orderBy("timestamp"));
 
     try {
       setLoader(true);
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const allPosts = [];
         querySnapshot.forEach((doc) => {
-          const postData = doc.data();
-          const postId = doc.id; // Get the document ID as postId
-          const postWithId = { ...postData, postId }; // Add postId to the data
-          allPosts.push(postWithId);
+          allPosts.push({ postId: doc.id, ...doc.data() });
         });
 
         setPost(allPosts);
@@ -298,6 +292,9 @@ const PostComponent = ({ user, id }) => {
     } catch (error) {
       console.error("Error deleting post: ", error);
     }
+  };
+  const handleClear = () => {
+    setPreview(null);
   };
   return (
     <Card
@@ -384,6 +381,7 @@ const PostComponent = ({ user, id }) => {
                             width: "100%",
                             height: "100%",
                             overflow: "hidden",
+                            position: "relative",
                           }}
                         >
                           <ReactPlayer
@@ -398,17 +396,42 @@ const PostComponent = ({ user, id }) => {
                             controls={true}
                             playing={true}
                           />
+                          <button
+                            onClick={handleClear}
+                            style={{
+                              backgroundColor: "white",
+                              position: "absolute",
+                              top: 0,
+                              right: 0,
+                              zIndex: 99999,
+                              border: "none",
+                              padding: "5px",
+                              borderRadius: "100%",
+                            }}
+                            className="previewClear"
+                          >
+                            <AiOutlineClose />
+                          </button>
                         </Box>
                       ) : (
-                        <img
+                        <label
                           style={{
+                            overflow: "hidden",
                             width: "100%",
                             height: "100%",
-                            objectFit: "cover",
                           }}
-                          src="https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
-                          alt="preview"
-                        />
+                          htmlFor="postVide0"
+                        >
+                          <img
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                            src="https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
+                            alt="preview"
+                          />
+                        </label>
                       )}
                     </Box>
                   </label>
@@ -432,27 +455,14 @@ const PostComponent = ({ user, id }) => {
                     value={input.desc}
                     onChange={handleInput}
                   />
-                  <Button
-                    sx={{
-                      width: "100%",
-                      bgcolor: "#71bb42",
-                      marginTop: "10px",
-                      color: "white",
-                      "&:hover": {
-                        color: "#068a02",
-                      },
-                    }}
-                    component="label"
-                    startIcon={<CloudUploadIcon />}
-                  >
-                    {Id ? "Edit video" : "Upload video"}
-                    <Input
-                      sx={{ display: "none" }}
-                      type="file"
-                      id="postVide0"
-                      onChange={handleProfile}
-                    />
-                  </Button>
+
+                  <Input
+                    sx={{ display: "none" }}
+                    type="file"
+                    id="postVide0"
+                    onChange={handleProfile}
+                  />
+
                   <Button
                     type="submit"
                     sx={{
