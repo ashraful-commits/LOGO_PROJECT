@@ -215,7 +215,6 @@ const PostComponent = ({
         console.error("Error updating follower and following arrays:", error);
       }
     } else {
-      setOpen(true);
       toast("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
@@ -277,7 +276,6 @@ const PostComponent = ({
         console.error("Error updating follower and following arrays:", error);
       }
     } else {
-      setOpen(true);
       toast("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
@@ -339,7 +337,6 @@ const PostComponent = ({
         console.error("Error updating Like array:", error);
       }
     } else {
-      setOpen(true);
       toast.error("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
@@ -382,7 +379,6 @@ const PostComponent = ({
           console.error("Error adding message to post:", error);
         }
       } else {
-        setOpen(true);
         toast.error("Please Login!", {
           position: "bottom-center",
           autoClose: 1000,

@@ -11,6 +11,7 @@ import { AiFillGoogleCircle, AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { app } from "../../firebase.confige";
+import { Firestore, doc, getFirestore, setDoc } from "firebase/firestore";
 
 const Login = ({ setOpen, setRedirect, setUser }) => {
   // State for login and registration form data
@@ -50,6 +51,18 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
           password
         );
         const user = userCredential.user;
+        const db = getFirestore(app);
+        await setDoc(doc(db, "users", `${user.uid}`), {
+          id: user.uid,
+          name: user.name,
+          email: user.email,
+          photoURL: "",
+          coverPhotoUrl: "",
+          followers: [],
+          following: [],
+          posts: [],
+          role: "user",
+        });
         setUser(user);
         // Display a success message using a toast notification
         toast("Login successful!", {
@@ -92,10 +105,22 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
     const provider = new GoogleAuthProvider();
 
     try {
+      const db = getFirestore(app);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      setOpen(false);
-      // Display a success message using a toast notification
+      console.log(user);
+      await setDoc(doc(db, "users", `${user?.uid}`), {
+        id: user.uid,
+        name: user.name,
+        email: user.email,
+        photoURL: "",
+        coverPhotoUrl: "",
+        followers: [],
+        following: [],
+        posts: [],
+        role: "user",
+      });
+
       toast("Login successful!", {
         position: "bottom-center",
         autoClose: 1000,
@@ -106,7 +131,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
         progress: undefined,
         theme: "dark",
       });
-
+      setOpen(false);
       // Store user data
       setUser(user);
     } catch (error) {
