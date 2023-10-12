@@ -13,8 +13,6 @@ import {
 import styled from "styled-components";
 import PostComponent from "../PostComponent/PostComponent";
 import { Box, Typography } from "@mui/material";
-import { getAuth } from "firebase/auth";
-import { app } from "../../firebase.confige";
 
 const Post = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +20,7 @@ const Post = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPosts, setTotalPost] = useState(1);
   const [posts, setPosts] = useState([]);
-
+  console.log(posts);
   const totalPost = async () => {
     const db = getFirestore();
     const postsRef = collection(db, "Posts");
@@ -114,32 +112,30 @@ const Post = () => {
     fetchMoreData();
     totalPost();
   }, []); // This useEffect runs only once when the component mounts.
-  const auth = getAuth(app);
-  const uid = auth?.currentUser?.uid;
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <PostContainer>
         {posts.length > 0 ? (
-          posts.map(
-            (item, index) =>
-              item.id !== uid && (
-                <PostComponent
-                  key={index}
-                  desc={item.desc}
-                  thumbnailUrl=""
-                  videoUrl={item.video}
-                  avatar={item.user.photoURL}
-                  email={item.user.email}
-                  name={item.user.name}
-                  title={item.title}
-                  id={item.id}
-                  postId={item.postId}
-                  Like={item.Like}
-                  posts={posts}
-                  messages={item.messages}
-                />
-              )
-          )
+          posts
+            .filter((item) => item.status === true)
+            .map((item, index) => (
+              <PostComponent
+                key={index}
+                desc={item.desc}
+                thumbnailUrl=""
+                videoUrl={item.video}
+                avatar={item.user.photoURL}
+                email={item.user.email}
+                name={item.user.name}
+                title={item.title}
+                id={item.id}
+                postId={item.postId}
+                Like={item.Like}
+                posts={posts}
+                messages={item.messages}
+              />
+            ))
         ) : (
           <Box>{!isLoading && <Typography>No post found</Typography>}</Box>
         )}

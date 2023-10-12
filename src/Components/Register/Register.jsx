@@ -72,6 +72,7 @@ const Register = ({ setOpen, setRedirect }) => {
           followers: [],
           following: [],
           posts: [],
+          role: "user",
         });
         setOpen(false);
         // Display a success message using a toast notification
@@ -170,14 +171,14 @@ const Register = ({ setOpen, setRedirect }) => {
   );
 };
 const LoginContainer = styled.div`
-  width: 320px;
+  width: 380px;
   height: auto;
   background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 80px 30px 50px 30px;
+  padding: 80px 40px 50px 40px;
   border-radius: 20px;
   .close_btn {
     width: 20px;
@@ -219,6 +220,7 @@ const LoginContainer = styled.div`
       display: flex;
       flex-direction: column;
       gap: 15px;
+      width: 100%;
       input {
         width: 100%;
         height: 35px;

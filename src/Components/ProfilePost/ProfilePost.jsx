@@ -218,6 +218,7 @@ const PostComponent = ({ user, id }) => {
         title: input.title,
         desc: input.desc,
         video: preview,
+        status: false,
         timestamp: serverTimestamp(),
       }).then(() => {
         toast("Post Created!", {

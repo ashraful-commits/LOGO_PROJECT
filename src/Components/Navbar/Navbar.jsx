@@ -47,10 +47,10 @@ import { GoogleAuthProvider } from "firebase/auth";
 
 import Login from "../Login/Login";
 import Register from "../Register/Register";
+import useOpen from "../../hooks/useOpen";
 
 // Define the Navbar component
 const Navbar = () => {
-  // State to manage menu visibility
   const [showMenu, setShowMenu] = useState(false);
 
   // Function to toggle the menu
@@ -58,14 +58,8 @@ const Navbar = () => {
     setShowMenu(!showMenu);
   };
 
-  // State to manage loading state
   const [loading, setLoading] = useState(true);
 
-  // State to manage user authentication status
-
-  // Effect to retrieve user data from local storage
-
-  // Simulate loading delay (replace with actual data fetching)
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -73,8 +67,7 @@ const Navbar = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // State and functions for login and registration forms
-  const [open, setOpen] = useState(false);
+  const { open, setOpen } = useOpen();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -129,7 +122,6 @@ const Navbar = () => {
       }
     });
 
-    // Unsubscribe from the listener when the component unmounts
     return () => unsubscribe();
   }, [auth, user, navigate]);
   const [search, setSearch] = useState("");

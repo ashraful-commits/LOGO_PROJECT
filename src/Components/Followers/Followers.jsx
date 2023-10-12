@@ -62,7 +62,7 @@ const Followers = ({ user, id }) => {
               <ListItemAvatar>
                 <Avatar alt="Travis Howard" src={item?.photoURL} />
               </ListItemAvatar>
-              <Link to={`/${item.id}`}>
+              <Link to={`/${item?.id}`}>
                 <ListItemText
                   primary={item?.name}
                   secondary={

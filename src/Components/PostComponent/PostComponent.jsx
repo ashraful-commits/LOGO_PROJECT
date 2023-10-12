@@ -40,6 +40,7 @@ import {
   Typography,
 } from "@mui/material";
 import { AiOutlineClose } from "react-icons/ai";
+import useOpen from "../../hooks/useOpen";
 
 // Define the 'PostComponent' functional component.
 const PostComponent = ({
@@ -59,7 +60,7 @@ const PostComponent = ({
   const [playing, setPlaying] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState({});
   const [chat, setChat] = useState(false);
-
+  const { open, setOpen } = useOpen();
   const auth = getAuth(app);
 
   const db = getFirestore(app);
@@ -214,6 +215,7 @@ const PostComponent = ({
         console.error("Error updating follower and following arrays:", error);
       }
     } else {
+      setOpen(true);
       toast("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
@@ -275,6 +277,7 @@ const PostComponent = ({
         console.error("Error updating follower and following arrays:", error);
       }
     } else {
+      setOpen(true);
       toast("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
@@ -336,6 +339,7 @@ const PostComponent = ({
         console.error("Error updating Like array:", error);
       }
     } else {
+      setOpen(true);
       toast.error("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
@@ -378,6 +382,7 @@ const PostComponent = ({
           console.error("Error adding message to post:", error);
         }
       } else {
+        setOpen(true);
         toast.error("Please Login!", {
           position: "bottom-center",
           autoClose: 1000,
@@ -391,6 +396,15 @@ const PostComponent = ({
       }
     };
     addMessageToPost(postUid, loggedInUser.id, message);
+  };
+  const handleShareClick = (postId) => {
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        postId
+      )}`,
+      "Share on Facebook",
+      "width=600, height=400"
+    );
   };
   return (
     <>
@@ -628,7 +642,7 @@ const PostComponent = ({
                 <span>{msgCount}</span>
               </div>
               <div className="status-item">
-                <button>
+                <button onClick={() => handleShareClick(postId)}>
                   <BsShare />
                 </button>
                 <span>3.5 k</span>

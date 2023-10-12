@@ -237,14 +237,14 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
   );
 };
 const LoginContainer = styled.div`
-  width: 320px;
+  width: 380px;
   height: auto;
   background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 80px 30px 50px 30px;
+  padding: 80px 50px 50px 50px;
   border-radius: 20px;
   .close_btn {
     width: 20px;
@@ -287,6 +287,7 @@ const LoginContainer = styled.div`
       display: flex;
       flex-direction: column;
       margin-top: 20px;
+      width: 100%;
       gap: 15px;
       input {
         width: 100%;
@@ -361,7 +362,7 @@ const LoginContainer = styled.div`
     align-items: center;
     justify-content: center;
     gap: 5px;
-    width: 90%;
+    width: 100%;
 
     height: 35px;
     button {
@@ -390,7 +391,7 @@ const LoginContainer = styled.div`
     align-items: center;
     justify-content: center;
     gap: 5px;
-    width: 90%;
+    width: 100%;
 
     button {
       background-color: #4d7fff;

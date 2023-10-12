@@ -41,6 +41,8 @@ import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import Following from "../../Components/Following/Following";
 import Followers from "../../Components/Followers/Followers";
+import Admin from "../../Components/Admin/Admin";
+import useOpen from "../../hooks/useOpen";
 const Profile = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -54,6 +56,7 @@ const Profile = () => {
     email: "",
     password: "",
   });
+  const { setOpen } = useOpen();
   // Simulate loading for 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -66,6 +69,7 @@ const Profile = () => {
     const auth = getAuth(app);
     if (!auth.currentUser) {
       navigate("/");
+      setOpen(true);
       toast("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
@@ -82,7 +86,7 @@ const Profile = () => {
       email: auth?.currentUser?.email,
       password: auth?.currentUser?.password,
     });
-  }, [navigate]);
+  }, [navigate, setOpen]);
 
   const [value, setValue] = useState("1");
 
@@ -547,6 +551,7 @@ const Profile = () => {
                   <Tab label="Photo" value="2" />
                   <Tab label="Follower" value="4" />
                   <Tab label="Following" value="5" />
+                  {user.role == "admin" && <Tab label="Admin" value="6" />}
                 </TabList>
               </Box>
               <TabPanel
@@ -677,6 +682,18 @@ const Profile = () => {
                   }}
                 >
                   <Following user={user} id={id} />
+                </Box>
+              </TabPanel>
+              <TabPanel sx={{ width: "100%" }} value="6">
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <Admin user={user} id={id} />
                 </Box>
               </TabPanel>
             </TabContext>
