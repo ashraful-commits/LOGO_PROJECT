@@ -247,7 +247,11 @@ const PostComponent = ({ user, id }) => {
   useEffect(() => {
     const db = getFirestore();
     const postsRef = collection(db, "Posts");
-    const q = query(postsRef, where("id", "==", id), orderBy("timestamp"));
+    const q = query(
+      postsRef,
+      where("id", "==", id), // Change the filter operation to "=="
+      orderBy("timestamp", "desc")
+    );
 
     try {
       setLoader(true);
@@ -260,13 +264,8 @@ const PostComponent = ({ user, id }) => {
         setPost(allPosts);
         setLoader(false); // Set to false when data is fetched
       });
-
-      return () => {
-        // Unsubscribe from the snapshot listener when the component unmounts
-        unsubscribe();
-      };
     } catch (error) {
-      console.error("Error fetching data: ", error);
+      console.error("Error fetching data from Firestore: ", error);
       setLoader(false); // Set loader to false in case of an error
     }
   }, [id]);

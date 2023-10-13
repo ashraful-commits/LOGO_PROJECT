@@ -17,16 +17,7 @@ import { Box, Typography } from "@mui/material";
 const Post = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastVisible, setLastVisible] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPosts, setTotalPost] = useState(1);
   const [posts, setPosts] = useState([]);
-  console.log(posts);
-  const totalPost = async () => {
-    const db = getFirestore();
-    const postsRef = collection(db, "Posts");
-    const querySnapshot = await getDocs(postsRef);
-    setTotalPost(querySnapshot.docs.length);
-  };
 
   const fetchMoreData = async () => {
     if (isLoading) {
@@ -35,51 +26,40 @@ const Post = () => {
 
     try {
       setIsLoading(true);
-
       const db = getFirestore();
       const postsRef = collection(db, "Posts");
-      let queryPosts;
-
-      if (lastVisible) {
-        queryPosts = query(
-          postsRef,
-          orderBy("timestamp", "desc"),
-          startAfter(lastVisible),
-          limit(3 * currentPage)
-        );
-      } else {
-        queryPosts = query(postsRef, orderBy("timestamp", "desc"), limit(3));
-      }
+      const queryPosts = query(
+        postsRef,
+        orderBy("timestamp"), // Correct the order
+        startAfter(lastVisible || null), // Pass null instead of 0
+        limit(2)
+      );
 
       const querySnapshot = await getDocs(queryPosts);
 
-      const allPosts = [];
+      if (!querySnapshot.empty) {
+        const allPosts = [];
 
-      for (const docData of querySnapshot.docs) {
-        const postData = { postId: docData.id, ...docData.data() };
-        const userId = postData.id;
-        const userDocRef = doc(db, "users", userId);
+        for (const docData of querySnapshot.docs) {
+          const postData = { postId: docData.id, ...docData.data() };
+          console.log(postData);
+          const userId = postData.id;
+          const userDocRef = doc(db, "users", userId);
+          const userSnapshot = await getDoc(userDocRef);
 
-        const userSnapshot = await getDoc(userDocRef);
-
-        console.log(userSnapshot);
-        if (userSnapshot.exists()) {
-          const userData = userSnapshot.data();
-          postData.user = userData;
-          allPosts.push(postData);
-        } else {
-          console.log("User does not exist for post with userId: ", userId);
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            console.log(userData);
+            postData.user = userData;
+            allPosts.push(postData);
+          } else {
+            console.log("User does not exist for post with userId: ", userId);
+          }
         }
-      }
 
-      if (allPosts.length > 0) {
         setPosts((prevPosts) => [...prevPosts, ...allPosts]);
         setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-
-        setIsLoading(false); // Change this to false
-        setCurrentPage((prevPage) => prevPage + 1);
       } else {
-        setIsLoading(false); // This is correct
         setLastVisible(null);
       }
     } catch (error) {
@@ -88,13 +68,12 @@ const Post = () => {
       setIsLoading(false);
     }
   };
-
   const handleScroll = () => {
     const scrollY = window.scrollY;
     const windowHeight = window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
 
-    if (scrollY + windowHeight >= documentHeight - 500) {
+    if (scrollY + windowHeight >= documentHeight - 200) {
       fetchMoreData();
     }
   };
@@ -110,7 +89,6 @@ const Post = () => {
   useEffect(() => {
     // Fetch initial data when the component mounts
     fetchMoreData();
-    totalPost();
   }, []); // This useEffect runs only once when the component mounts.
 
   return (
