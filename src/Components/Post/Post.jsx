@@ -13,128 +13,120 @@ import {
 import styled from "styled-components";
 import PostComponent from "../PostComponent/PostComponent";
 import { Box, Typography } from "@mui/material";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const Post = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [lastVisible, setLastVisible] = useState(null);
   const [posts, setPosts] = useState([]);
-
+  const [hasMore, setHasMore] = useState(true);
+  const [limit, setLimit] = useState(2);
+  const [lastPost, setLastPost] = useState(null);
+  const [isLoading, SetIsLoading] = useState(false);
   const fetchMoreData = async () => {
-    if (isLoading) {
-      return;
-    }
+    if (hasMore) {
+      try {
+        const db = getFirestore();
+        const q = query(
+          collection(db, "Posts"),
+          limit,
+          lastPost ? startAfter(lastPost) : null
+        );
 
-    try {
-      setIsLoading(true);
-      const db = getFirestore();
-      const postsRef = collection(db, "Posts");
-      const queryPosts = query(
-        postsRef,
-        orderBy("timestamp"), // Correct the order
-        startAfter(lastVisible || null), // Pass null instead of 0
-        limit(2)
-      );
+        const data = await getDocs(q);
+        const newPosts = data.docs;
 
-      const querySnapshot = await getDocs(queryPosts);
-
-      if (!querySnapshot.empty) {
-        const allPosts = [];
-
-        for (const docData of querySnapshot.docs) {
-          const postData = { postId: docData.id, ...docData.data() };
-          console.log(postData);
-          const userId = postData.id;
-          const userDocRef = doc(db, "users", userId);
-          const userSnapshot = await getDoc(userDocRef);
-
-          if (userSnapshot.exists()) {
-            const userData = userSnapshot.data();
-            console.log(userData);
-            postData.user = userData;
-            allPosts.push(postData);
-          } else {
-            console.log("User does not exist for post with userId: ", userId);
-          }
+        if (newPosts.length === 0) {
+          setHasMore(false);
+        } else {
+          setLastPost(newPosts[newPosts.length - 1]);
+          setPosts([...posts, ...newPosts]);
         }
-
-        setPosts((prevPosts) => [...prevPosts, ...allPosts]);
-        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      } else {
-        setLastVisible(null);
+      } catch (error) {
+        console.error("Error fetching more data:", error);
       }
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleScroll = () => {
-    const scrollY = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
-
-    if (scrollY + windowHeight >= documentHeight - 200) {
-      fetchMoreData();
+    } else {
+      setHasMore(false);
     }
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    const fetchData = async () => {
+      try {
+        const db = getFirestore();
+        const q = query(collection(db, "Posts"), limit);
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
+        const data = await getDocs(q);
+        const initialPosts = data.docs;
+
+        if (initialPosts.length > 0) {
+          setLastPost(initialPosts[initialPosts.length - 1]);
+          const allPosts = await Promise.all(
+            initialPosts.map(async (post) => {
+              const postData = { postId: post.id, ...post.data() };
+              const userId = postData.id;
+              const userDocRef = doc(db, "users", userId);
+              const userSnapshot = await getDoc(userDocRef);
+
+              if (userSnapshot.exists()) {
+                postData.user = userSnapshot.data();
+              } else {
+                console.log(
+                  "User does not exist for post with userId: ",
+                  userId
+                );
+              }
+              return postData;
+            })
+          );
+          setPosts(allPosts);
+        } else {
+          setHasMore(false);
+        }
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      }
     };
-  }, []);
 
-  useEffect(() => {
-    // Fetch initial data when the component mounts
-    fetchMoreData();
-  }, []); // This useEffect runs only once when the component mounts.
+    fetchData();
+  }, [limit]);
+  // This useEffect runs only once when the component mounts.
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <PostContainer>
-        {posts.length > 0 ? (
-          posts
-            .filter((item) => item.status === true)
-            .map((item, index) => (
-              <PostComponent
-                key={index}
-                desc={item.desc}
-                thumbnailUrl=""
-                videoUrl={item.video}
-                avatar={item.user.photoURL}
-                email={item.user.email}
-                name={item.user.name}
-                title={item.title}
-                id={item.id}
-                postId={item.postId}
-                Like={item.Like}
-                posts={posts}
-                messages={item.messages}
-              />
-            ))
-        ) : (
-          <Box>{!isLoading && <Typography>No post found</Typography>}</Box>
-        )}
-      </PostContainer>
-
-      {isLoading && (
-        <Box
-          sx={{
-            width: "100%",
-            height: "100px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+        <InfiniteScroll
+          dataLength={posts.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={
+            <img
+              style={{ width: "50px" }}
+              src="https://bestanimations.com/media/loading-gears/1575100148loading-gear-6.gif"
+            />
+          }
+          endMessage="No more post!"
         >
-          <img
-            style={{ width: "50px" }}
-            src="https://bestanimations.com/media/loading-gears/1575100148loading-gear-6.gif"
-          />
-        </Box>
-      )}
+          {posts.length > 0 &&
+            posts
+              .filter((item) => item.status === true)
+              .map((item, index) => (
+                <PostComponent
+                  key={index}
+                  desc={item.desc}
+                  thumbnailUrl=""
+                  videoUrl={item.video}
+                  avatar={item.user.photoURL}
+                  email={item.user.email}
+                  name={item.user.name}
+                  title={item.title}
+                  id={item.id}
+                  postId={item.postId}
+                  Like={item.Like}
+                  posts={posts}
+                  messages={item.messages}
+                />
+              ))}
+        </InfiniteScroll>
+      </PostContainer>
     </Box>
   );
 };
@@ -145,7 +137,12 @@ const PostContainer = styled.div`
   align-items: center;
   justify-content: start;
   gap: 52px;
-
+  .infinite-scroll-component {
+    text-align: center;
+    overflow: hidden !important;
+    min-height: 100vh;
+    max-height: fit-content;
+  }
   // Media query for smaller screens.
   @media (max-width: 768px) {
     width: 100%;
@@ -165,6 +162,9 @@ const PostContainer = styled.div`
     margin: 0 auto;
     .infinite-scroll-component {
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      row-gap: 30px;
     }
   }
 `;

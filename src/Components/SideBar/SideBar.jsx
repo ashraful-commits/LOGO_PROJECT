@@ -326,6 +326,7 @@ const Sidebar = styled.div`
       align-items: start;
       gap: 16px;
       margin-top: 16px;
+      overflow-x: hidden;
 
       scrollbar-width: thin;
       scrollbar-color: #888 #f1f1f1;

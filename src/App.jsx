@@ -9,7 +9,6 @@ function App() {
   return (
     <>
       <ToastContainer />
-      {/* Same as */}
 
       <RouterProvider router={PublicRoute} />
     </>

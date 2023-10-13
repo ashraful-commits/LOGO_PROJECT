@@ -147,7 +147,7 @@ const PostComponent = ({
         if (entry.isIntersecting) {
           // Video is in view, play it.
           setPlaying(true);
-          videoRef.current?.seekTo(0); // Reset video to the beginning.
+          videoRef?.current?.seekTo(0); // Reset video to the beginning.
         } else {
           // Video is out of view, pause it.
           setPlaying(false);
@@ -159,14 +159,14 @@ const PostComponent = ({
     const observer = new IntersectionObserver(handleIntersection, options);
 
     // Observe the video element when it's available.
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
+    if (videoRef?.current) {
+      observer.observe(videoRef?.current);
     }
 
     // Cleanup function to unobserve the video element.
     return () => {
-      if (videoRef.current) {
-        observer.unobserve(videoRef.current);
+      if (videoRef?.current) {
+        observer.unobserve(videoRef?.current);
       }
     };
   }, []);
@@ -750,6 +750,10 @@ const PostContainer = styled.div`
         }
       }
       .details {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        margin-left: 4px;
         p {
           color: #000;
           font-family: Poppins;
