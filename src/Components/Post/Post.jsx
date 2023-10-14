@@ -105,7 +105,12 @@ const Post = () => {
         >
           {posts.length > 0 &&
             posts
-              .filter((item) => item?.status === true)
+              .filter(
+                (item) =>
+                  item?.pending === false &&
+                  item?.decline === false &&
+                  item?.suspended?.status === false
+              )
               .map((item, index) => (
                 <PostComponent
                   key={index}

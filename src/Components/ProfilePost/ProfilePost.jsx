@@ -187,6 +187,14 @@ const PostComponent = ({ user, id, setTotalPost }) => {
         title: input.title,
         desc: input.desc,
         video: preview,
+        pending: "true",
+        suspended: {
+          status: false,
+          startTime: serverTimestamp(),
+          msg: "",
+          endTime: "",
+        },
+        decline: false,
       };
       try {
         await updateDoc(postRef, updatedData);
@@ -200,7 +208,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
         setOpen(false);
         toast.success("Post updated", {
           position: "bottom-center",
-          autoClose: 1000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -212,20 +220,10 @@ const PostComponent = ({ user, id, setTotalPost }) => {
         console.error("Error updating post: ", error);
       }
     } else {
-      const db = getFirestore(app);
-      const auth = getAuth(app);
-
-      await addDoc(collection(db, "Posts"), {
-        id: auth?.currentUser?.uid,
-        title: input.title,
-        desc: input.desc,
-        video: preview,
-        status: false,
-        timestamp: serverTimestamp(),
-      }).then(() => {
-        toast("Post Created!", {
+      if (user?.status?.user === "suspend") {
+        toast.warning(`${user?.status?.msg}`, {
           position: "bottom-center",
-          autoClose: 1000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -233,14 +231,45 @@ const PostComponent = ({ user, id, setTotalPost }) => {
           progress: undefined,
           theme: "dark",
         });
-        setOpen(false);
-        setInput({
-          title: "",
-          desc: "",
+      } else {
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        await addDoc(collection(db, "Posts"), {
+          id: auth?.currentUser?.uid,
+          title: input.title,
+          desc: input.desc,
+          video: preview,
+          status: false,
+          timestamp: serverTimestamp(),
+          pending: "true",
+          suspended: {
+            status: false,
+            startTime: serverTimestamp(),
+            msg: "",
+            endTime: "",
+          },
+          decline: false,
+        }).then(() => {
+          toast("Post Created!", {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setOpen(false);
+          setInput({
+            title: "",
+            desc: "",
+          });
+          setId(null);
+          setPreview(null);
         });
-        setId(null);
-        setPreview(null);
-      });
+      }
     }
   };
   const [posts, setPost] = useState([]);

@@ -32,41 +32,15 @@ const AllPosts = () => {
     title: "",
     desc: "",
   });
+  const [msg, setMsg] = useState("");
+  const [suspendUserId, setSuspendUserId] = useState(null);
+  const [time, setTime] = useState("");
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(null);
   const [open, setOpen] = useState(null);
   const [progress, setProgress] = useState(null);
   const [unsubscribe, setUnsubscribe] = useState(null);
-  const handleInput = async (e, id) => {
-    const db = getFirestore(app);
-    const newChecked = e.target.checked;
-    console.log(newChecked);
-
-    try {
-      const updateRef = doc(db, "Posts", id);
-      await updateDoc(updateRef, { status: newChecked });
-      const updatedPosts = Posts.map((item) => {
-        if (item.id === id) {
-          return { ...item, status: newChecked };
-        }
-        return item;
-      });
-      console.log(newChecked);
-      setPosts(updatedPosts);
-      toast.success("Permission updated!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [suspend, setSuspend] = useState(false);
   const handleInputChange = (e) => {
     setInput((prev) => ({
       ...prev,
@@ -167,6 +141,7 @@ const AllPosts = () => {
       }
     });
   };
+
   const columns = [
     {
       name: "Photo",
@@ -216,29 +191,41 @@ const AllPosts = () => {
         </p>
       ),
     },
-    {
-      name: "status",
-      selector: (row) => (
-        <input
-          onChange={(e) => handleInput(e, row.dataId)}
-          checked={row?.status ? true : false}
-          type="checkbox"
-        />
-      ),
-    },
+
     {
       name: "Action",
       selector: (row) => (
-        <Box sx={{ display: "flex", alignItems: "center", columnGap: "5px" }}>
-          <Button onClick={() => handleEdit(row.dataId)} variant="outlined">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            columnGap: "5px",
+
+            zIndex: 0,
+          }}
+        >
+          <button onClick={() => handleEdit(row.dataId)}>
             <FaEdit />
-          </Button>
-          <Button
-            onClick={() => handlePostDelete(row.dataId)}
-            variant="outlined"
-          >
+          </button>
+          <button onClick={() => handlePostDelete(row.dataId)}>
             <FaTrash />
-          </Button>
+          </button>
+          <button
+            color="primary"
+            onClick={() => handleApprove(row.dataId, row.pending)}
+          >
+            approve
+          </button>
+          <button
+            color="secondary"
+            onClick={() => handleDecline(row.dataId, row.pending, row.decline)}
+          >
+            Decline
+          </button>
+
+          <button onClick={() => handleSuspend(row.dataId, row.id)}>
+            Suspend
+          </button>
         </Box>
       ),
     },
@@ -272,26 +259,181 @@ const AllPosts = () => {
       theme: "dark",
     });
   };
+  const handleApprove = async (id, pending) => {
+    const db = getFirestore(app);
+
+    try {
+      const updateRef = doc(db, "Posts", id);
+      await updateDoc(updateRef, { pending: !pending });
+
+      setPosts(setPosts([...Posts.filter((item) => item.dataId !== id)]));
+      toast.success("Approved!", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDecline = async (id, pending, decline) => {
+    const db = getFirestore(app);
+    console.log(id, pending);
+    try {
+      const updateRef = doc(db, "Posts", id);
+      await updateDoc(updateRef, { pending: !pending, decline: !decline });
+
+      setPosts([...Posts.filter((item) => item.dataId !== id)]);
+      toast.warning("Rejected", {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSuspend = (id, uId) => {
+    setSuspend(!suspend);
+    setId(id);
+    setSuspendUserId(uId);
+  };
   //===========================
   useEffect(() => {
-    const fetchData = async () => {
-      const userData = await getAllData("Posts");
-      setPosts(userData);
-    };
-
     const setupRealTimeUpdates = () => {
+      let updateData = [];
       const unsubscribe = getAllData("Posts").then((data) => {
-        setPosts(data);
+        data.forEach((item) => {
+          console.log(item);
+          if (item.pending) {
+            updateData.push(item);
+          }
+        });
       });
+
+      setPosts(updateData);
       setUnsubscribe(unsubscribe);
     };
 
-    fetchData();
     setupRealTimeUpdates();
-  }, [Posts]);
+  }, []);
+  const handleSubmitSuspend = async (e) => {
+    e.preventDefault();
+    const db = getFirestore(app);
+    console.log(Id, msg, time);
+    try {
+      const updateRef = doc(db, "Posts", Id);
+      const userRef = doc(db, "users", suspendUserId);
+      await updateDoc(updateRef, {
+        pending: false,
+        suspended: { status: true, endTime: time, msg: msg },
+      });
+      await updateDoc(userRef, {
+        status: {
+          user: "suspend",
+          msg: `${msg} until ${time}`,
+        },
+      });
 
+      setPosts([...Posts.filter((item) => item.dataId !== Id)]);
+      toast.warning(`You are suspended until ${time}`, {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setSuspend(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
-    <div>
+    <div style={{ position: "relative" }}>
+      {suspend && (
+        <div
+          style={{
+            position: "absolute",
+            top: "-150%",
+            right: "25%",
+            width: "300px",
+            height: "300px",
+            boxShadow: " 0 0 10px",
+            borderRadius: "10px",
+            zIndex: 999999,
+            backgroundColor: "white",
+          }}
+        >
+          <form
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              padding: "10px",
+              gap: "10px",
+            }}
+            onSubmit={handleSubmitSuspend}
+          >
+            <h4
+              style={{
+                color: "gray",
+              }}
+            >
+              Suspend message
+            </h4>
+            <input
+              style={{
+                height: "40px",
+                border: "none",
+                borderRadius: "50px",
+                padding: "0 10px",
+              }}
+              type="date"
+              onChange={(e) => setTime(e.target.value)}
+              name=""
+              id=""
+            />
+            <input
+              style={{
+                height: "40px",
+                border: "none",
+                borderRadius: "50px",
+                padding: "0 10px",
+              }}
+              onChange={(e) => setMsg(e.target.value)}
+              type="text"
+              placeholder="Message"
+              name=""
+              id=""
+            />
+            <button
+              type="submit"
+              style={{
+                height: "40px",
+                border: "none",
+                borderRadius: "50px",
+                padding: "0 10px",
+              }}
+            >
+              suspend
+            </button>
+          </form>
+        </div>
+      )}
       <Modal
         open={open}
         onClose={handleClose}

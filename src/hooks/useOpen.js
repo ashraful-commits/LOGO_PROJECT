@@ -2,8 +2,10 @@ import { useState } from "react";
 
 const useOpen = () => {
     const [open,setOpen] = useState(false)
-    
-  return {open,setOpen}
+    const handleOpen =()=>{
+      setOpen(!open)
+    }
+  return {open,setOpen,handleOpen}
 };
 
 export default useOpen;

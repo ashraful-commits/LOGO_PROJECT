@@ -73,6 +73,10 @@ const Register = ({ setOpen, setRedirect }) => {
           following: [],
           posts: [],
           role: "user",
+          status: {
+            user: "verified",
+            msg: "",
+          },
           timestamp: serverTimestamp(),
         });
         setOpen(false);

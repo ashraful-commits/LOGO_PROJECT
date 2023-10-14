@@ -28,8 +28,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
     email: "",
     password: "",
   });
-  // Handle changes in the registration form
-  // Handle changes in the login form
+
   const handleChangeLogin = (e) => {
     const { name, value } = e.target;
     setLoginForm({ ...loginForm, [name]: value });
@@ -75,6 +74,10 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
             followers: [],
             following: [],
             posts: [],
+            status: {
+              user: "verified",
+              msg: "",
+            },
             role: "user",
             timestamp: serverTimestamp(),
           }).then(() => {
@@ -131,6 +134,10 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
           followers: [],
           following: [],
           posts: [],
+          status: {
+            user: "verified",
+            msg: "",
+          },
           role: "user",
           timestamp: serverTimestamp(),
         }).then(() => {
