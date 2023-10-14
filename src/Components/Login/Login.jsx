@@ -3,15 +3,24 @@ import {
   FacebookAuthProvider,
   GoogleAuthProvider,
   getAuth,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillGoogleCircle, AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { app } from "../../firebase.confige";
-import { Firestore, doc, getFirestore, setDoc } from "firebase/firestore";
+import {
+  Firestore,
+  doc,
+  getDoc,
+  getFirestore,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ setOpen, setRedirect, setUser }) => {
   // State for login and registration form data
@@ -52,36 +61,36 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
         );
         const user = userCredential.user;
         const db = getFirestore(app);
-        await setDoc(doc(db, "users", `${user.uid}`), {
-          id: user.uid,
-          name: user.displayName,
-          email: user.email,
-          photoURL: user.phoneURL,
-          coverPhotoUrl: "",
-          followers: [],
-          following: [],
-          posts: [],
-          role: "user",
-        });
-        setUser(user);
-        // Display a success message using a toast notification
-        toast("Login successful!", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-
-        // Close the login modal, clear the form, and store user data
-        setOpen(false);
-        setLoginForm({
-          email: "",
-          password: "",
-        });
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.data()) {
+          navigate("/");
+        } else {
+          await setDoc(doc(db, "users", `${user?.uid}`), {
+            id: user?.uid,
+            name: user?.displayName,
+            email: user?.email,
+            photoURL: user?.phoneURL,
+            coverPhotoUrl: "",
+            followers: [],
+            following: [],
+            posts: [],
+            role: "user",
+            timestamp: serverTimestamp(),
+          }).then(() => {
+            setOpen(false);
+            toast.warning("Login successful!", {
+              position: "bottom-center",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+          });
+        }
       } catch (error) {
         // Handle login errors
         if (error.code === "auth/invalid-login-credentials") {
@@ -108,32 +117,37 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
       const db = getFirestore(app);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log(user);
-      await setDoc(doc(db, "users", `${user?.uid}`), {
-        id: user.uid,
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        coverPhotoUrl: "",
-        followers: [],
-        following: [],
-        posts: [],
-        role: "user",
-      });
-
-      toast("Login successful!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-      setOpen(false);
-      // Store user data
-      setUser(user);
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.data()) {
+        navigate("/");
+      } else {
+        await setDoc(doc(db, "users", `${user?.uid}`), {
+          id: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          coverPhotoUrl: "",
+          followers: [],
+          following: [],
+          posts: [],
+          role: "user",
+          timestamp: serverTimestamp(),
+        }).then(() => {
+          setOpen(false);
+          setUser(user);
+          toast("Login successful!", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        });
+      }
     } catch (error) {
       // Handle Google sign-in errors
       const errorMessage = error.message;
@@ -192,6 +206,37 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
       console.log(errorMessage);
     }
   };
+  const navigate = useNavigate();
+  const auth = getAuth(app);
+  useEffect(() => {
+    // Listen for changes in authentication state
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        toast("Login successful!", {
+          position: "bottom-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        setLoginForm({
+          email: "",
+          password: "",
+        });
+        setOpen(false);
+        setUser(user);
+      } else {
+        // No user is signed in.
+        setUser(null);
+        navigate("/");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [auth, setUser, setOpen, navigate]);
   return (
     <LoginContainer className="container">
       <div className="login_container">

@@ -188,11 +188,33 @@ const AllPosts = () => {
     },
     {
       name: "title",
-      selector: (row) => row.title,
+      selector: (row) => (
+        <p
+          style={{
+            width: " 200px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {row.title}
+        </p>
+      ),
     },
     {
       name: "Desc",
-      selector: (row) => row.desc,
+      selector: (row) => (
+        <p
+          style={{
+            width: " 200px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {row.desc}
+        </p>
+      ),
     },
     {
       name: "status",

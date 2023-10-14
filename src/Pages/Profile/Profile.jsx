@@ -43,6 +43,7 @@ import Following from "../../Components/Following/Following";
 import Followers from "../../Components/Followers/Followers";
 import Admin from "../../Components/Admin/Admin";
 import useOpen from "../../hooks/useOpen";
+
 const Profile = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -56,6 +57,9 @@ const Profile = () => {
     email: "",
     password: "",
   });
+
+  const [totalPost, setTotalPost] = useState(0);
+  const [totalPhoto, setTotalPhoto] = useState(0);
   const { setOpen } = useOpen();
   // Simulate loading for 2 seconds
   useEffect(() => {
@@ -65,6 +69,7 @@ const Profile = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
   useEffect(() => {
     const auth = getAuth(app);
     if (!auth.currentUser) {
@@ -444,7 +449,6 @@ const Profile = () => {
                 </Box>
               )}
             </Box>
-
             <UserName>{user?.name}</UserName>
             <ProfileInfo>
               <List
@@ -479,7 +483,9 @@ const Profile = () => {
                       flexDirection: "column",
                       alignItems: "center",
                     }}
-                    secondary={""}
+                    secondary={
+                      user?.followers?.length + user?.following?.length
+                    }
                   />
                 </ListItem>
                 <ListItem
@@ -505,7 +511,7 @@ const Profile = () => {
                       alignItems: "center",
                     }}
                     primary="Photos"
-                    secondary={`${user?.photos}`}
+                    secondary={totalPhoto}
                   />
                 </ListItem>
                 <ListItem
@@ -531,7 +537,7 @@ const Profile = () => {
                       alignItems: "center",
                     }}
                     primary="Posts"
-                    secondary={`${user?.posts}`}
+                    secondary={totalPost}
                   />
                 </ListItem>
               </List>
@@ -654,13 +660,17 @@ const Profile = () => {
                         rowGap: "50px",
                       }}
                     >
-                      <PostComponent user={user} id={id} />
+                      <PostComponent
+                        setTotalPost={setTotalPost}
+                        user={user}
+                        id={id}
+                      />
                     </Box>
                   </Post>
                 </Box>
               </TabPanel>
               <TabPanel sx={{ width: "100%" }} value="2">
-                <StandardImageList />
+                <StandardImageList setTotalPhoto={setTotalPhoto} />
               </TabPanel>
 
               <TabPanel sx={{ width: "100%" }} value="4">

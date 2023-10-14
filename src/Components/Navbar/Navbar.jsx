@@ -20,7 +20,7 @@ import avtar5 from "../../../public/avatar5.png";
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
-import {} from "firebase/firestore";
+import { collection, getDocs, getFirestore, query } from "firebase/firestore";
 import {
   Drawer,
   Box,
@@ -36,6 +36,7 @@ import {
   TextField,
   Button,
   Tab,
+  Avatar,
 } from "@mui/material";
 
 // Import Firebase Authentication functions and configuration
@@ -53,6 +54,30 @@ import useOpen from "../../hooks/useOpen";
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
 
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(null);
+  const auth = getAuth(app);
+  useEffect(() => {
+    const getAllUser = async () => {
+      const db = getFirestore(app);
+
+      const q = query(collection(db, "users"));
+      setLoading(true);
+      try {
+        const querySnapshot = await getDocs(q);
+        const usersData = [];
+
+        querySnapshot.forEach((doc) => {
+          usersData.push(doc.data());
+        });
+        setLoading(false);
+        setUsers(usersData);
+      } catch (error) {
+        console.error("Error getting users:", error);
+      }
+    };
+    getAllUser();
+  }, []);
   // Function to toggle the menu
   const toggleDrawer = () => {
     setShowMenu(!showMenu);
@@ -105,27 +130,9 @@ const Navbar = () => {
       });
   };
 
-  const [user, setUser] = useState(null);
-  const auth = getAuth(app);
-
-  const navigate = useNavigate();
-  useEffect(() => {
-    // Listen for changes in authentication state
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in.
-        setUser(user);
-      } else {
-        // No user is signed in.
-        setUser(null);
-        navigate("/");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [auth, user, navigate]);
   const [search, setSearch] = useState("");
   const [redirect, setRedirect] = useState("Login");
+  const [seeMore, setSeMore] = useState(false);
   return (
     <>
       {loading ? (
@@ -184,7 +191,7 @@ const Navbar = () => {
             <Box
               sx={{
                 width: "300px",
-                padding: "30px 30px",
+                padding: "30px 10px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
@@ -227,69 +234,63 @@ const Navbar = () => {
               <Typography fontSize={18} fontWeight={600}>
                 Popular Creators
               </Typography>
-              <List>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar1} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar2} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar3} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar4} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={avtar5} alt="" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Makenna Rosser"
-                      secondary="@rosser_makenna"
-                    />
-                  </ListItemButton>
-                </ListItem>
+              <List sx={{ height: "350px", overflow: "auto" }}>
+                {users.length > 0 ? (
+                  users
+                    ?.slice(0, seeMore ? users.length : 5)
+                    .map((item, index) => {
+                      return (
+                        <Link
+                          style={{ width: "270px" }}
+                          key={index}
+                          to={`/${item.id}`}
+                        >
+                          <ListItem>
+                            <ListItemButton>
+                              <ListItemIcon>
+                                <Avatar>
+                                  {item.photoURL ? (
+                                    <img
+                                      style={{ width: "100%" }}
+                                      src={item?.photoURL}
+                                      alt=""
+                                    />
+                                  ) : (
+                                    <img
+                                      style={{ width: "100%" }}
+                                      src="https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg"
+                                      alt=""
+                                    />
+                                  )}
+                                </Avatar>
+                              </ListItemIcon>
+                              <ListItemText
+                                sx={{
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  maxWidth: "100%",
+                                }}
+                                primary={item?.name}
+                                secondary={item?.email}
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        </Link>
+                      );
+                    })
+                ) : (
+                  <p>No user</p>
+                )}
               </List>
+              <Typography onClick={() => setSeMore(!seeMore)}>
+                {seeMore ? "See Less" : "See More"}{" "}
+              </Typography>
             </Box>
           </Drawer>
 
           <div className="container">
             <div className="left">
-              {/* small menu  */}
               <div className="small-menu">
                 <button onClick={() => setShowMenu(!showMenu)}>
                   <AiOutlineMenu />
@@ -300,7 +301,6 @@ const Navbar = () => {
                   <img src={logo} alt="" />
                 </Link>
               </div>
-              {/* search field  */}
             </div>
 
             <div className="right">

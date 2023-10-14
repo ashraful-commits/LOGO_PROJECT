@@ -23,12 +23,14 @@ const Following = ({ user, id }) => {
       setFriends(docSnap.data());
       if (docSnap.exists()) {
         let user = [];
+
         const userdata = docSnap.data();
         userdata.following.forEach(async (item) => {
           const followersRef = doc(db, "users", item);
           const followSnp = await getDoc(followersRef);
           user.push(followSnp.data());
         });
+
         setFriends((prev) => ({ ...prev, following: user }));
       } else {
         // Return null if the user document does not exist

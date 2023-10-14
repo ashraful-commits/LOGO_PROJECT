@@ -56,6 +56,7 @@ const PostComponent = ({
   Like,
   posts,
   messages,
+  setTotalPost,
 }) => {
   const [playing, setPlaying] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState({});
@@ -195,7 +196,7 @@ const PostComponent = ({
         await updateDoc(followerRef, {
           followers: arrayUnion(auth?.currentUser?.uid),
         }).then(() => {
-          toast("Following!", {
+          toast.success("Following!", {
             position: "bottom-center",
             autoClose: 1000,
             hideProgressBar: false,
@@ -215,7 +216,9 @@ const PostComponent = ({
         console.error("Error updating follower and following arrays:", error);
       }
     } else {
-      toast("Please Login!", {
+      setOpen(true);
+
+      toast.warning("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -259,7 +262,7 @@ const PostComponent = ({
           { following: updatedFollowingArray },
           { merge: true }
         ).then(() => {
-          toast("Unfollow!", {
+          toast.warning("Unfollow!", {
             position: "bottom-center",
             autoClose: 1000,
             hideProgressBar: false,
@@ -276,7 +279,9 @@ const PostComponent = ({
         console.error("Error updating follower and following arrays:", error);
       }
     } else {
-      toast("Please Login!", {
+      setOpen(true);
+
+      toast.warning("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -291,13 +296,13 @@ const PostComponent = ({
   const [likeCount, setLikeCount] = useState(Like ? Like?.length : 0);
   const [msgCount, setMsgCount] = useState(messages ? messages?.length : 0);
   const [totalChat, setTotalChat] = useState(messages ? messages : []);
+
   const [isLiked, setIsLiked] = useState(false);
   useEffect(() => {
     setIsLiked(Like?.some((item) => item === loggedInUser?.id) ? true : false);
   }, [loggedInUser?.id, Like]);
 
   const handleLike = async (postId) => {
-    console.log(loggedInUser?.id);
     const postDataRef = doc(db, "Posts", postId);
     if (loggedInUser?.id) {
       try {
@@ -338,7 +343,9 @@ const PostComponent = ({
         console.error("Error updating Like array:", error);
       }
     } else {
-      toast.error("Please Login!", {
+      setOpen(true);
+
+      toast.warning("Please Login!", {
         position: "bottom-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -357,7 +364,7 @@ const PostComponent = ({
 
   const handleMessage = (e) => {
     e.preventDefault();
-    console.log(postUid, message);
+
     const addMessageToPost = async (postUid, userId, message) => {
       const postRef = doc(db, "Posts", postUid);
       if (userId) {
@@ -380,7 +387,9 @@ const PostComponent = ({
           console.error("Error adding message to post:", error);
         }
       } else {
-        toast.error("Please Login!", {
+        setOpen(true);
+
+        toast.warning("Please Login!", {
           position: "bottom-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -587,21 +596,22 @@ const PostComponent = ({
                     overflowY: "auto", // Enable vertical scrollbar
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "space-between",
+                    bgcolor: "#e0e4ff",
                     alignItems: "start",
-                    padding: "5px 0 0 0",
-                    margin: "20px 0 0 0",
-                    gap: "10px",
-                    // Customize the scrollbar styles for WebKit-based browsers
+                    padding: "5px 5px 0 5px",
+                    margin: "25px 10px 0 10px",
+                    gap: "1px",
+                    borderRadius: "10px",
+
                     "&::-webkit-scrollbar": {
-                      width: "8px", // Adjust the scrollbar width
+                      width: "8px",
                     },
                     "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: "#fefefe", // Color of the scrollbar thumb
-                      borderRadius: "4px", // Rounded corners
+                      backgroundColor: "#fefefe",
+                      borderRadius: "4px",
                     },
                     "&::-webkit-scrollbar-thumb:hover": {
-                      backgroundColor: "#555", // Color when hovered
+                      backgroundColor: "#555",
                     },
                   }}
                 >
@@ -610,39 +620,50 @@ const PostComponent = ({
                       <ListItem
                         sx={{
                           display: "flex",
+                          marginBottom: "10px",
+                          gap: "10px",
                           flexDirection:
-                            loggedInUser?.id == item?.id
+                            loggedInUser?.id === item?.id
                               ? "row-reverse"
                               : "row",
                           alignItems: "center",
+
                           bgcolor:
-                            loggedInUser?.id == item?.id ? "#eee" : "#c6f7c9", // Apply different background colors
+                            loggedInUser?.id === item?.id
+                              ? "#fae4e4"
+                              : "#c6f7c9",
                           width: "auto",
-                          justifyContent:
-                            loggedInUser?.id == item?.id
+                          alignSelf:
+                            loggedInUser?.id === item?.id
                               ? "flex-end"
-                              : "flex-start", // Align to right for user, left for others
+                              : "flex-start",
+                          borderRadius: "10px",
                         }}
                         key={index}
-                        alignItems="flex-start"
                       >
-                        <ListItemAvatar>
-                          <Avatar
-                            sx={{ width: "20px", height: "20px" }}
-                          ></Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary=""
-                          secondary={
-                            <Typography
-                              component="span"
-                              variant="body2"
-                              color="gray"
-                            >
-                              {item.text}
-                            </Typography>
-                          }
-                        />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "flex-end",
+                          }}
+                        >
+                          <ListItemAvatar>
+                            <Avatar sx={{ width: "20px", height: "20px" }} />
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={item.username} // Assuming you have a 'username' property
+                            secondary={
+                              <Typography
+                                component="span"
+                                variant="body2"
+                                color="textSecondary"
+                              >
+                                {item.text}
+                              </Typography>
+                            }
+                          />
+                        </Box>
                       </ListItem>
                     );
                   })}

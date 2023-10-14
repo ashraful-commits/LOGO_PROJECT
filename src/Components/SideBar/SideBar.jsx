@@ -325,6 +325,7 @@ const Sidebar = styled.div`
       justify-content: start;
       align-items: start;
       gap: 16px;
+
       margin-top: 16px;
       overflow-x: hidden;
 
@@ -353,6 +354,8 @@ const Sidebar = styled.div`
       }
 
       .popular-creator {
+        width: 100%;
+
         cursor: pointer;
         display: flex;
         gap: 7px;
@@ -367,7 +370,9 @@ const Sidebar = styled.div`
           width: 100%;
           height: 100%;
           align-items: center;
+          padding: "0 10px";
           justify-content: start;
+          padding-top: 0 !important;
           .avatar {
             width: 40px;
             height: 40px;
@@ -618,7 +623,7 @@ const Sidebar = styled.div`
       flex-direction: column;
       justify-content: start;
       align-items: start;
-      margin-top: 42px;
+      /* margin-top: 42px; */
       h4 {
         color: #000;
         font-family: Poppins;
@@ -634,7 +639,7 @@ const Sidebar = styled.div`
         align-items: start;
         .popular-creator {
           width: 100%;
-
+          height: 100%;
           display: flex;
           align-items: center;
           justify-content: start;

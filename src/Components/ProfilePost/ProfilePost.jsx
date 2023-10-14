@@ -57,7 +57,7 @@ import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { Delete, Edit } from "@mui/icons-material";
 import useOpen from "../../hooks/useOpen";
 // Define the PostComponent functional component
-const PostComponent = ({ user, id }) => {
+const PostComponent = ({ user, id, setTotalPost }) => {
   // State variables
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef(null);
@@ -262,13 +262,14 @@ const PostComponent = ({ user, id }) => {
         });
 
         setPost(allPosts);
+        setTotalPost(allPosts.length);
         setLoader(false); // Set to false when data is fetched
       });
     } catch (error) {
       console.error("Error fetching data from Firestore: ", error);
       setLoader(false); // Set loader to false in case of an error
     }
-  }, [id]);
+  }, [id, setTotalPost]);
 
   const handleEdit = (id) => {
     setId(id);

@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 
-export default function StandardImageList() {
+export default function StandardImageList({ setTotalPhoto }) {
   const [imageList, setImagesList] = useState([]);
   const { id } = useParams();
   useEffect(() => {
@@ -19,20 +19,22 @@ export default function StandardImageList() {
       const auth = getAuth(app);
       const listRef = ref(storage, "profilePhotos/" + id);
 
-      // Fetch the first page of 100.
+      let totalPhoto = 0;
+      let totalImg = [];
       const firstPage = await list(listRef, { maxResults: 10 });
       firstPage.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
-          console.log(url);
           if (imageList.length < 10) {
-            setImagesList((prev) => [...prev, url]);
+            totalImg.push(url);
+            totalPhoto++;
           }
+          setImagesList(totalImg);
+          setTotalPhoto(totalPhoto);
         });
       });
-      console.log(firstPage.items);
     }
     pageTokenExample();
-  }, []);
+  }, [id]);
   return (
     <>
       {imageList.length > 0 ? (

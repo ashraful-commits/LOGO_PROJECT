@@ -3,7 +3,7 @@ import {
   getAuth,
   updateProfile,
 } from "firebase/auth";
-import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { doc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
@@ -73,6 +73,7 @@ const Register = ({ setOpen, setRedirect }) => {
           following: [],
           posts: [],
           role: "user",
+          timestamp: serverTimestamp(),
         });
         setOpen(false);
         // Display a success message using a toast notification

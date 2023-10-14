@@ -4,15 +4,13 @@ import {
   getDocs,
   getFirestore,
   query,
-  orderBy,
-  limit,
   getDoc,
   doc,
   startAfter,
 } from "firebase/firestore";
 import styled from "styled-components";
 import PostComponent from "../PostComponent/PostComponent";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Post = () => {
@@ -20,7 +18,7 @@ const Post = () => {
   const [hasMore, setHasMore] = useState(true);
   const [limit, setLimit] = useState(2);
   const [lastPost, setLastPost] = useState(null);
-  const [isLoading, SetIsLoading] = useState(false);
+
   const fetchMoreData = async () => {
     if (hasMore) {
       try {
@@ -103,26 +101,26 @@ const Post = () => {
               src="https://bestanimations.com/media/loading-gears/1575100148loading-gear-6.gif"
             />
           }
-          endMessage="No more post!"
+          endMessage="No post!"
         >
           {posts.length > 0 &&
             posts
-              .filter((item) => item.status === true)
+              .filter((item) => item?.status === true)
               .map((item, index) => (
                 <PostComponent
                   key={index}
                   desc={item.desc}
                   thumbnailUrl=""
                   videoUrl={item.video}
-                  avatar={item.user.photoURL}
-                  email={item.user.email}
-                  name={item.user.name}
+                  avatar={item?.user?.photoURL}
+                  email={item?.user?.email}
+                  name={item?.user?.name}
                   title={item.title}
-                  id={item.id}
-                  postId={item.postId}
-                  Like={item.Like}
+                  id={item?.id}
+                  postId={item?.postId}
+                  Like={item?.Like}
                   posts={posts}
-                  messages={item.messages}
+                  messages={item?.messages}
                 />
               ))}
         </InfiniteScroll>
