@@ -9,6 +9,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { app } from "../../firebase.confige";
+import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
 const Register = ({ setOpen, setRedirect }) => {
   const [signUpForm, setSignUpForm] = useState({
@@ -16,32 +17,23 @@ const Register = ({ setOpen, setRedirect }) => {
     email: "",
     password: "",
   });
-  //=====================handle onchage
+  //=====================handle onchange
   const handleRegisterForm = (e) => {
     setSignUpForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
-  // Handle registration form submission
+  //================ Handle registration form submission
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
     const auth = getAuth(app);
     const email = signUpForm.email;
     const password = signUpForm.password;
 
-    // Check if password and confirm password match
+    //==================== Check if password and confirm password match
     if (!signUpForm.name || !signUpForm.email || !signUpForm.password) {
-      toast.error("All Files are required!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc("All Files are required!", "error");
     } else {
       try {
         const userCredential = await createUserWithEmailAndPassword(
@@ -80,7 +72,7 @@ const Register = ({ setOpen, setRedirect }) => {
           timestamp: serverTimestamp(),
         });
         setOpen(false);
-        // Display a success message using a toast notification
+        //============== Display a success message using a toast notification
         toast.success("Registration successful!", {
           position: "bottom-center",
           autoClose: 1000,
@@ -92,18 +84,9 @@ const Register = ({ setOpen, setRedirect }) => {
           theme: "dark",
         });
       } catch (error) {
-        // Handle registration errors
+        //============== Handle registration errors
         if (error.code === "auth/email-already-in-use") {
-          toast.success("Email already exists.", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
+          ToastifyFunc("Email already exists.", "error");
         }
       }
     }
@@ -175,6 +158,7 @@ const Register = ({ setOpen, setRedirect }) => {
     </LoginContainer>
   );
 };
+//===================styled
 const LoginContainer = styled.div`
   width: 380px;
   height: auto;

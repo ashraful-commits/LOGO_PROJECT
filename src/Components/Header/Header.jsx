@@ -1,8 +1,8 @@
-// Import the Navbar component and styled-components library for styling
+//======== Import the Navbar component and styled-components library for styling
 import Navbar from "../Navbar/Navbar";
 import styled from "styled-components";
 
-// Define the Header component
+//========== Define the Header component
 const Header = () => {
   return (
     <HeaderContainer>

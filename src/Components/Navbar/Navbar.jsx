@@ -1,22 +1,10 @@
 // Import necessary dependencies and components
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
-import Header from "../Header/Header";
+
 import styled from "styled-components";
-import {
-  AiFillFacebook,
-  AiFillGoogleCircle,
-  AiOutlineClose,
-  AiOutlineLogout,
-  AiOutlineMenu,
-} from "react-icons/ai";
+import { AiOutlineClose, AiOutlineLogout, AiOutlineMenu } from "react-icons/ai";
 import { CiSearch } from "react-icons/ci";
 import logo from "../../../public/LOGO.png";
-import avtar1 from "../../../public/avatar1.png";
-import avtar2 from "../../../public/avatar2.png";
-import avtar3 from "../../../public/avatar3.png";
-import avtar4 from "../../../public/avatar4.png";
-import avtar5 from "../../../public/avatar5.png";
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
 import play from "../../../public/playIcon.png";
@@ -39,23 +27,29 @@ import {
   Avatar,
 } from "@mui/material";
 
-// Import Firebase Authentication functions and configuration
-import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+//======================== Import Firebase Authentication functions and configuration
+import { getAuth, signOut } from "firebase/auth";
 import { app } from "../../firebase.confige"; // Ensure that your Firebase configuration is correctly set up
-import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { GoogleAuthProvider } from "firebase/auth";
 
 import Login from "../Login/Login";
 import Register from "../Register/Register";
 import useOpen from "../../hooks/useOpen";
+import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
 // Define the Navbar component
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
-
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [redirect, setRedirect] = useState("Login");
+  const [seeMore, setSeMore] = useState(false);
+  //======================= use hook
+  const { open, setOpen } = useOpen();
+  //====================get auth
   const auth = getAuth(app);
   useEffect(() => {
     const getAllUser = async () => {
@@ -78,61 +72,39 @@ const Navbar = () => {
     };
     getAllUser();
   }, []);
-  // Function to toggle the menu
+  //=============== Function to toggle the menu
   const toggleDrawer = () => {
     setShowMenu(!showMenu);
   };
-
-  const [loading, setLoading] = useState(true);
+  //================ loading time out
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust the delay as needed
+    }, 2000);
+    //===================== Adjust the delay as needed
     return () => clearTimeout(timer);
   }, []);
 
-  const { open, setOpen } = useOpen();
+  //============= handle modal close
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  // Handle user logout
+  //=============== Handle user logout
   const handleLogout = () => {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
         localStorage.clear();
         setUser(null);
-        toast("Logout successful!", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        ToastifyFunc("Logout successful!", "success");
         setUser(null);
       })
       .catch((error) => {
         const message = error.message;
-        toast(message, {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        ToastifyFunc(message, "success");
       });
   };
 
-  const [search, setSearch] = useState("");
-  const [redirect, setRedirect] = useState("Login");
-  const [seeMore, setSeMore] = useState(false);
   return (
     <>
       {loading ? (

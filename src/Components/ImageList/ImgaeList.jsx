@@ -1,4 +1,3 @@
-import * as React from "react";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import { getStorage, ref, list, getDownloadURL } from "firebase/storage";
@@ -10,18 +9,21 @@ import { useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 
 export default function StandardImageList({ setTotalPhoto }) {
+  //=============== State to store the list of images
   const [imageList, setImagesList] = useState([]);
+  //============ Get user ID from route parameters
   const { id } = useParams();
   useEffect(() => {
     async function pageTokenExample() {
-      // Create a reference under which you want to list
+      //============== Create a reference under which you want to list
       const storage = getStorage(app);
       const auth = getAuth(app);
       const listRef = ref(storage, "profilePhotos/" + id);
-
       let totalPhoto = 0;
       let totalImg = [];
+      //============== List the images with pagination
       const firstPage = await list(listRef, { maxResults: 10 });
+      //============ Get the download URL of each image
       firstPage.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
           if (imageList.length < 10) {

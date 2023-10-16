@@ -18,13 +18,15 @@ const Following = ({ user, id }) => {
   useEffect(() => {
     const db = getFirestore(app);
     const fetchUserDataById = async () => {
-      const docRef = doc(db, "users", id); // Assuming "users" is the collection name
+      //======================== Get the user document by ID
+      const docRef = doc(db, "users", id);
       const docSnap = await getDoc(docRef);
       setFriends(docSnap.data());
       if (docSnap.exists()) {
         let user = [];
 
         const userdata = docSnap.data();
+        //=============== Fetch and set the followers' data
         userdata.following.forEach(async (item) => {
           const followersRef = doc(db, "users", item);
           const followSnp = await getDoc(followersRef);
@@ -33,7 +35,7 @@ const Following = ({ user, id }) => {
 
         setFriends((prev) => ({ ...prev, following: user }));
       } else {
-        // Return null if the user document does not exist
+        //=================== Return null if the user document does not exist
         return null;
       }
     };

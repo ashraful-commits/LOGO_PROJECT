@@ -14,11 +14,12 @@ import { Box } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Post = () => {
+  //====================al state
   const [posts, setPosts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [limit, setLimit] = useState(2);
   const [lastPost, setLastPost] = useState(null);
-
+  //====================fetch more data
   const fetchMoreData = async () => {
     if (hasMore) {
       try {
@@ -45,7 +46,7 @@ const Post = () => {
       setHasMore(false);
     }
   };
-
+  //=====================fetch all post data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -83,10 +84,8 @@ const Post = () => {
         console.error("Error fetching initial data:", error);
       }
     };
-
     fetchData();
   }, [limit]);
-  // This useEffect runs only once when the component mounts.
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -133,7 +132,7 @@ const Post = () => {
     </Box>
   );
 };
-// Styled component for the container of 'Post' components.
+
 const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -172,5 +171,5 @@ const PostContainer = styled.div`
   }
 `;
 
-// Export the 'Post' component as the default export.
+//======================= Export the 'Post' component as the default export.
 export default Post;

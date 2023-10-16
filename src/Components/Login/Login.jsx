@@ -7,13 +7,12 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillGoogleCircle, AiOutlineClose } from "react-icons/ai";
-import { toast } from "react-toastify";
+
 import styled from "styled-components";
 import { app } from "../../firebase.confige";
 import {
-  Firestore,
   doc,
   getDoc,
   getFirestore,
@@ -21,36 +20,29 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
 const Login = ({ setOpen, setRedirect, setUser }) => {
-  // State for login and registration form data
+  //=========== State for login and registration form data
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
   });
-
+  const navigate = useNavigate();
+  const auth = getAuth(app);
   const handleChangeLogin = (e) => {
     const { name, value } = e.target;
     setLoginForm({ ...loginForm, [name]: value });
   };
 
-  // Handle login form submission
+  //============== Handle login form submission
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
     const auth = getAuth(app);
     const email = loginForm.email;
     const password = loginForm.password;
     if (!loginForm.email || !loginForm.password) {
-      toast.error("All Fields are required!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc("All Fields are required!", "error");
     } else {
       try {
         const userCredential = await signInWithEmailAndPassword(
@@ -82,36 +74,18 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
             timestamp: serverTimestamp(),
           }).then(() => {
             setOpen(false);
-            toast.warning("Login successful!", {
-              position: "bottom-center",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
+            ToastifyFunc("Login successful!", "success");
           });
         }
       } catch (error) {
-        // Handle login errors
+        //=================== Handle login errors
         if (error.code === "auth/invalid-login-credentials") {
-          toast("Email and password do not match", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
+          ToastifyFunc("Email and password do not match", "error");
         }
       }
     }
   };
-  //  Handle Google sign-in
+  //===============  Handle Google sign-in
   const handleGoogleSignIn = async () => {
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
@@ -143,35 +117,17 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
         }).then(() => {
           setOpen(false);
           setUser(user);
-          toast("Login successful!", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
+          ToastifyFunc("Login successful!", "success");
         });
       }
     } catch (error) {
-      // Handle Google sign-in errors
+      //============ Handle Google sign-in errors
       const errorMessage = error.message;
-      toast(errorMessage, {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc(errorMessage, "error");
     }
   };
 
-  // Handle Facebook sign-in
+  //=============== Handle Facebook sign-in
   const handleFacebookSignIn = async () => {
     try {
       const provider = new FacebookAuthProvider();
@@ -180,16 +136,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
         .then((result) => {
           const user = result.user;
           console.log(user);
-          toast("facebook login successful!", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
+          ToastifyFunc("facebook login successful!", "success");
 
           const credential = FacebookAuthProvider.credentialFromResult(result);
           const accessToken = credential.accessToken;
@@ -206,29 +153,17 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
           const credential = FacebookAuthProvider.credentialFromError(error);
 
           console.log(credential);
-          // ...
         });
     } catch (error) {
       const errorMessage = error.message;
       console.log(errorMessage);
     }
   };
-  const navigate = useNavigate();
-  const auth = getAuth(app);
+
   useEffect(() => {
-    // Listen for changes in authentication state
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        toast("Login successful!", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        ToastifyFunc("Login successful!", "success");
         setLoginForm({
           email: "",
           password: "",
@@ -236,7 +171,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
         setOpen(false);
         setUser(user);
       } else {
-        // No user is signed in.
+        //================== No user is signed in.
         setUser(null);
         navigate("/");
       }
@@ -296,12 +231,14 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
               </a>
             </div>
           </form>
+          {/*============= google button  */}
           <div className="google">
             <button onClick={handleGoogleSignIn}>
               <AiFillGoogleCircle />
               <span>Sign in with google</span>
             </button>
           </div>
+          {/*============= facebook button  */}
           <div className="facebook">
             <button onClick={handleFacebookSignIn}>
               <Facebook />
@@ -313,6 +250,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
     </LoginContainer>
   );
 };
+//=================styled
 const LoginContainer = styled.div`
   width: 380px;
   height: auto;

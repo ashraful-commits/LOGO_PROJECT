@@ -9,7 +9,6 @@ import {
 } from "react-icons/bi";
 import appleStore from "../../../public/appleStore1.png";
 import playStore from "../../../public/palystore.png";
-import avtar1 from "../../../public/avatar1.png";
 
 import trending from "../../../public/trendingIcn.png";
 import group from "../../../public/groupIcon.png";
@@ -17,18 +16,19 @@ import play from "../../../public/playIcon.png";
 import { useEffect, useState } from "react";
 import { collection, getDocs, getFirestore, query } from "firebase/firestore";
 import { app } from "../../firebase.confige";
-import { getAuth } from "firebase/auth";
 
 const SideBar = () => {
   const [loading, setLoading] = useState(true);
   const [users, setUser] = useState([]);
   const [showMore, setShowMore] = useState(false);
   useEffect(() => {
-    // Simulate a delay, e.g., while fetching data
+    //================ Simulate a delay, e.g., while fetching data
     setTimeout(() => {
-      setLoading(false); // Set loading to false when your data is ready
-    }, 2000); // Replace with your actual data loading logic
+      setLoading(false);
+    }, 2000);
+    //================= Replace with your actual data loading logic
   }, []);
+  //===================== get all user
   useEffect(() => {
     const getAllUser = async () => {
       const db = getFirestore(app);
@@ -224,12 +224,12 @@ const SideBar = () => {
     </>
   );
 };
-
+//======================sidebar styled
 const Sidebar = styled.div`
   width: 100%;
-  position: sticky; /* Make the sidebar sticky */
+  position: sticky;
   top: 11.2%;
-  bottom: 0; /* Stick to the top of the viewport */
+  bottom: 0;
   height: 100vh;
   grid-template-rows: 20% 40% 30%;
   gap: 5rem;
@@ -314,8 +314,7 @@ const Sidebar = styled.div`
     flex-direction: column;
     justify-content: start;
     align-items: start;
-    margin-top: 42px;
-
+    margin-top: 22px;
     .popular-creators {
       overflow: auto;
       width: 100%;
@@ -324,14 +323,9 @@ const Sidebar = styled.div`
       flex-direction: column;
       justify-content: start;
       align-items: start;
-      gap: 16px;
-
-      margin-top: 16px;
       overflow-x: hidden;
-
       scrollbar-width: thin;
       scrollbar-color: #888 #f1f1f1;
-
       &::-webkit-scrollbar {
         width: 10px;
       }
@@ -355,7 +349,6 @@ const Sidebar = styled.div`
 
       .popular-creator {
         width: 100%;
-
         cursor: pointer;
         display: flex;
         gap: 7px;
@@ -623,7 +616,6 @@ const Sidebar = styled.div`
       flex-direction: column;
       justify-content: start;
       align-items: start;
-      /* margin-top: 42px; */
       h4 {
         color: #000;
         font-family: Poppins;
@@ -637,9 +629,10 @@ const Sidebar = styled.div`
         flex-direction: column;
         justify-content: start;
         align-items: start;
+
         .popular-creator {
           width: 100%;
-          height: 100%;
+
           display: flex;
           align-items: center;
           justify-content: start;
@@ -857,6 +850,7 @@ const Sidebar = styled.div`
     }
   }
 `;
+//====================skeleton styled
 const SkeletonStyle = styled.div`
   .skeleton-loader {
     width: 100%;

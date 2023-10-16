@@ -3,9 +3,10 @@ import { collection, getFirestore, onSnapshot, query, where } from "firebase/fir
 
 const getSingleData = async (collectionName, id) => {
     return new Promise((resolve, reject) => {
+      //===================== get firestore
       const db = getFirestore();
       const q = query(collection(db, collectionName, where("id", "===", id)));
-  
+  //========================= on snapshot
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         let allData = [];
         querySnapshot.forEach((doc) => {
@@ -16,7 +17,7 @@ const getSingleData = async (collectionName, id) => {
         console.error("Error in onSnapshot:", error);
         reject(error); 
       });
-  
+
       return unsubscribe;
     });
   };

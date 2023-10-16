@@ -43,6 +43,7 @@ import Following from "../../Components/Following/Following";
 import Followers from "../../Components/Followers/Followers";
 import Admin from "../../Components/Admin/Admin";
 import useOpen from "../../hooks/useOpen";
+import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
 const Profile = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
@@ -60,8 +61,10 @@ const Profile = () => {
 
   const [totalPost, setTotalPost] = useState(0);
   const [totalPhoto, setTotalPhoto] = useState(0);
+  const [value, setValue] = useState("1");
   const { setOpen } = useOpen();
-  // Simulate loading for 2 seconds
+  const { id } = useParams();
+  //========================= Simulate loading for 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -69,22 +72,13 @@ const Profile = () => {
 
     return () => clearTimeout(timer);
   }, []);
-
+  //============================get current user
   useEffect(() => {
     const auth = getAuth(app);
     if (!auth.currentUser) {
       navigate("/");
       setOpen(true);
-      toast("Please Login!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc("Please Login!", "warning");
     }
     setLoggedInUser(auth?.currentUser);
     setInput({
@@ -92,15 +86,11 @@ const Profile = () => {
       password: auth?.currentUser?.password,
     });
   }, [navigate, setOpen]);
-
-  const [value, setValue] = useState("1");
-
+  //============================handle input change
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-  const { id } = useParams();
-
+  //==============================get user with id
   useEffect(() => {
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -133,51 +123,45 @@ const Profile = () => {
     const file = e.target.files[0];
 
     if (file) {
-      // Initialize Firebase Authentication
       const auth = getAuth(app);
       setIsProfileLoading(true);
 
       try {
-        // Get the currently signed-in user
         const user = auth?.currentUser;
 
         if (!user) {
           console.error("User is not authenticated");
-          // Handle the case where the user is not authenticated
+
           return;
         }
-
-        // Create a reference to the Firebase Storage bucket
         const storage = getStorage();
         const storageRef = ref(
           storage,
           "profilePhotos/" + user.uid + "/" + file.name
         );
 
-        // Upload the file to Firebase Storage
+        //============= Upload the file to Firebase Storage
         const uploadTask = uploadBytesResumable(storageRef, file);
 
-        // Attach a 'state_changed' event listener to track progress
         uploadTask.on(
           "state_changed",
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setIsProfileProgress(progress.toFixed(0)); // Update the progress state
+            setIsProfileProgress(progress.toFixed(0));
           },
           (error) => {
-            setIsProfileLoading(false); // Upload failed, set isUploading to false
+            setIsProfileLoading(false);
             console.error("Error uploading file:", error);
           },
           async () => {
-            // Upload complete, set isUploading to false
             setIsProfileLoading(false);
-            // Get the download URL of the uploaded file
+
             const downloadURL = await getDownloadURL(storageRef);
             await updateProfile(auth?.currentUser, {
               photoURL: downloadURL,
             });
-            // Update the user's profile photoURL with the download URL
+
             try {
               const db = getFirestore(app);
               const userDb = doc(db, "users", `${user.uid}`);
@@ -189,16 +173,7 @@ const Profile = () => {
                 ...prev,
                 photoURL: downloadURL,
               }));
-              toast("Profile Photo uploaded!", {
-                position: "bottom-center",
-                autoClose: 1000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-              });
+              ToastifyFunc("Profile Photo uploaded!", "success");
               setIsProfileLoading(false);
             } catch (error) {
               console.error("Error updating profile:", error);
@@ -216,49 +191,42 @@ const Profile = () => {
     const file = e.target.files[0];
 
     if (file) {
-      // Initialize Firebase Authentication
       const auth = getAuth(app);
       setIsCoverUploading(true);
 
       try {
-        // Get the currently signed-in user
         const user = auth?.currentUser;
 
         if (!user) {
           console.error("User is not authenticated");
-          // Handle the case where the user is not authenticated
+
           return;
         }
 
-        // Create a reference to the Firebase Storage bucket for cover photos
         const storage = getStorage();
         const storageRef = ref(
           storage,
           "profilePhotos/" + user.uid + "/" + file.name
         );
 
-        // Upload the cover photo to Firebase Storage
         const uploadTask = uploadBytesResumable(storageRef, file);
 
-        // Attach a 'state_changed' event listener to track progress
         uploadTask.on(
           "state_changed",
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setCoverUploadProgress(progress.toFixed(0)); // Update the progress state
+            setCoverUploadProgress(progress.toFixed(0));
           },
           (error) => {
-            setIsCoverUploading(false); // Upload failed, set isUploading to false
+            setIsCoverUploading(false);
             console.error("Error uploading cover photo:", error);
           },
           async () => {
-            setIsCoverUploading(false); // Upload complete, set isUploading to false
+            setIsCoverUploading(false);
 
-            // Get the download URL of the uploaded cover photo
             const downloadURL = await getDownloadURL(storageRef);
 
-            // Update the user's profile with the cover photo URL in Firebase Realtime Database
             try {
               const db = getFirestore(app);
               const userDb = doc(db, "users", `${user.uid}`);
@@ -270,16 +238,7 @@ const Profile = () => {
                 ...prev,
                 coverPhotoUrl: downloadURL,
               }));
-              toast("Cover Photo uploaded!", {
-                position: "bottom-center",
-                autoClose: 1000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-              });
+              ToastifyFunc("Cover Photo uploaded!", "success");
             } catch (error) {
               console.error("Error updating user profile:", error);
             }
@@ -291,12 +250,14 @@ const Profile = () => {
       }
     }
   };
+  //=======================handle input
   const handleInput = (e) => {
     setInput((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
+  //==============================update email and password
   const handleUpdateEmailAndPassword = (e) => {
     const auth = getAuth(app);
     e.preventDefault();
@@ -307,16 +268,7 @@ const Profile = () => {
       });
     updatePassword(auth.currentUser, input.password)
       .then(() => {
-        toast.success("Email & password updated!", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        ToastifyFunc("Email & password updated!", "success");
         signOut(app);
         navigate("/");
       })

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   getFirestore,
   query,
@@ -9,7 +9,6 @@ import {
   startAfter,
 } from "firebase/firestore";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { AiOutlineLoading } from "react-icons/ai";
 
 const InfiniteData = () => {
   const [dataSource, setDataSource] = useState([]);

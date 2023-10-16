@@ -6,16 +6,23 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import {
   Box,
   Button,
+  IconButton,
   Input,
   Modal,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { app } from "../../firebase.confige";
-import { toast } from "react-toastify";
+
 import swal from "sweetalert";
-import { AiOutlineClose } from "react-icons/ai";
+import {
+  AiOutlineCheck,
+  AiOutlineClose,
+  AiOutlineCloseCircle,
+  AiOutlineStop,
+} from "react-icons/ai";
 import ReactPlayer from "react-player";
 import {
   getDownloadURL,
@@ -24,8 +31,10 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { getAuth } from "firebase/auth";
+import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
 const AllPosts = () => {
+  //=========================== all state
   const [Posts, setPosts] = useState([]);
   const [Id, setId] = useState(null);
   const [input, setInput] = useState({
@@ -41,13 +50,14 @@ const AllPosts = () => {
   const [progress, setProgress] = useState(null);
   const [unsubscribe, setUnsubscribe] = useState(null);
   const [suspend, setSuspend] = useState(false);
+  //===========================handle edit change
   const handleInputChange = (e) => {
     setInput((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
-  //=============================handle edit
+  //============================handle edit
   const handleEdit = (id) => {
     setId(id);
     setOpen(true);
@@ -58,43 +68,44 @@ const AllPosts = () => {
       desc: singlePost?.desc,
     });
     setPreview(singlePost?.video);
-  }; //=====================handle close
+  }; //=======================handle close
   const handleClose = () => {
     setOpen(false);
   };
+  //=========================handle clear
   const handleClear = () => {
     setPreview(null);
   };
-  //===============================handle video
+  //==========================handle video
   const handleVideo = async (e) => {
     const file = e.target.files[0];
 
     if (file) {
-      // Initialize Firebase Authentication
+      //=========== Initialize Firebase Authentication
       const auth = getAuth(app);
       setLoading(true);
 
       try {
-        // Get the currently signed-in user
+        //============= Get the currently signed-in user
         const user = auth?.currentUser;
 
         if (!user) {
           console.error("User is not authenticated");
-          // Handle the case where the user is not authenticated
+          //=========== Handle the case where the user is not authenticated
           return;
         }
 
-        // Create a reference to the Firebase Storage bucket
+        //======= Create a reference to the Firebase Storage bucket
         const storage = getStorage();
         const storageRef = ref(
           storage,
           "postVideo/" + user?.uid + "/" + file.name
         );
 
-        // Upload the file to Firebase Storage
+        //========== Upload the file to Firebase Storage
         const uploadTask = uploadBytesResumable(storageRef, file);
 
-        // Attach a 'state_changed' event listener to track progress
+        //=========== Attach a 'state_changed' event listener to track progress
         uploadTask.on(
           "state_changed",
           (snapshot) => {
@@ -103,13 +114,13 @@ const AllPosts = () => {
             setProgress(progress.toFixed(0)); // Update the progress state
           },
           (error) => {
-            setLoading(false); // Upload failed, set isUploading to false
+            setLoading(false); //============== Upload failed, set isUploading to false
             console.error("Error uploading file:", error);
           },
           async () => {
-            // Upload complete, set isUploading to false
+            //=========== Upload complete, set isUploading to false
             setLoading(false);
-            // Get the download URL of the uploaded file
+            //============== Get the download URL of the uploaded file
             const downloadURL = await getDownloadURL(storageRef);
             setPreview(downloadURL);
           }
@@ -120,7 +131,7 @@ const AllPosts = () => {
       }
     }
   };
-  //=============================delete post
+  //==========================delete post
   const handlePostDelete = async (id) => {
     swal({
       title: "Are you sure?",
@@ -200,36 +211,68 @@ const AllPosts = () => {
             display: "flex",
             alignItems: "center",
             columnGap: "5px",
-
+            gap: "10px",
             zIndex: 0,
           }}
         >
-          <button onClick={() => handleEdit(row.dataId)}>
-            <FaEdit />
-          </button>
-          <button onClick={() => handlePostDelete(row.dataId)}>
-            <FaTrash />
+          <button
+            style={{ border: "none", color: "green" }}
+            onClick={() => handleEdit(row.dataId)}
+          >
+            <Tooltip title="Edit">
+              <IconButton>
+                <FaEdit fontSize={"23"} />
+              </IconButton>
+            </Tooltip>
           </button>
           <button
+            style={{ border: "none", color: "red" }}
+            onClick={() => handlePostDelete(row.dataId)}
+          >
+            <Tooltip title="Permanent delete">
+              <IconButton>
+                <FaTrash fontSize={"23"} />
+              </IconButton>
+            </Tooltip>
+          </button>
+          <button
+            style={{ border: "none", color: "green" }}
             color="primary"
             onClick={() => handleApprove(row.dataId, row.pending)}
           >
-            approve
+            <Tooltip title="Approve">
+              <IconButton>
+                <AiOutlineCheck fontSize={"23"} />
+              </IconButton>
+            </Tooltip>
           </button>
           <button
+            style={{ border: "none", color: "red" }}
             color="secondary"
             onClick={() => handleDecline(row.dataId, row.pending, row.decline)}
           >
-            Decline
+            <Tooltip title="Decline">
+              <IconButton>
+                <AiOutlineCloseCircle fontSize={"23"} />
+              </IconButton>
+            </Tooltip>
           </button>
 
-          <button onClick={() => handleSuspend(row.dataId, row.id)}>
-            Suspend
+          <button
+            style={{ border: "none", color: "red" }}
+            onClick={() => handleSuspend(row.dataId, row.id)}
+          >
+            <Tooltip title="Suspend">
+              <IconButton>
+                <AiOutlineStop fontSize={"23"} />
+              </IconButton>
+            </Tooltip>
           </button>
         </Box>
       ),
     },
   ];
+  //========================== Handle closing the modal
   const handlePostEdit = async (e) => {
     e.preventDefault();
     const db = getFirestore();
@@ -248,17 +291,9 @@ const AllPosts = () => {
     );
     setId(null);
     setOpen(false);
-    toast.success("Post updated", {
-      position: "bottom-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+    ToastifyFunc("Post Updated!", "success");
   };
+  //========================== approve post
   const handleApprove = async (id, pending) => {
     const db = getFirestore(app);
 
@@ -266,22 +301,13 @@ const AllPosts = () => {
       const updateRef = doc(db, "Posts", id);
       await updateDoc(updateRef, { pending: !pending });
 
-      setPosts(setPosts([...Posts.filter((item) => item.dataId !== id)]));
-      toast.success("Approved!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      setPosts([...Posts.filter((item) => item.dataId != id)]);
+      ToastifyFunc("Approved", "success");
     } catch (error) {
       console.log(error);
     }
   };
-
+  //========================== post reject
   const handleDecline = async (id, pending, decline) => {
     const db = getFirestore(app);
     console.log(id, pending);
@@ -290,27 +316,18 @@ const AllPosts = () => {
       await updateDoc(updateRef, { pending: !pending, decline: !decline });
 
       setPosts([...Posts.filter((item) => item.dataId !== id)]);
-      toast.warning("Rejected", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc("Decline", "success");
     } catch (error) {
       console.log(error);
     }
   };
-
+  //========================== user suspend
   const handleSuspend = (id, uId) => {
     setSuspend(!suspend);
     setId(id);
     setSuspendUserId(uId);
   };
-  //===========================
+  //=========================== get all post
   useEffect(() => {
     const setupRealTimeUpdates = () => {
       let updateData = [];
@@ -329,6 +346,7 @@ const AllPosts = () => {
 
     setupRealTimeUpdates();
   }, []);
+  //========================== handle suspend message
   const handleSubmitSuspend = async (e) => {
     e.preventDefault();
     const db = getFirestore(app);
@@ -344,25 +362,18 @@ const AllPosts = () => {
         status: {
           user: "suspend",
           msg: `${msg} until ${time}`,
+          time: time,
         },
       });
 
       setPosts([...Posts.filter((item) => item.dataId !== Id)]);
-      toast.warning(`You are suspended until ${time}`, {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc(`You are suspended until ${time}`, "warning");
       setSuspend(false);
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <div style={{ position: "relative" }}>
       {suspend && (
@@ -610,5 +621,5 @@ const AllPosts = () => {
     </div>
   );
 };
-
+//===========================export
 export default AllPosts;

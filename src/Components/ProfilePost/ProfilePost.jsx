@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -6,7 +6,6 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
-
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -16,9 +15,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import Skeleton from "@mui/material/Skeleton";
 import ReactPlayer from "react-player";
-
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-
 import {
   Box,
   Input,
@@ -30,12 +26,12 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getFirestore,
   onSnapshot,
   orderBy,
@@ -56,9 +52,10 @@ import { toast } from "react-toastify";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { Delete, Edit } from "@mui/icons-material";
 import useOpen from "../../hooks/useOpen";
+import { ToastifyFunc } from "../../Utility/TostifyFunc";
 // Define the PostComponent functional component
 const PostComponent = ({ user, id, setTotalPost }) => {
-  // State variables
+  //==================all states
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef(null);
   const [loader, setLoader] = useState(true);
@@ -68,64 +65,70 @@ const PostComponent = ({ user, id, setTotalPost }) => {
   const [progress, setProgress] = useState(false);
   const [dropDown, setDropDrown] = useState(false);
   const [Id, setId] = useState(null);
-  const auth = getAuth(app);
+  const [posts, setPost] = useState([]);
+
   const [input, setInput] = useState({
     title: "",
     desc: "",
   });
+  //=====================get auth
+  const auth = getAuth(app);
+  //=====================handle input
   const handleInput = (e) => {
     setInput((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
+  //======================handle toggle button for video
   const togglePlay = () => {
     setPlaying(!playing);
   };
+  //==================== handle profile upload
   const handleProfile = async (e) => {
     const file = e.target.files[0];
 
     if (file) {
-      // Initialize Firebase Authentication
+      //============== Initialize Firebase Authentication
       const auth = getAuth(app);
       setLoading(true);
 
       try {
-        // Get the currently signed-in user
+        //=========== Get the currently signed-in user
         const user = auth?.currentUser;
 
         if (!user) {
           console.error("User is not authenticated");
-          // Handle the case where the user is not authenticated
+          //================ Handle the case where the user is not authenticated
           return;
         }
 
-        // Create a reference to the Firebase Storage bucket
+        //================= Create a reference to the Firebase Storage bucket
         const storage = getStorage();
         const storageRef = ref(
           storage,
           "postVideo/" + user?.uid + "/" + file.name
         );
 
-        // Upload the file to Firebase Storage
+        //=========== Upload the file to Firebase Storage
         const uploadTask = uploadBytesResumable(storageRef, file);
 
-        // Attach a 'state_changed' event listener to track progress
+        //============== Attach a 'state_changed' event listener to track progress
         uploadTask.on(
           "state_changed",
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setProgress(progress.toFixed(0)); // Update the progress state
+            setProgress(progress.toFixed(0)); //=============== Update the progress state
           },
           (error) => {
-            setLoading(false); // Upload failed, set isUploading to false
+            setLoading(false); //============= Upload failed, set isUploading to false
             console.error("Error uploading file:", error);
           },
           async () => {
-            // Upload complete, set isUploading to false
+            //====================Upload complete, set isUploading to false
             setLoading(false);
-            // Get the download URL of the uploaded file
+            //===================== Get the download URL of the uploaded file
             const downloadURL = await getDownloadURL(storageRef);
             setPreview(downloadURL);
           }
@@ -136,6 +139,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       }
     }
   };
+  //========================= handle video play
   useEffect(() => {
     const options = {
       root: null,
@@ -166,18 +170,21 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       }
     };
   }, []);
-
+  //=====================handle loading time
   useEffect(() => {
     setTimeout(() => {
       setLoader(false);
     }, 2000);
   }, []);
+  //======================handle post modal
   const handlePostModel = () => {
     setOpen(true);
   };
+  //================== handle modal close
   const handleClose = () => {
     setOpen(false);
   };
+  //=========================handle post create and update
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     if (Id) {
@@ -272,7 +279,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       }
     }
   };
-  const [posts, setPost] = useState([]);
+  //==========================find user all post
   useEffect(() => {
     const db = getFirestore();
     const postsRef = collection(db, "Posts");
@@ -299,7 +306,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       setLoader(false); // Set loader to false in case of an error
     }
   }, [id, setTotalPost]);
-
+  //===========================handle edit post
   const handleEdit = (id) => {
     setId(id);
     setOpen(true);
@@ -310,21 +317,47 @@ const PostComponent = ({ user, id, setTotalPost }) => {
     });
     setPreview(singlePost.video);
   };
+  //=========================handle delete post
   const handleDelete = async (id) => {
     const db = getFirestore();
     const postRef = doc(db, "Posts", id);
 
     try {
       await deleteDoc(postRef);
-      // Optionally, update the local state to remove the deleted post
+      //====================== Optionally, update the local state to remove the deleted post
       setPost((prevPosts) => prevPosts.filter((post) => post.postId !== id));
     } catch (error) {
       console.error("Error deleting post: ", error);
     }
   };
+  //=======================handle clear preview
   const handleClear = () => {
     setPreview(null);
   };
+  //===========================fetch all user
+  useEffect(() => {
+    const fetchUser = async () => {
+      const db = getFirestore(app);
+      const userRef = doc(db, "users", id);
+      const getData = await getDoc(userRef);
+      if (getData.exists()) {
+        const userData = getData.data();
+        if (userData?.status?.user == "suspend") {
+          const currentTime = new Date();
+          const suspendDate = new Date(userData?.status?.time);
+
+          if (currentTime >= suspendDate) {
+            await updateDoc(userRef, { status: { user: "verified" } }).then(
+              () => {
+                ToastifyFunc("Suspension removed", "success");
+              }
+            );
+          }
+        }
+      }
+    };
+    fetchUser();
+  }, [id]);
   return (
     <Card
       sx={{
@@ -559,7 +592,10 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                           sx={{
                             width: "100%",
                             borderBottom: "1px solid #eeeeee",
-                            bgcolor: "#eee",
+                            bgcolor:
+                              item?.suspended?.status === true
+                                ? "#fa8b8b"
+                                : "#93ff8f",
                             position: "relative",
                           }}
                           variant="primary"

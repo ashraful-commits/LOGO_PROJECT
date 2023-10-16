@@ -13,7 +13,7 @@
     of the{" "}
     <a
       href="https://www.termsfeed.com/privacy-policy-generator/"
-      target="_blank"
+      target="blank"
     >
       Privacy Policy Generator
     </a>

@@ -8,6 +8,7 @@ import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { app } from "../../firebase.confige";
 import { toast } from "react-toastify";
 import swal from "sweetalert";
+import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
 const User = () => {
   const [Users, setUsers] = useState([]);
@@ -16,7 +17,7 @@ const User = () => {
   const handleOnchange = async (e, id) => {
     const newRole = e.target.value;
 
-    // Update the user's role in the state
+    //============= Update the user's role in the state
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
         if (user.id === id) {
@@ -25,21 +26,12 @@ const User = () => {
         return user;
       })
     );
-
+    //===================get fire store
     const db = getFirestore(app);
     try {
       const updateRef = doc(db, "users", id);
       await updateDoc(updateRef, { role: newRole });
-      toast.success("Role updated!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc("Role updated!", "success");
     } catch (error) {
       console.log(error);
     }
@@ -65,7 +57,7 @@ const User = () => {
       }
     });
   };
-
+  //=========================columns
   const columns = [
     {
       name: "Photo",
@@ -116,7 +108,7 @@ const User = () => {
     },
   ];
 
-  //===========================
+  //===============================get all users
   useEffect(() => {
     const fetchData = async () => {
       const userData = await getAllData("users");
@@ -135,6 +127,7 @@ const User = () => {
   }, []);
   return (
     <div>
+      {/* //=======================data table  */}
       <DataTable data={Users} columns={columns} />
     </div>
   );

@@ -13,27 +13,30 @@ import { app } from "../../firebase.confige";
 import { Link } from "react-router-dom";
 
 const Followers = ({ user, id }) => {
+  //================= State to store the user and their followers
   const [friend, setFriends] = useState({});
 
   useEffect(() => {
     const db = getFirestore(app);
     const fetchUserDataById = async () => {
-      const docRef = doc(db, "users", id); // Assuming "users" is the collection name
+      //===================== Get the user document by ID
+      const docRef = doc(db, "users", id);
       const docSnap = await getDoc(docRef);
       setFriends(docSnap.data());
       if (docSnap.exists()) {
         let user = [];
 
         const userData = docSnap.data();
+        //===================== Fetch and set the followers' data
         userData.followers.forEach(async (item) => {
           const followersRef = doc(db, "users", item);
           const followSnp = await getDoc(followersRef);
           user.push(followSnp.data());
         });
-
+        //====================== Set the user's data
         setFriends((prev) => ({ ...prev, followers: user }));
       } else {
-        // Return null if the user document does not exist
+        //======================= Return null if the user document does not exist
         return null;
       }
     };
@@ -85,6 +88,7 @@ const Followers = ({ user, id }) => {
           );
         })
       ) : (
+        //================== no data no followers
         <Box>
           <Typography>No Followers</Typography>
         </Box>

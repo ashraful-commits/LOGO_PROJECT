@@ -41,6 +41,7 @@ import {
 } from "@mui/material";
 import { AiOutlineClose } from "react-icons/ai";
 import useOpen from "../../hooks/useOpen";
+import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
 // Define the 'PostComponent' functional component.
 const PostComponent = ({
@@ -58,16 +59,25 @@ const PostComponent = ({
   messages,
   setTotalPost,
 }) => {
+  //=========================all states
   const [playing, setPlaying] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState({});
   const [chat, setChat] = useState(false);
   const { open, setOpen } = useOpen();
   const auth = getAuth(app);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [postUid, setPostUid] = useState(null);
+  const [likeCount, setLikeCount] = useState(Like ? Like?.length : 0);
+  const [msgCount, setMsgCount] = useState(messages ? messages?.length : 0);
+  const [totalChat, setTotalChat] = useState(messages ? messages : []);
 
+  const [isLiked, setIsLiked] = useState(false);
+  //===========================firestore
   const db = getFirestore(app);
 
   const [unsubscribe, setUnsubscribe] = useState(null);
-
+  //======================= fetch user data
   useEffect(() => {
     const fetchUserDataById = async () => {
       const docRef = doc(db, "users", auth?.currentUser?.uid);
@@ -118,10 +128,10 @@ const PostComponent = ({
 
     return () => {
       if (unsubscribe) {
-        // Call each unsubscribe function for followers
-        Object.values(unsubscribe).forEach((unsub) => unsub());
+        //===================== Call each unsubscribe function for followers
+        Object.values(unsubscribe).forEach((unSub) => unSub());
 
-        // Call the main unsubscribe function
+        //=================== Call the main unSubscribe function
         if (unsubscribe.main) {
           unsubscribe.main();
         }
@@ -130,60 +140,52 @@ const PostComponent = ({
   }, [id, auth?.currentUser?.uid, db, unsubscribe]);
 
   const videoRef = useRef();
-
+  //============================= video toggle paly
   const togglePlay = () => {
     setPlaying(!playing);
   };
-
+  //=============================== video playing function
   useEffect(() => {
     const options = {
-      root: null, // Use the viewport as the root.
-      rootMargin: "0px", // No margin.
-      threshold: 0.5, // 50% of the video element must be visible.
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.5,
     };
 
-    // Callback function for IntersectionObserver.
+    //=========================== Callback function for IntersectionObserver.
     const handleIntersection = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // Video is in view, play it.
           setPlaying(true);
-          videoRef?.current?.seekTo(0); // Reset video to the beginning.
+          videoRef?.current?.seekTo(0);
         } else {
-          // Video is out of view, pause it.
           setPlaying(false);
         }
       });
     };
 
-    // Create an IntersectionObserver instance.
+    //======================== Create an IntersectionObserver instance.
     const observer = new IntersectionObserver(handleIntersection, options);
 
-    // Observe the video element when it's available.
+    //========================= Observe the video element when it's available.
     if (videoRef?.current) {
       observer.observe(videoRef?.current);
     }
 
-    // Cleanup function to unobserve the video element.
+    //============================ Cleanup function to unobserve the video element.
     return () => {
       if (videoRef?.current) {
         observer.unobserve(videoRef?.current);
       }
     };
   }, []);
-
-  const [loading, setLoading] = useState(false);
-
-  const [message, setMessage] = useState("");
-
-  const [postUid, setPostUid] = useState(null);
-
+  //===============================loading time out
   useEffect(() => {
     setTimeout(() => {
-      setLoading(false); // Set loading to false when data is ready.
-    }, 2000); // Adjust the delay as needed.
+      setLoading(false);
+    }, 2000);
   }, []);
-
+  //==============================handle follow
   const handleFollow = async (id) => {
     const db = getFirestore(app);
     const auth = getAuth(app);
@@ -196,41 +198,23 @@ const PostComponent = ({
         await updateDoc(followerRef, {
           followers: arrayUnion(auth?.currentUser?.uid),
         }).then(() => {
-          toast.success("Following!", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
+          ToastifyFunc("Following!", "success");
         });
         await updateDoc(followingRef, {
           following: arrayUnion(id),
         });
 
-        // At this point, the documents are updated instantly
+        //======================= At this point, the documents are updated instantly
       } catch (error) {
         console.error("Error updating follower and following arrays:", error);
       }
     } else {
       setOpen(true);
 
-      toast.warning("Please Login!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc("Please Login!", "warning");
     }
   };
-
+  //===========================handle unfollow
   const handleUnfollow = async (id) => {
     const db = getFirestore(app);
     const auth = getAuth(app);
@@ -238,20 +222,17 @@ const PostComponent = ({
       try {
         const followingRef = doc(db, "users", auth?.currentUser?.uid);
         const followerRef = doc(db, "users", id);
-
-        // Fetch the current data from Firestore
+        //=============== Fetch the current data from Firestore
         const followingDoc = await getDoc(followingRef);
         const followerDoc = await getDoc(followerRef);
-
-        // Modify the arrays in memory
+        //=============== Modify the arrays in memory
         const updatedFollowerArray = followerDoc
           .data()
           .followers.filter((item) => item !== id);
         const updatedFollowingArray = followingDoc
           .data()
           .following.filter((item) => item !== id);
-
-        // Update Firestore documents with the modified arrays
+        //================ Update Firestore documents with the modified arrays
         await setDoc(
           followerRef,
           { followers: updatedFollowerArray },
@@ -262,16 +243,7 @@ const PostComponent = ({
           { following: updatedFollowingArray },
           { merge: true }
         ).then(() => {
-          toast.warning("Unfollow!", {
-            position: "bottom-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
+          ToastifyFunc("Unfollow!", "success");
         });
 
         // At this point, the documents are updated instantly
@@ -281,33 +253,19 @@ const PostComponent = ({
     } else {
       setOpen(true);
 
-      toast.warning("Please Login!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      ToastifyFunc("Please Login!", "warning");
     }
   };
-  const [likeCount, setLikeCount] = useState(Like ? Like?.length : 0);
-  const [msgCount, setMsgCount] = useState(messages ? messages?.length : 0);
-  const [totalChat, setTotalChat] = useState(messages ? messages : []);
-
-  const [isLiked, setIsLiked] = useState(false);
+  //============================handle update like instent
   useEffect(() => {
     setIsLiked(Like?.some((item) => item === loggedInUser?.id) ? true : false);
   }, [loggedInUser?.id, Like]);
-
+  //============================handle post like
   const handleLike = async (postId) => {
     const postDataRef = doc(db, "Posts", postId);
     if (loggedInUser?.id) {
       try {
         const postDataSnapshot = await getDoc(postDataRef);
-
         if (postDataSnapshot.exists()) {
           const existingData = postDataSnapshot.data();
           const updatedLikeArray = existingData.Like || [];
@@ -315,7 +273,7 @@ const PostComponent = ({
           const likeIndex = updatedLikeArray.indexOf(loggedInUser?.id);
 
           if (likeIndex !== -1) {
-            // If the user's ID exists in the Like array, remove it
+            //====================== If the user's ID exists in the Like array, remove it
             updatedLikeArray.splice(likeIndex, 1);
             if (likeCount > 0) {
               setLikeCount((prev) => prev - 1);
@@ -324,13 +282,13 @@ const PostComponent = ({
             }
             setIsLiked(false);
           } else {
-            // If the user's ID doesn't exist in the Like array, add it
+            //======================= If the user's ID doesn't exist in the Like array, add it
             updatedLikeArray.push(loggedInUser?.id);
             setLikeCount((prev) => prev + 1);
             setIsLiked(true);
           }
 
-          // Update the document with the modified Like array
+          //============================ Update the document with the modified Like array
           await updateDoc(postDataRef, {
             Like: updatedLikeArray,
           });
@@ -357,11 +315,12 @@ const PostComponent = ({
       });
     }
   };
+  //============================handle chats
   const handleChat = (postId) => {
     setPostUid(postId ? postId : null);
     setChat(!chat);
   };
-
+  //============================handle message
   const handleMessage = (e) => {
     e.preventDefault();
 
@@ -369,7 +328,7 @@ const PostComponent = ({
       const postRef = doc(db, "Posts", postUid);
       if (userId) {
         try {
-          // Use arrayUnion to add a new message to the 'messages' array in the post document
+          //===================== Update
           await updateDoc(postRef, {
             messages: arrayUnion({ id: userId, text: message }),
           }).then(() => {
@@ -389,20 +348,12 @@ const PostComponent = ({
       } else {
         setOpen(true);
 
-        toast.warning("Please Login!", {
-          position: "bottom-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        ToastifyFunc("Please Login!", "warning");
       }
     };
     addMessageToPost(postUid, loggedInUser.id, message);
   };
+  //===================================== handle share
   const handleShareClick = (postId) => {
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
@@ -419,7 +370,7 @@ const PostComponent = ({
         <SkeletonPost>
           {loading && (
             <div className="skeleton-loading">
-              {/* You can customize the loading animation */}
+              {/* ================You can customize the loading animation */}
               Loading...
             </div>
           )}
@@ -427,12 +378,12 @@ const PostComponent = ({
             <div className="post-user-details">
               <div className="user-details">
                 <div className="avatar">
-                  {/* Add an empty avatar */}
+                  {/*=============== Add an empty avatar */}
                   <div className="skeleton-content"></div>
                 </div>
                 <div className="details">
                   <p>
-                    {/* Add skeleton content for name */}
+                    {/* ===============Add skeleton content for name */}
                     <span className="skeleton-content"></span>
                   </p>
                   <span>
@@ -442,7 +393,7 @@ const PostComponent = ({
                 </div>
               </div>
               <div className="follow">
-                {/* Add skeleton content for the follow button */}
+                {/* ===================Add skeleton content for the follow button */}
                 <button className="skeleton-content"></button>
               </div>
             </div>
@@ -450,7 +401,7 @@ const PostComponent = ({
           {!loading && (
             <div className="title">
               <p>
-                {/* Add skeleton content for title */}
+                {/* ===================Add skeleton content for title */}
                 <span className="skeleton-content"></span>
               </p>
             </div>
@@ -458,12 +409,12 @@ const PostComponent = ({
           {!loading && (
             <div className="img-status">
               <div className="img">
-                {/* Add skeleton content for the image */}
+                {/* =================Add skeleton content for the image */}
                 <div className="skeleton-content"></div>
                 <div className="play-button"></div>
                 <div className="desc">
                   <p>
-                    {/* Add skeleton content for description */}
+                    {/* ================Add skeleton content for description */}
                     <span className="skeleton-content"></span>
                   </p>
                 </div>
@@ -471,31 +422,31 @@ const PostComponent = ({
               <div className="status">
                 <div className="status-item">
                   <button>
-                    {/* Add skeleton content for like button */}
+                    {/* ============Add skeleton content for like button */}
                     <span className="skeleton-content"></span>
                   </button>
                   <span>
-                    {/* Add skeleton content for like count */}
+                    {/* A================dd skeleton content for like count */}
                     <span className="skeleton-content"></span>
                   </span>
                 </div>
                 <div className="status-item">
                   <button>
-                    {/* Add skeleton content for chat button */}
+                    {/*================Add skeleton content for chat button */}
                     <span className="skeleton-content"></span>
                   </button>
                   <span>
-                    {/* Add skeleton content for message count */}
+                    {/* =================Add skeleton content for message count */}
                     <span className="skeleton-content"></span>
                   </span>
                 </div>
                 <div className="status-item">
                   <button>
-                    {/* Add skeleton content for share button */}
+                    {/*============== Add skeleton content for share button */}
                     <span className="skeleton-content"></span>
                   </button>
                   <span>
-                    {/* Add skeleton content for share count */}
+                    {/* ==============Add skeleton content for share count */}
                     <span className="skeleton-content"></span>
                   </span>
                 </div>
@@ -724,7 +675,7 @@ const PostComponent = ({
     </>
   );
 };
-/* ... (Styles for the main container) */
+/* ............... (Styles for the main container) */
 const PostContainer = styled.div`
   width: 545.112px;
   height: 671.334px;
@@ -1105,6 +1056,7 @@ const PostContainer = styled.div`
     }
   }
 `;
+//=======================loader animation
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -1113,7 +1065,7 @@ const fadeIn = keyframes`
     opacity: 1;
   }
 `;
-// Create a separate styled component for the skeleton
+//====================== Create a separate styled component for the skeleton
 const SkeletonPost = styled.div`
   width: 545.112px;
   height: 671.334px;

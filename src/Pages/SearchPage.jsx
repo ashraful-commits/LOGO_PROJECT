@@ -18,14 +18,13 @@ import { Link, useParams } from "react-router-dom";
 const SearchPage = () => {
   const [searchItem, setSearchItem] = useState([]);
   const { search } = useParams();
-
   useEffect(() => {
     const handleSubmitSerach = async (e) => {
       e.preventDefault();
       const db = getFirestore();
       const usersCollection = collection(db, "users"); // 'users' is the name of your Firestore collection
 
-      // Create a query that filters users by name
+      //============ Create a query that filters users by name
       const queryByName = query(
         usersCollection,
         where("name", ">=", search).where("name", "<", search + "z")
@@ -40,7 +39,7 @@ const SearchPage = () => {
 
         const users = [];
         querySnapshot.forEach((userDoc) => {
-          // Access the user data
+          //=========== Access the user data
           const userData = userDoc.data();
           console.log(userData);
           users.push(userData);
