@@ -4,7 +4,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { doc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -49,7 +49,6 @@ const Register = ({ setOpen, setRedirect }) => {
           displayName: signUpForm.name,
         })
           .then(() => {
-            console.log(user);
             setRedirect("Login");
           })
           .catch((error) => {
@@ -93,7 +92,7 @@ const Register = ({ setOpen, setRedirect }) => {
   };
 
   return (
-    <LoginContainer className="container">
+    <RegisterContainer className="container">
       <div className="login_container">
         <button className="close_btn" onClick={() => setOpen(false)}>
           <AiOutlineClose />
@@ -155,11 +154,11 @@ const Register = ({ setOpen, setRedirect }) => {
           </form>
         </div>
       </div>
-    </LoginContainer>
+    </RegisterContainer>
   );
 };
 //===================styled
-const LoginContainer = styled.div`
+const RegisterContainer = styled.div`
   width: 380px;
   height: auto;
   background-color: #fff;

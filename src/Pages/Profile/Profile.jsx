@@ -58,7 +58,6 @@ const Profile = () => {
     email: "",
     password: "",
   });
-
   const [totalPost, setTotalPost] = useState(0);
   const [totalPhoto, setTotalPhoto] = useState(0);
   const [value, setValue] = useState("1");
@@ -436,7 +435,11 @@ const Profile = () => {
                       alignItems: "center",
                     }}
                     secondary={
-                      user?.followers?.length + user?.following?.length
+                      user?.followers?.length
+                        ? user?.followers?.length
+                        : 0 + user?.following?.length
+                        ? user?.following?.length
+                        : 0
                     }
                   />
                 </ListItem>

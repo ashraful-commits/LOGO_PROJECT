@@ -29,16 +29,17 @@ import {
 
 //======================== Import Firebase Authentication functions and configuration
 import { getAuth, signOut } from "firebase/auth";
-import { app } from "../../firebase.confige"; // Ensure that your Firebase configuration is correctly set up
+//================== Ensure that your Firebase configuration is correctly set up
+import { app } from "../../firebase.confige";
 import { Link } from "react-router-dom";
 import { GoogleAuthProvider } from "firebase/auth";
-
 import Login from "../Login/Login";
 import Register from "../Register/Register";
 import useOpen from "../../hooks/useOpen";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
+import getAllDataWithSnapshot from "../../Utility/GetAllData";
 
-// Define the Navbar component
+//================= Define the Navbar component
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [users, setUsers] = useState([]);
@@ -52,25 +53,14 @@ const Navbar = () => {
   //====================get auth
   const auth = getAuth(app);
   useEffect(() => {
-    const getAllUser = async () => {
-      const db = getFirestore(app);
+    setLoading(true);
 
-      const q = query(collection(db, "users"));
-      setLoading(true);
-      try {
-        const querySnapshot = await getDocs(q);
-        const usersData = [];
+    const querySnapshot = getAllDataWithSnapshot("users", (allData) => {
+      setLoading(false);
+      setUsers(allData);
+    });
 
-        querySnapshot.forEach((doc) => {
-          usersData.push(doc.data());
-        });
-        setLoading(false);
-        setUsers(usersData);
-      } catch (error) {
-        console.error("Error getting users:", error);
-      }
-    };
-    getAllUser();
+    return querySnapshot;
   }, []);
   //=============== Function to toggle the menu
   const toggleDrawer = () => {
@@ -104,7 +94,10 @@ const Navbar = () => {
         ToastifyFunc(message, "success");
       });
   };
-
+  useEffect(() => {
+    const user = auth.currentUser;
+    setUser(user);
+  }, [auth.currentUser]);
   return (
     <>
       {loading ? (

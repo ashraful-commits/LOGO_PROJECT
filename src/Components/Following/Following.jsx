@@ -11,29 +11,30 @@ import React, { useEffect, useState } from "react";
 import { app } from "../../firebase.confige";
 
 import { Link } from "react-router-dom";
+import getDocumentById from "../../Utility/getSingleData";
 
 const Following = ({ user, id }) => {
   const [friend, setFriends] = useState({});
 
   useEffect(() => {
-    const db = getFirestore(app);
     const fetchUserDataById = async () => {
       //======================== Get the user document by ID
-      const docRef = doc(db, "users", id);
-      const docSnap = await getDoc(docRef);
-      setFriends(docSnap.data());
-      if (docSnap.exists()) {
-        let user = [];
 
-        const userdata = docSnap.data();
+      const docSnap = await getDocumentById("users", id);
+      setFriends(docSnap);
+
+      if (docSnap) {
+        let userFollowingData = [];
+
+        const userdata = docSnap;
         //=============== Fetch and set the followers' data
-        userdata.following.forEach(async (item) => {
-          const followersRef = doc(db, "users", item);
-          const followSnp = await getDoc(followersRef);
-          user.push(followSnp.data());
+        userdata?.following?.forEach(async (item) => {
+          const followSnp = await getDocumentById("users", item);
+
+          userFollowingData.push(followSnp);
         });
 
-        setFriends((prev) => ({ ...prev, following: user }));
+        setFriends((prev) => ({ ...prev, following: userFollowingData }));
       } else {
         //=================== Return null if the user document does not exist
         return null;

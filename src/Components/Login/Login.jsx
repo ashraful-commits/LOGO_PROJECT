@@ -21,9 +21,11 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
+import setDocumentWithId from "../../Utility/SetDocWithId";
+import getDocumentById from "../../Utility/getSingleData";
 
 const Login = ({ setOpen, setRedirect, setUser }) => {
-  //=========== State for login and registration form data
+  //======================= State for login and registration form data
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -35,7 +37,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
     setLoginForm({ ...loginForm, [name]: value });
   };
 
-  //============== Handle login form submission
+  //======================== Handle login form submission
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
     const auth = getAuth(app);
@@ -51,13 +53,15 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
           password
         );
         const user = userCredential.user;
+        console.log(user);
         const db = getFirestore(app);
-        const docRef = doc(db, "users", user.uid);
+        const docRef = doc(db, "users", user?.uid);
         const docSnap = await getDoc(docRef);
+
         if (docSnap.data()) {
           navigate("/");
         } else {
-          await setDoc(doc(db, "users", `${user?.uid}`), {
+          await setDocumentWithId("users", {
             id: user?.uid,
             name: user?.displayName,
             email: user?.email,
@@ -73,6 +77,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
             role: "user",
             timestamp: serverTimestamp(),
           }).then(() => {
+            setUser(user);
             setOpen(false);
             ToastifyFunc("Login successful!", "success");
           });
@@ -85,21 +90,20 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
       }
     }
   };
-  //===============  Handle Google sign-in
+  //=========================  Handle Google sign-in
   const handleGoogleSignIn = async () => {
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
     try {
-      const db = getFirestore(app);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.data()) {
+
+      const docSnap = await getDocumentById("users", user.uid);
+      if (docSnap) {
         navigate("/");
       } else {
-        await setDoc(doc(db, "users", `${user?.uid}`), {
+        await setDocumentWithId("users", `${user?.uid}`, {
           id: user.uid,
           name: user.displayName,
           email: user.email,
@@ -127,7 +131,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
     }
   };
 
-  //=============== Handle Facebook sign-in
+  //========================== Handle Facebook sign-in
   const handleFacebookSignIn = async () => {
     try {
       const provider = new FacebookAuthProvider();
@@ -159,7 +163,6 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
       console.log(errorMessage);
     }
   };
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -171,14 +174,15 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
         setOpen(false);
         setUser(user);
       } else {
-        //================== No user is signed in.
+        //======================= No user is signed in.
         setUser(null);
-        navigate("/");
+        navigate("/profile");
       }
     });
 
     return () => unsubscribe();
   }, [auth, setUser, setOpen, navigate]);
+
   return (
     <LoginContainer className="container">
       <div className="login_container">
@@ -231,14 +235,14 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
               </a>
             </div>
           </form>
-          {/*============= google button  */}
+          {/*=================== google button  */}
           <div className="google">
             <button onClick={handleGoogleSignIn}>
               <AiFillGoogleCircle />
               <span>Sign in with google</span>
             </button>
           </div>
-          {/*============= facebook button  */}
+          {/*=================== facebook button  */}
           <div className="facebook">
             <button onClick={handleFacebookSignIn}>
               <Facebook />

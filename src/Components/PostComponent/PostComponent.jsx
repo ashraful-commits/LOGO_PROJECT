@@ -13,17 +13,13 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  arrayRemove,
   arrayUnion,
-  collection,
   doc,
-  endAt,
   getDoc,
   getFirestore,
   onSnapshot,
   setDoc,
   updateDoc,
-  writeBatch,
 } from "firebase/firestore";
 import { app } from "../../firebase.confige";
 import { getAuth } from "firebase/auth";
@@ -31,17 +27,22 @@ import { toast } from "react-toastify";
 import {
   Avatar,
   Box,
-  Button,
   Input,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Modal,
   Typography,
 } from "@mui/material";
 import { AiOutlineClose } from "react-icons/ai";
 import useOpen from "../../hooks/useOpen";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
+import Register from "../Register/Register";
+import Login from "../Login/Login";
+import updateDocumentWithSnapshot from "../../Utility/UpdateDoc";
+import getDocumentById from "../../Utility/getSingleData";
+import setDocumentWithId from "../../Utility/SetDocWithId";
 
 // Define the 'PostComponent' functional component.
 const PostComponent = ({
@@ -60,6 +61,7 @@ const PostComponent = ({
   setTotalPost,
 }) => {
   //=========================all states
+
   const [playing, setPlaying] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState({});
   const [chat, setChat] = useState(false);
@@ -68,6 +70,7 @@ const PostComponent = ({
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [postUid, setPostUid] = useState(null);
+  const [redirect, setRedirect] = useState("Login");
   const [likeCount, setLikeCount] = useState(Like ? Like?.length : 0);
   const [msgCount, setMsgCount] = useState(messages ? messages?.length : 0);
   const [totalChat, setTotalChat] = useState(messages ? messages : []);
@@ -84,14 +87,13 @@ const PostComponent = ({
 
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
-        // Return null if the user document does not exist
+        //=================== Return null if the user document does not exist
         return;
       }
-
       const userdata = docSnap.data();
       const user = [];
 
-      // Subscribe to real-time updates for the following list
+      //==================== Subscribe to real-time updates for the following list
       const unsubscribeFollowing = onSnapshot(docRef, (doc) => {
         const newUserData = doc.data();
         setLoggedInUser((prev) => ({
@@ -101,7 +103,7 @@ const PostComponent = ({
         }));
       });
 
-      // Subscribe to real-time updates for the user's followers
+      //================= Subscribe to real-time updates for the user's followers
       userdata.following.forEach((item) => {
         const followersRef = doc(db, "users", item);
 
@@ -110,14 +112,14 @@ const PostComponent = ({
           setLoggedInUser((prev) => ({ ...prev, following: user }));
         });
 
-        // Store the unsubscribe functions for each follower
+        //===================== Store the unsubscribe functions for each follower
         setUnsubscribe((prev) => ({
           ...prev,
           [item]: unsubscribeFollower,
         }));
       });
 
-      // Store the main unsubscribe function
+      //======================== Store the main unsubscribe function
       setUnsubscribe((prev) => ({
         ...prev,
         main: unsubscribeFollowing,
@@ -187,20 +189,16 @@ const PostComponent = ({
   }, []);
   //==============================handle follow
   const handleFollow = async (id) => {
-    const db = getFirestore(app);
     const auth = getAuth(app);
 
-    if (auth.currentUser) {
+    if (auth?.currentUser) {
       try {
-        const followingRef = doc(db, "users", auth?.currentUser?.uid);
-        const followerRef = doc(db, "users", id);
-
-        await updateDoc(followerRef, {
+        await updateDocumentWithSnapshot("users", id, {
           followers: arrayUnion(auth?.currentUser?.uid),
         }).then(() => {
           ToastifyFunc("Following!", "success");
         });
-        await updateDoc(followingRef, {
+        await updateDocumentWithSnapshot("users", auth?.currentUser?.uid, {
           following: arrayUnion(id),
         });
 
@@ -210,36 +208,36 @@ const PostComponent = ({
       }
     } else {
       setOpen(true);
-
-      ToastifyFunc("Please Login!", "warning");
     }
   };
   //===========================handle unfollow
   const handleUnfollow = async (id) => {
-    const db = getFirestore(app);
     const auth = getAuth(app);
     if (auth.currentUser) {
       try {
-        const followingRef = doc(db, "users", auth?.currentUser?.uid);
-        const followerRef = doc(db, "users", id);
         //=============== Fetch the current data from Firestore
-        const followingDoc = await getDoc(followingRef);
-        const followerDoc = await getDoc(followerRef);
+        const followingDoc = await getDocumentById(
+          "users",
+          auth?.currentUser?.uid
+        );
+        const followerDoc = await getDocumentById("users", id);
         //=============== Modify the arrays in memory
-        const updatedFollowerArray = followerDoc
-          .data()
-          .followers.filter((item) => item !== id);
-        const updatedFollowingArray = followingDoc
-          .data()
-          .following.filter((item) => item !== id);
+        const updatedFollowerArray = followerDoc.followers.filter(
+          (item) => item !== id
+        );
+        const updatedFollowingArray = followingDoc.following.filter(
+          (item) => item !== id
+        );
         //================ Update Firestore documents with the modified arrays
-        await setDoc(
-          followerRef,
+        await setDocumentWithId(
+          "users",
+          id,
           { followers: updatedFollowerArray },
           { merge: true }
         );
-        await setDoc(
-          followingRef,
+        await setDocumentWithId(
+          "users",
+          auth?.currentUser?.uid,
           { following: updatedFollowingArray },
           { merge: true }
         ).then(() => {
@@ -252,8 +250,6 @@ const PostComponent = ({
       }
     } else {
       setOpen(true);
-
-      ToastifyFunc("Please Login!", "warning");
     }
   };
   //============================handle update like instent
@@ -262,12 +258,11 @@ const PostComponent = ({
   }, [loggedInUser?.id, Like]);
   //============================handle post like
   const handleLike = async (postId) => {
-    const postDataRef = doc(db, "Posts", postId);
     if (loggedInUser?.id) {
       try {
-        const postDataSnapshot = await getDoc(postDataRef);
-        if (postDataSnapshot.exists()) {
-          const existingData = postDataSnapshot.data();
+        const postDataSnapshot = await getDocumentById("Posts", postId);
+        if (postDataSnapshot) {
+          const existingData = postDataSnapshot;
           const updatedLikeArray = existingData.Like || [];
 
           const likeIndex = updatedLikeArray.indexOf(loggedInUser?.id);
@@ -289,7 +284,7 @@ const PostComponent = ({
           }
 
           //============================ Update the document with the modified Like array
-          await updateDoc(postDataRef, {
+          await updateDocumentWithSnapshot("Posts", postId, {
             Like: updatedLikeArray,
           });
 
@@ -302,17 +297,6 @@ const PostComponent = ({
       }
     } else {
       setOpen(true);
-
-      toast.warning("Please Login!", {
-        position: "bottom-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
     }
   };
   //============================handle chats
@@ -347,8 +331,6 @@ const PostComponent = ({
         }
       } else {
         setOpen(true);
-
-        ToastifyFunc("Please Login!", "warning");
       }
     };
     addMessageToPost(postUid, loggedInUser.id, message);
@@ -363,9 +345,33 @@ const PostComponent = ({
       "width=600, height=400"
     );
   };
+  //==========================handle close
+  const handleClose = () => setOpen(false);
 
   return (
     <>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "160px",
+            width: "100%",
+          }}
+        >
+          {redirect === "Login" ? (
+            <Login setOpen={setOpen} setRedirect={setRedirect} />
+          ) : (
+            <Register setOpen={setOpen} setRedirect={setRedirect} />
+          )}
+        </Box>
+      </Modal>
       {loading ? (
         <SkeletonPost>
           {loading && (
@@ -392,6 +398,7 @@ const PostComponent = ({
                   </span>
                 </div>
               </div>
+
               <div className="follow">
                 {/* ===================Add skeleton content for the follow button */}
                 <button className="skeleton-content"></button>
@@ -476,11 +483,13 @@ const PostComponent = ({
               </div>
             </div>
             <div className="follow">
-              {loggedInUser?.following?.some((item) => item.id === id) ? (
-                <button onClick={() => handleUnfollow(id)}>Unfollow</button>
-              ) : (
-                <button onClick={() => handleFollow(id)}>follow</button>
-              )}
+              {loggedInUser?.following?.some((item) => item.id === id)
+                ? loggedInUser.id !== id && (
+                    <button onClick={() => handleUnfollow(id)}>Unfollow</button>
+                  )
+                : loggedInUser.id !== id && (
+                    <button onClick={() => handleFollow(id)}>follow</button>
+                  )}
             </div>
           </div>
           <div className="title">

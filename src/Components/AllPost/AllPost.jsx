@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import DataTable from "react-data-table-component";
 import getAllData from "../../Utility/GetAllData";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -33,6 +32,9 @@ import {
 import { getAuth } from "firebase/auth";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
+import updateDocumentWithSnapshot from "../../Utility/UpdateDoc";
+import getAllDataWithSnapshot from "../../Utility/GetAllData";
+
 const AllPosts = () => {
   //=========================== all state
   const [Posts, setPosts] = useState([]);
@@ -48,7 +50,8 @@ const AllPosts = () => {
   const [loading, setLoading] = useState(null);
   const [open, setOpen] = useState(null);
   const [progress, setProgress] = useState(null);
-  const [unsubscribe, setUnsubscribe] = useState(null);
+  const [filterPosts, setFilterPosts] = useState([]); // State to store filtered posts
+
   const [suspend, setSuspend] = useState(false);
   //===========================handle edit change
   const handleInputChange = (e) => {
@@ -221,7 +224,7 @@ const AllPosts = () => {
           >
             <Tooltip title="Edit">
               <IconButton>
-                <FaEdit fontSize={"23"} />
+                <FaEdit fontSize={"18"} color="#71bb41" />
               </IconButton>
             </Tooltip>
           </button>
@@ -231,7 +234,7 @@ const AllPosts = () => {
           >
             <Tooltip title="Permanent delete">
               <IconButton>
-                <FaTrash fontSize={"23"} />
+                <FaTrash fontSize={"18"} color="red" />
               </IconButton>
             </Tooltip>
           </button>
@@ -242,7 +245,7 @@ const AllPosts = () => {
           >
             <Tooltip title="Approve">
               <IconButton>
-                <AiOutlineCheck fontSize={"23"} />
+                <AiOutlineCheck fontSize={"18"} color="#71bb41" />
               </IconButton>
             </Tooltip>
           </button>
@@ -253,7 +256,7 @@ const AllPosts = () => {
           >
             <Tooltip title="Decline">
               <IconButton>
-                <AiOutlineCloseCircle fontSize={"23"} />
+                <AiOutlineCloseCircle fontSize={"18"} color="red" />
               </IconButton>
             </Tooltip>
           </button>
@@ -264,7 +267,7 @@ const AllPosts = () => {
           >
             <Tooltip title="Suspend">
               <IconButton>
-                <AiOutlineStop fontSize={"23"} />
+                <AiOutlineStop fontSize={"18"} color="red" />
               </IconButton>
             </Tooltip>
           </button>
@@ -329,50 +332,45 @@ const AllPosts = () => {
   };
   //=========================== get all post
   useEffect(() => {
-    const setupRealTimeUpdates = () => {
-      let updateData = [];
-      const unsubscribe = getAllData("Posts").then((data) => {
-        data.forEach((item) => {
-          console.log(item);
-          if (item.pending) {
-            updateData.push(item);
-          }
-        });
-      });
-
-      setPosts(updateData);
-      setUnsubscribe(unsubscribe);
-    };
-
-    setupRealTimeUpdates();
+    const unsubscribe = getAllDataWithSnapshot("Posts", (AllPosts) => {
+      setPosts(AllPosts);
+    });
+    return () => unsubscribe;
   }, []);
   //========================== handle suspend message
   const handleSubmitSuspend = async (e) => {
     e.preventDefault();
-    const db = getFirestore(app);
-    console.log(Id, msg, time);
+
     try {
-      const updateRef = doc(db, "Posts", Id);
-      const userRef = doc(db, "users", suspendUserId);
-      await updateDoc(updateRef, {
+      //===================update post suspend
+      await updateDocumentWithSnapshot("Posts", Id, {
         pending: false,
         suspended: { status: true, endTime: time, msg: msg },
       });
-      await updateDoc(userRef, {
+      //============================update user suspend
+      await updateDocumentWithSnapshot("users", suspendUserId, {
         status: {
           user: "suspend",
           msg: `${msg} until ${time}`,
           time: time,
         },
       });
-
+      setSuspend(false);
       setPosts([...Posts.filter((item) => item.dataId !== Id)]);
+      //======================toast message
       ToastifyFunc(`You are suspended until ${time}`, "warning");
       setSuspend(false);
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    if (Posts) {
+      const filteredPosts = Posts?.filter((item) => item.pending === true);
+
+      setFilterPosts(filteredPosts);
+    }
+  }, [Posts]);
 
   return (
     <div style={{ position: "relative" }}>
@@ -384,7 +382,7 @@ const AllPosts = () => {
             right: "25%",
             width: "300px",
             height: "300px",
-            boxShadow: " 0 0 10px",
+            boxShadow: " 0 0 10px #32d105",
             borderRadius: "10px",
             zIndex: 999999,
             backgroundColor: "white",
@@ -394,14 +392,16 @@ const AllPosts = () => {
             style={{
               display: "flex",
               flexDirection: "column",
-              padding: "10px",
+              padding: "20px",
               gap: "10px",
+              textAlign: "center",
             }}
             onSubmit={handleSubmitSuspend}
           >
             <h4
               style={{
-                color: "gray",
+                color: "#71bb41",
+                textTransform: "uppercase",
               }}
             >
               Suspend message
@@ -412,6 +412,8 @@ const AllPosts = () => {
                 border: "none",
                 borderRadius: "50px",
                 padding: "0 10px",
+                textTransform: "uppercase",
+                fontWeight: "bold",
               }}
               type="date"
               onChange={(e) => setTime(e.target.value)}
@@ -437,7 +439,12 @@ const AllPosts = () => {
                 height: "40px",
                 border: "none",
                 borderRadius: "50px",
+                backgroundColor: "#71bb41",
+                color: "white",
                 padding: "0 10px",
+                textTransform: "capitalize",
+                fontWeight: "bold",
+                fontSize: "16px",
               }}
             >
               suspend
@@ -617,7 +624,7 @@ const AllPosts = () => {
           </form>
         </Box>
       </Modal>
-      <DataTable data={Posts} columns={columns} />
+      <DataTable data={filterPosts} columns={columns} />
     </div>
   );
 };

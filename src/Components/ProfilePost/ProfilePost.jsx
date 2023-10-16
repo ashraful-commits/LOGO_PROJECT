@@ -28,6 +28,7 @@ import {
 } from "@mui/material";
 import {
   addDoc,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -53,6 +54,9 @@ import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { Delete, Edit } from "@mui/icons-material";
 import useOpen from "../../hooks/useOpen";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
+import getDocumentById from "../../Utility/getSingleData";
+import setDocumentWithId from "../../Utility/SetDocWithId";
+import updateDocumentWithSnapshot from "../../Utility/UpdateDoc";
 // Define the PostComponent functional component
 const PostComponent = ({ user, id, setTotalPost }) => {
   //==================all states
@@ -64,6 +68,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(false);
   const [dropDown, setDropDrown] = useState(false);
+  const [LoggedInUser, setLoggedInUser] = useState({});
   const [Id, setId] = useState(null);
   const [posts, setPost] = useState([]);
 
@@ -194,7 +199,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
         title: input.title,
         desc: input.desc,
         video: preview,
-        pending: "true",
+        pending: true,
         suspended: {
           status: false,
           startTime: serverTimestamp(),
@@ -249,7 +254,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
           video: preview,
           status: false,
           timestamp: serverTimestamp(),
-          pending: "true",
+          pending: true,
           suspended: {
             status: false,
             startTime: serverTimestamp(),
@@ -334,30 +339,99 @@ const PostComponent = ({ user, id, setTotalPost }) => {
   const handleClear = () => {
     setPreview(null);
   };
+  const handleFollow = async (id) => {
+    const auth = getAuth(app);
+
+    if (auth?.currentUser) {
+      try {
+        await updateDocumentWithSnapshot("users", id, {
+          followers: arrayUnion(auth?.currentUser?.uid),
+        }).then(() => {
+          ToastifyFunc("Following!", "success");
+        });
+        await updateDocumentWithSnapshot("users", auth?.currentUser?.uid, {
+          following: arrayUnion(id),
+        });
+
+        //======================= At this point, the documents are updated instantly
+      } catch (error) {
+        console.error("Error updating follower and following arrays:", error);
+      }
+    } else {
+      setOpen(true);
+    }
+  };
+  //===========================handle unfollow
+  const handleUnfollow = async (id) => {
+    const auth = getAuth(app);
+    if (auth.currentUser) {
+      try {
+        //=============== Fetch the current data from Firestore
+        const followingDoc = await getDocumentById(
+          "users",
+          auth?.currentUser?.uid
+        );
+        const followerDoc = await getDocumentById("users", id);
+        //=============== Modify the arrays in memory
+        const updatedFollowerArray = followerDoc.followers.filter(
+          (item) => item !== id
+        );
+        const updatedFollowingArray = followingDoc.following.filter(
+          (item) => item !== id
+        );
+        //================ Update Firestore documents with the modified arrays
+        await setDocumentWithId(
+          "users",
+          id,
+          { followers: updatedFollowerArray },
+          { merge: true }
+        );
+        await setDocumentWithId(
+          "users",
+          auth?.currentUser?.uid,
+          { following: updatedFollowingArray },
+          { merge: true }
+        ).then(() => {
+          ToastifyFunc("Unfollow!", "success");
+        });
+
+        // At this point, the documents are updated instantly
+      } catch (error) {
+        console.error("Error updating follower and following arrays:", error);
+      }
+    } else {
+      setOpen(true);
+    }
+  };
   //===========================fetch all user
   useEffect(() => {
-    const fetchUser = async () => {
-      const db = getFirestore(app);
-      const userRef = doc(db, "users", id);
-      const getData = await getDoc(userRef);
-      if (getData.exists()) {
-        const userData = getData.data();
-        if (userData?.status?.user == "suspend") {
-          const currentTime = new Date();
-          const suspendDate = new Date(userData?.status?.time);
+    const fetchData = async () => {
+      await getDocumentById("users", auth?.currentUser?.uid, (data) => {
+        setLoggedInUser(data);
+        console.log(data);
+      });
+      getDocumentById("users", id, (getData) => {
+        if (getData) {
+          const userData = getData.data();
 
-          if (currentTime >= suspendDate) {
-            await updateDoc(userRef, { status: { user: "verified" } }).then(
-              () => {
+          if (userData?.status?.user == "suspend") {
+            const currentTime = new Date();
+            const suspendDate = new Date(userData?.status?.time);
+
+            if (currentTime >= suspendDate) {
+              updateDocumentWithSnapshot("users", id, {
+                status: { user: "verified" },
+              }).then(() => {
                 ToastifyFunc("Suspension removed", "success");
-              }
-            );
+              });
+            }
           }
         }
-      }
+      });
     };
-    fetchUser();
-  }, [id]);
+    fetchData();
+  }, [id, auth?.currentUser?.uid]);
+
   return (
     <Card
       sx={{
@@ -610,9 +684,21 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                                 <AiOutlineMenu size={"24"} />
                               </Button>
                             ) : (
-                              <Button onClick={() => setDropDrown(!dropDown)}>
-                                Follow
-                              </Button>
+                              LoggedInUser?.following?.some((item) =>
+                                item.id === user?.id ? (
+                                  <Button
+                                    onClick={() => handleUnfollow(user?.id)}
+                                  >
+                                    Unfollow
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    onClick={() => handleFollow(user?.id)}
+                                  >
+                                    follow
+                                  </Button>
+                                )
+                              )
                             )
                           }
                         />
@@ -669,24 +755,6 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                         sx={{
                           display: "grid",
                           width: "100%",
-                          gridTemplateColumns: "auto 80px",
-                          gridTemplateRows: "1fr 1fr",
-                          "@media (max-width: 768px)": {
-                            display: "grid",
-                            width: "100%",
-                            gridTemplateColumns: "1fr",
-                          },
-                          "@media (max-width: 1024px) and (min-width: 769px)": {
-                            display: "grid",
-                            gridTemplateColumns: "auto 80px",
-                            gridTemplateRows: "1fr",
-                          },
-                          "@media (min-width: 1025px) and (min-width: 1442px)":
-                            {
-                              display: "grid",
-                              gridTemplateColumns: "auto 80px",
-                              gridTemplateRows: "3fr",
-                            },
                         }}
                       >
                         <Box sx={{ minHeight: "100%", width: "100%" }}>
@@ -699,13 +767,24 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                               {item.title}
                             </Typography>
                           </CardContent>
-                          <Box>
+                          <Box
+                            sx={{
+                              display: "grid",
+                              height: "600px",
+                              gridTemplateColumns: "auto 80px",
+                              "@media (max-width: 768px)": {
+                                height: "300px",
+                                gridTemplateColumns: "1fr",
+                                gridTemplateRows: "220px 80px",
+                              },
+                            }}
+                          >
                             <CardMedia
                               ref={videoRef}
                               component="div"
                               sx={{
                                 width: "100%",
-                                height: "500px",
+                                height: "100%",
                                 position: "relative",
                               }}
                               // 16:9 aspect ratio
@@ -758,22 +837,13 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                             <CardActions
                               sx={{
                                 display: "flex",
-                                justifyContent: "space-around",
-                                borderTop: "1px solid #ece9e9",
-                                "@media (max-width: 1024px) and (min-width: 769px)":
-                                  {
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    justifyContent: "between",
-                                    alignItems: "end",
-                                  },
-                                "@media (min-width: 1025px) and (min-width: 1442px)":
-                                  {
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    justifyContent: "between",
-                                    alignItems: "end",
-                                  },
+                                flexDirection: "column",
+                                justifyContent: "end",
+                                alignItems: "center",
+                                "@media (max-width: 768px)": {
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                },
                               }}
                             >
                               <Button

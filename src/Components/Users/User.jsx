@@ -9,6 +9,7 @@ import { app } from "../../firebase.confige";
 import { toast } from "react-toastify";
 import swal from "sweetalert";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
+import getAllDataWithSnapshot from "../../Utility/GetAllData";
 
 const User = () => {
   const [Users, setUsers] = useState([]);
@@ -110,20 +111,11 @@ const User = () => {
 
   //===============================get all users
   useEffect(() => {
-    const fetchData = async () => {
-      const userData = await getAllData("users");
-      setUsers(userData);
-    };
+    const userData = getAllDataWithSnapshot("users", (allUser) => {
+      setUsers(allUser);
+    });
 
-    const setupRealTimeUpdates = () => {
-      const unsubscribe = getAllData("users").then((data) => {
-        setUsers(data);
-      });
-      setUnsubscribe(unsubscribe);
-    };
-
-    fetchData();
-    setupRealTimeUpdates();
+    return userData;
   }, []);
   return (
     <div>

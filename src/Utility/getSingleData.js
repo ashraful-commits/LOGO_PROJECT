@@ -1,25 +1,22 @@
-import { collection, getFirestore, onSnapshot, query, where } from "firebase/firestore";
+import { doc, getFirestore, getDoc } from "firebase/firestore";
 
+const getDocumentById = async (collectionName, documentId) => {
+  const db = getFirestore();
+  const docRef = doc(db, collectionName, documentId);
 
-const getSingleData = async (collectionName, id) => {
-    return new Promise((resolve, reject) => {
-      //===================== get firestore
-      const db = getFirestore();
-      const q = query(collection(db, collectionName, where("id", "===", id)));
-  //========================= on snapshot
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        let allData = [];
-        querySnapshot.forEach((doc) => {
-          allData.push({ dataId: doc.id, ...doc.data() });
-        });
-        resolve(allData);
-      }, (error) => {
-        console.error("Error in onSnapshot:", error);
-        reject(error); 
-      });
+  try {
+    const docSnapshot = await getDoc(docRef);
 
-      return unsubscribe;
-    });
-  };
-  
-  export default getSingleData
+    if (docSnapshot.exists()) {
+      return docSnapshot.data();
+    } else {
+      console.log("Document not found.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting document: ", error);
+    return null;
+  }
+};
+
+export default getDocumentById;

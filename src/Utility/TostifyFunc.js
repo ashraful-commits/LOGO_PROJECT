@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 export const ToastifyFunc = ( msg, type = "error" ) => {
   const toastOptions = {
     position: "bottom-center",
-    autoClose: 1000,
+    autoClose: 2000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
