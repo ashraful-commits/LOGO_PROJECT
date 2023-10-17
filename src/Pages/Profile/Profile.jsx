@@ -508,20 +508,41 @@ const Profile = () => {
             <TabContext value={value}>
               <Box
                 sx={{
-                  width: "100%",
+                  width: "100vw",
                   borderBottom: 1,
                   padding: "0px",
                   borderColor: "divider",
+                  overflow: "auto",
                 }}
               >
                 <TabList sx={{ width: "100%" }} onChange={handleChange}>
-                  <Tab label="Post" value="1" />
-                  <Tab label="Photo" value="2" />
-                  <Tab label="Follower" value="4" />
-                  <Tab label="Following" value="5" />
+                  <Tab
+                    sx={{ fontSize: "12px", padding: "0px" }}
+                    label="Post"
+                    value="1"
+                  />
+                  <Tab
+                    sx={{ fontSize: "12px", padding: "2px" }}
+                    label="Photo"
+                    value="2"
+                  />
+                  <Tab
+                    sx={{ fontSize: "12px", padding: "2px" }}
+                    label="Follower"
+                    value="4"
+                  />
+                  <Tab
+                    sx={{ fontSize: "12px", padding: "2px" }}
+                    label="Following"
+                    value="5"
+                  />
                   {user.role == "admin" &&
                     user.id === auth?.currentUser?.uid && (
-                      <Tab label="Admin" value="6" />
+                      <Tab
+                        sx={{ fontSize: "12px", padding: "2px" }}
+                        label="Admin"
+                        value="6"
+                      />
                     )}
                 </TabList>
               </Box>
@@ -732,7 +753,7 @@ const Container = styled.div`
 
   @media (max-width: 767px) {
     flex-direction: column;
-    width: 100%;
+    width: 99%;
     display: flex;
     justify-content: center;
     margin: 0 auto;
