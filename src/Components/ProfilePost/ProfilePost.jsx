@@ -57,6 +57,7 @@ import { ToastifyFunc } from "../../Utility/TostifyFunc";
 import getDocumentById from "../../Utility/getSingleData";
 import setDocumentWithId from "../../Utility/SetDocWithId";
 import updateDocumentWithSnapshot from "../../Utility/UpdateDoc";
+import FileDeleteFunc from "../../Utility/FileDeleteFunc";
 // Define the PostComponent functional component
 const PostComponent = ({ user, id, setTotalPost }) => {
   //==================all states
@@ -323,12 +324,13 @@ const PostComponent = ({ user, id, setTotalPost }) => {
     setPreview(singlePost.video);
   };
   //=========================handle delete post
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, url) => {
     const db = getFirestore();
     const postRef = doc(db, "Posts", id);
 
     try {
       await deleteDoc(postRef);
+      FileDeleteFunc(url);
       //====================== Optionally, update the local state to remove the deleted post
       setPost((prevPosts) => prevPosts.filter((post) => post.postId !== id));
     } catch (error) {
@@ -740,7 +742,9 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                                 <ListItemText primary="Edit" />
                               </ListItemButton>
                               <ListItemButton
-                                onClick={() => handleDelete(item.postId)}
+                                onClick={() =>
+                                  handleDelete(item.postId, item.video)
+                                }
                               >
                                 <ListItemIcon>
                                   <Delete />

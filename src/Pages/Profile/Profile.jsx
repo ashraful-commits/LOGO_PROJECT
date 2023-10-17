@@ -44,6 +44,7 @@ import Admin from "../../Components/Admin/Admin";
 import useOpen from "../../hooks/useOpen";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
 import VideoList from "../../Components/Videos/VideoGallery";
+import { AiFillVideoCamera } from "react-icons/ai";
 
 const Profile = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
@@ -60,6 +61,7 @@ const Profile = () => {
   });
   const [totalPost, setTotalPost] = useState(0);
   const [totalPhoto, setTotalPhoto] = useState(0);
+  const [totalVideo, setTotalVideo] = useState(0);
   const [value, setValue] = useState("1");
   const { setOpen } = useOpen();
   const { id } = useParams();
@@ -249,32 +251,7 @@ const Profile = () => {
       }
     }
   };
-  //=======================handle input
-  const handleInput = (e) => {
-    setInput((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-  //==============================update email and password
-  const handleUpdateEmailAndPassword = (e) => {
-    const auth = getAuth(app);
-    e.preventDefault();
-    updateEmail(auth.currentUser, input.email)
-      .then(() => {})
-      .catch((error) => {
-        console.log(error);
-      });
-    updatePassword(auth.currentUser, input.password)
-      .then(() => {
-        ToastifyFunc("Email & password updated!", "success");
-        signOut(app);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+
   const auth = getAuth();
 
   return (
@@ -505,6 +482,32 @@ const Profile = () => {
                   <ListItemAvatar
                     sx={{ display: "flex", justifyContent: "center" }}
                   >
+                    <AiFillVideoCamera color="#71bb42" size={"32"} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    sx={{
+                      color: "#71bb42",
+                      fontSize: "13",
+                      fontWeight: "700",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                    primary="Videos"
+                    secondary={totalVideo}
+                  />
+                </ListItem>
+                <ListItem
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <ListItemAvatar
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
                     <FaRegThumbsUp color="#71bb42" size={"32"} />
                   </ListItemAvatar>
                   <ListItemText
@@ -646,7 +649,7 @@ const Profile = () => {
                 <StandardImageList setTotalPhoto={setTotalPhoto} />
               </TabPanel>
               <TabPanel sx={{ width: "100%" }} value="7">
-                <VideoList setTotalPhoto={setTotalPhoto} />
+                <VideoList setTotalVideo={setTotalVideo} />
               </TabPanel>
 
               <TabPanel sx={{ width: "100%" }} value="4">

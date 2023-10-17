@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { AiOutlineClose } from "react-icons/ai";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
+import FileDeleteFunc from "../../Utility/FileDeleteFunc";
 
 export default function StandardImageList({ setTotalPhoto }) {
   //=============== State to store the list of images
@@ -47,21 +48,9 @@ export default function StandardImageList({ setTotalPhoto }) {
   }, [id]);
 
   const handleDeletePhoto = (url) => {
-    const storage = getStorage();
-    const imageRef = ref(storage, url);
-
-    deleteObject(imageRef)
-      .then(() => {
-        // Remove the deleted image URL from imageList
-        const updatedImageList = imageList.filter(
-          (imageUrl) => imageUrl !== url
-        );
-        setImagesList(updatedImageList);
-        ToastifyFunc("Image deleted!", "success");
-      })
-      .catch((error) => {
-        ToastifyFunc("Something wrong!", "error");
-      });
+    FileDeleteFunc(url);
+    const filterData = imageList.filter((item) => item !== url);
+    setImagesList(filterData);
   };
 
   return (

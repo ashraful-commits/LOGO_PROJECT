@@ -34,6 +34,8 @@ import { ToastifyFunc } from "../../Utility/TostifyFunc";
 
 import updateDocumentWithSnapshot from "../../Utility/UpdateDoc";
 import getAllDataWithSnapshot from "../../Utility/GetAllData";
+import FileDeleteFunc from "../../Utility/FileDeleteFunc";
+import getDocumentById from "../../Utility/getSingleData";
 
 const AllPosts = () => {
   //=========================== all state
@@ -135,7 +137,7 @@ const AllPosts = () => {
     }
   };
   //==========================delete post
-  const handlePostDelete = async (id) => {
+  const handlePostDelete = async (id, url) => {
     swal({
       title: "Are you sure?",
       text: "Once deleted, you will not be able to recover this imaginary file!",
@@ -146,6 +148,7 @@ const AllPosts = () => {
       if (willDelete) {
         const db = getFirestore();
         await deleteDoc(doc(db, "Posts", id));
+        FileDeleteFunc(url);
         swal("Poof! Your imaginary file has been deleted!", {
           icon: "success",
         });
@@ -157,6 +160,21 @@ const AllPosts = () => {
   };
 
   const columns = [
+    {
+      name: "User Name",
+      selector: (row) => (
+        <p
+          style={{
+            width: " 100px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {row.userName}
+        </p>
+      ),
+    },
     {
       name: "Photo",
       selector: (row) => {
@@ -231,7 +249,7 @@ const AllPosts = () => {
           </button>
           <button
             style={{ border: "none", color: "red" }}
-            onClick={() => handlePostDelete(row.dataId)}
+            onClick={() => handlePostDelete(row.dataId, row.video)}
           >
             <Tooltip title="Permanent delete">
               <IconButton>
@@ -367,12 +385,28 @@ const AllPosts = () => {
   };
   useEffect(() => {
     if (Posts) {
-      const filteredPosts = Posts?.filter((item) => item.pending === true);
+      const fetchUserNames = async () => {
+        const filteredPosts = Posts.filter((item) => item.pending === true);
+        const allPost = [];
 
-      setFilterPosts(filteredPosts);
+        for (const item of filteredPosts) {
+          // Fetch user data by ID using your function
+          const userData = await getDocumentById("users", item.id);
+
+          if (userData) {
+            console.log(userData);
+            allPost.push({ ...item, userName: userData?.name });
+          } else {
+            console.log("User data not found for user ID: ", item.id);
+          }
+        }
+        console.log(allPost);
+        setFilterPosts(allPost);
+      };
+
+      fetchUserNames();
     }
   }, [Posts]);
-
   return (
     <div style={{ width: "100%", position: "relative", overflow: "auto" }}>
       {suspend && (

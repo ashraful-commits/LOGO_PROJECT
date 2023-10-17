@@ -15,8 +15,9 @@ import { useParams } from "react-router-dom";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { AiOutlineClose } from "react-icons/ai";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
+import FileDeleteFunc from "../../Utility/FileDeleteFunc";
 
-export default function VideoList({ setTotalPhoto }) {
+export default function VideoList({ setTotalVideo }) {
   //=============== State to store the list of images
   const [imageList, setImagesList] = useState([]);
   //============ Get user ID from route parameters
@@ -39,7 +40,7 @@ export default function VideoList({ setTotalPhoto }) {
             totalPhoto++;
           }
           setImagesList(totalImg);
-          setTotalPhoto(totalPhoto);
+          setTotalVideo(totalPhoto);
         });
       });
     }
@@ -47,34 +48,57 @@ export default function VideoList({ setTotalPhoto }) {
   }, [id]);
 
   const handleDeletePhoto = (url) => {
-    const storage = getStorage();
-    const imageRef = ref(storage, url);
-
-    deleteObject(imageRef)
-      .then(() => {
-        // Remove the deleted image URL from imageList
-        const updatedImageList = imageList.filter(
-          (imageUrl) => imageUrl !== url
-        );
-        setImagesList(updatedImageList);
-        ToastifyFunc("Image deleted!", "success");
-      })
-      .catch((error) => {
-        ToastifyFunc("Something wrong!", "error");
-      });
+    FileDeleteFunc(url);
+    const updatedImageList = imageList.filter((imageUrl) => imageUrl !== url);
+    setImagesList(updatedImageList);
   };
 
   return (
     <>
       {imageList.length > 0 ? (
-        <Box sx={{ position: "relative" }}>
-          <Card>
+        <Box>
+          <Card
+            sx={{
+              display: "grid",
+              gap: "10px",
+              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              "@media (max-width: 767px)": {
+                gridTemplateColumns: "1fr",
+              },
+              "@media (min-width: 768px) and (max-width: 1023px)": {
+                gridTemplateColumns: "1fr 1fr 1fr",
+              },
+              "@media (min-width: 1024px) and (max-width: 1365px)": {
+                gridTemplateColumns: "1fr 1fr 1fr",
+              },
+            }}
+          >
             {imageList.map((item, index) => (
               <>
-                <Box key={index}>
-                  <video autoPlay loop muted>
+                <Box
+                  sx={{
+                    position: "relative",
+
+                    overflow: "hidden",
+                  }}
+                  key={index}
+                >
+                  <video style={{ width: "100%" }} autoPlay loop muted>
                     <source src={item} />
                   </video>
+                  <button
+                    onClick={() => handleDeletePhoto(item)}
+                    style={{
+                      position: "absolute",
+                      zIndex: 999999,
+                      top: 10,
+                      right: 10,
+                      backgroundColor: "transparent",
+                      border: "none",
+                    }}
+                  >
+                    <AiOutlineClose color="white" fontSize={22} />
+                  </button>
                 </Box>
               </>
             ))}
@@ -89,7 +113,7 @@ export default function VideoList({ setTotalPhoto }) {
             justifyContent: "center",
           }}
         >
-          <Typography>No Gallery photo found</Typography>
+          <Typography>No Gallery Video found</Typography>
         </Box>
       )}
     </>
