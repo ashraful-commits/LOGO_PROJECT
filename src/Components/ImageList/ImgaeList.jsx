@@ -44,7 +44,7 @@ export default function StandardImageList({ setTotalPhoto }) {
       });
     }
     pageTokenExample();
-  }, [id, imageList.length]);
+  }, [id]);
 
   const handleDeletePhoto = (url) => {
     const storage = getStorage();
