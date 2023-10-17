@@ -43,6 +43,7 @@ import Followers from "../../Components/Followers/Followers";
 import Admin from "../../Components/Admin/Admin";
 import useOpen from "../../hooks/useOpen";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
+import VideoList from "../../Components/Videos/VideoGallery";
 
 const Profile = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
@@ -306,11 +307,22 @@ const Profile = () => {
                   sx={{
                     width: "100%",
                     height: "100%",
-
+                    position: "relative",
                     overflow: "hidden",
                   }}
                 >
                   <CoverPhoto src={user?.coverPhotoUrl} alt="Cover" />
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      backgroundImage:
+                        "linear-gradient(to bottom, transparent, #444444)",
+                    }}
+                  ></Box>
                 </Box>
               ) : (
                 <CoverPhoto
@@ -534,6 +546,11 @@ const Profile = () => {
                   />
                   <Tab
                     sx={{ fontSize: "12px", padding: "2px" }}
+                    label="Videos"
+                    value="7"
+                  />
+                  <Tab
+                    sx={{ fontSize: "12px", padding: "2px" }}
                     label="Follower"
                     value="4"
                   />
@@ -627,6 +644,9 @@ const Profile = () => {
               </TabPanel>
               <TabPanel sx={{ width: "100%" }} value="2">
                 <StandardImageList setTotalPhoto={setTotalPhoto} />
+              </TabPanel>
+              <TabPanel sx={{ width: "100%" }} value="7">
+                <VideoList setTotalPhoto={setTotalPhoto} />
               </TabPanel>
 
               <TabPanel sx={{ width: "100%" }} value="4">
@@ -778,6 +798,7 @@ const Content = styled.div`
 const CoverPhoto = styled.img`
   width: 100%;
   height: 300px;
+  min-height: 220px;
   object-fit: cover;
   border-radius: 15px;
   overflow: hidden;

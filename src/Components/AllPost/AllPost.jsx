@@ -379,13 +379,13 @@ const AllPosts = () => {
         <div
           style={{
             position: "absolute",
-            top: "-150%",
+            top: "-10%",
             right: "25%",
             width: "300px",
             height: "300px",
             boxShadow: " 0 0 10px #32d105",
             borderRadius: "10px",
-            zIndex: 999999,
+            zIndex: 999999999,
             backgroundColor: "white",
             overflow: "auto",
           }}
