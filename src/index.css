@@ -48,3 +48,31 @@ button {
 a {
   cursor: pointer;
 }
+
+.rdt_Table {
+  border: 1px solid #eee;
+  box-shadow: 0 0 30px #b3fdaf;
+}
+/* .rdt_TableRow */
+.rdt_TableCol {
+  display: flex;
+  justify-content: center;
+}
+/* .rdt_TableCol_Sortable */
+.rdt_TableCell {
+  display: flex;
+  justify-content: center;
+  padding: 15px 0;
+}
+/* .rdt_TableHeader */
+/* .rdt_TableFooter  */
+
+/* .rdt_TableHead */
+.rdt_TableHeadRow {
+  background-color: #9ae769 !important;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+/* .rdt_TableBody */
+/* .rdt_ExpanderRow   */

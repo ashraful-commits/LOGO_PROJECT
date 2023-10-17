@@ -770,13 +770,18 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                           <Box
                             sx={{
                               display: "grid",
-                              height: "600px",
+                              height: "500px",
                               gridTemplateColumns: "auto 80px",
-                              "@media (max-width: 768px)": {
+                              "@media (max-width: 767px)": {
                                 height: "300px",
                                 gridTemplateColumns: "1fr",
                                 gridTemplateRows: "220px 80px",
                               },
+                              "@media (min-width: 768px) and (max-width: 1023px)":
+                                {
+                                  height: "300px",
+                                  gridTemplateColumns: "auto 80px",
+                                },
                             }}
                           >
                             <CardMedia

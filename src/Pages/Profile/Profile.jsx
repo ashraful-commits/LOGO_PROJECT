@@ -36,7 +36,6 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { toast } from "react-toastify";
 import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import Following from "../../Components/Following/Following";
@@ -279,8 +278,6 @@ const Profile = () => {
 
   return (
     <Container>
-      {/* Left sidebar for desktop and tablet */}
-
       <Content>
         {isLoading ? (
           <SkeletonContainer>
@@ -295,7 +292,7 @@ const Profile = () => {
             <Box
               sx={{
                 position: "relative",
-                width: "100vw",
+                width: "100%",
                 display: "flex",
                 alignItems: "center",
               }}
@@ -305,7 +302,16 @@ const Profile = () => {
                   <Typography> {`${CoverUploadProgress}%`}</Typography>
                 </CoverLoader>
               ) : user?.coverPhotoUrl ? (
-                <CoverPhoto src={user?.coverPhotoUrl} alt="Cover" />
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+
+                    overflow: "hidden",
+                  }}
+                >
+                  <CoverPhoto src={user?.coverPhotoUrl} alt="Cover" />
+                </Box>
               ) : (
                 <CoverPhoto
                   src="https://2.bp.blogspot.com/-nfvjMm5r4HE/UAEzYD80HII/AAAAAAAAARA/CASgQfzOD3w/s1600/free-facebook-cover-photo-make-your-own.jpg"
@@ -593,45 +599,6 @@ const Profile = () => {
                           <Typography>{user?.email}</Typography>
                         </ListItem>
                       </List>
-                      {id === auth.currentUser?.uid && (
-                        <form onSubmit={handleUpdateEmailAndPassword}>
-                          <LeftSidebar>
-                            <List>
-                              <ListItem button>
-                                <TextField
-                                  type="email"
-                                  name="email"
-                                  value={input.email}
-                                  required
-                                  onChange={handleInput}
-                                  id="outlined-required"
-                                  label="Email"
-                                />
-                              </ListItem>
-                              <ListItem button>
-                                <TextField
-                                  value={input.password}
-                                  name="password"
-                                  required
-                                  type="password"
-                                  onChange={handleInput}
-                                  id="outlined-required"
-                                  label="Password"
-                                />
-                              </ListItem>
-                              <ListItem>
-                                <Button
-                                  type="submit"
-                                  sx={{ width: "100%" }}
-                                  variant="outlined"
-                                >
-                                  Save
-                                </Button>
-                              </ListItem>
-                            </List>
-                          </LeftSidebar>
-                        </form>
-                      )}
                     </Box>
                   </Box>
                   <Post>
@@ -787,9 +754,8 @@ const LeftSidebar = styled.div`
   justify-content: center;
   align-items: flex-start;
   border: 1px solid #eee;
-
   border-radius: 10px;
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     display: none;
   }
 `;
@@ -807,23 +773,27 @@ const CoverPhoto = styled.img`
   width: 100%;
   height: 300px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 15px;
+  overflow: hidden;
   margin: 0 auto;
   margin-top: 20px;
   @media (max-width: 767px) {
     flex-direction: column;
     width: 100%;
     height: 220px;
-    border-radius: 40px;
+    border-radius: 15px;
+    overflow: hidden;
     margin: 0 auto;
   }
   @media (max-width: 768px) and (max-width: 1023px) {
     padding: 0 20px;
-    border-radius: 50px;
+    border-radius: 15px;
+    overflow: hidden;
   }
   @media (max-width: 1024px) and (max-width: 1365px) {
     padding: 0 20px;
-    border-radius: 50px;
+    border-radius: 15px;
+    overflow: hidden;
   }
 `;
 

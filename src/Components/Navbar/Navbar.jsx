@@ -739,7 +739,7 @@ const Container = styled.div`
       grid-template-columns: 1fr 4fr;
       justify-content: space-between;
       align-items: center;
-      padding: 0 30px;
+      padding: 0 5px;
       .left {
         border-right: 0px solid gray;
         display: flex;
