@@ -745,7 +745,7 @@ const Container = styled.div`
   @media (min-width: 1024px) and (max-width: 1365px) {
     display: flex;
     justify-content: center;
-    max-width: 1023px;
+    min-width: 1023px;
     margin: 0 auto;
     padding: 2rem auto;
     overflow: hidden;
