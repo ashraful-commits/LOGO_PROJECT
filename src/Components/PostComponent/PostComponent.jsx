@@ -521,8 +521,8 @@ const PostComponent = ({
                   zIndex: 999,
                   width: "335px",
                   height: "300px",
-                  boxShadow: "0 0 10px gray",
-                  bgcolor: "white",
+                  boxShadow: "0 0 10px #ccffc9 inset",
+                  bgcolor: "#eee",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
@@ -556,15 +556,14 @@ const PostComponent = ({
                     overflowY: "auto", // Enable vertical scrollbar
                     display: "flex",
                     flexDirection: "column",
-                    bgcolor: "#e0e4ff",
+                    bgcolor: "#fff",
                     alignItems: "start",
                     padding: "5px 5px 0 5px",
-                    margin: "25px 10px 0 10px",
+                    margin: "25px 0 4px 0",
                     gap: "1px",
-                    borderRadius: "10px",
-
                     "&::-webkit-scrollbar": {
-                      width: "8px",
+                      width: "1px",
+                      opacity: 0,
                     },
                     "&::-webkit-scrollbar-thumb": {
                       backgroundColor: "#fefefe",
