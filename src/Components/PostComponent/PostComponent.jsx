@@ -337,13 +337,17 @@ const PostComponent = ({
   };
   //===================================== handle share
   const handleShareClick = (postId) => {
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        postId
-      )}`,
+    const url = `${postId}`;
+    const shareWindow = window.open(
+      url,
       "Share on Facebook",
       "width=600, height=400"
     );
+    if (shareWindow) {
+      shareWindow.focus();
+    } else {
+      alert("Please allow pop-ups to share on Facebook.");
+    }
   };
   //==========================handle close
   const handleClose = () => setOpen(false);
@@ -1117,8 +1121,9 @@ const SkeletonPost = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  background-color: #f0f0f0; /* Adjust the background color for the skeleton */
+  background-color: #f0f0f0;
   animation: ${fadeIn} 0.5s ease-in-out;
+
   /* Add skeleton styles for the user details */
   .post-user-details {
     width: 545.112px;
@@ -1126,7 +1131,7 @@ const SkeletonPost = styled.div`
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
-    background-color: #e0e0e0; /* Adjust the background color for the skeleton */
+    background-color: #e0e0e0;
 
     /* Add skeleton styles for user details */
     .user-details {
@@ -1140,7 +1145,7 @@ const SkeletonPost = styled.div`
         width: 50px;
         height: 50px;
         flex-shrink: 0;
-        background-color: #ccc; /* Adjust the background color for the skeleton */
+        background-color: #ccc;
         border-radius: 50%;
         overflow: hidden;
       }
@@ -1148,15 +1153,15 @@ const SkeletonPost = styled.div`
       /* Add skeleton styles for user name */
       .details {
         p {
-          background-color: #e0e0e0; /* Adjust the background color for the skeleton */
-          height: 20px; /* Adjust the height for the skeleton */
-          width: 100px; /* Adjust the width for the skeleton */
+          background-color: #e0e0e0;
+          height: 20px;
+          width: 100px;
           border-radius: 5px;
         }
         span {
-          background-color: #e0e0e0; /* Adjust the background color for the skeleton */
-          height: 10px; /* Adjust the height for the skeleton */
-          width: 60px; /* Adjust the width for the skeleton */
+          background-color: #e0e0e0;
+          height: 10px;
+          width: 60px;
           border-radius: 5px;
         }
       }
@@ -1172,9 +1177,9 @@ const SkeletonPost = styled.div`
     margin-left: 5px;
     margin-top: 2px;
     p {
-      background-color: #e0e0e0; /* Adjust the background color for the skeleton */
-      height: 15px; /* Adjust the height for the skeleton */
-      width: 80%; /* Adjust the width for the skeleton */
+      background-color: #e0e0e0;
+      height: 15px;
+      width: 80%;
       border-radius: 5px;
     }
   }
@@ -1199,7 +1204,7 @@ const SkeletonPost = styled.div`
       width: 100%;
       position: relative;
       height: 100%;
-      background-color: #ccc; /* Adjust the background color for the skeleton */
+      background-color: #ccc;
       border-radius: 10px;
       img {
         width: 100%;
@@ -1232,13 +1237,13 @@ const SkeletonPost = styled.div`
           display: flex;
           justify-content: center;
           align-items: center;
-          background-color: #e0e0e0; /* Adjust the background color for the skeleton */
+          background-color: #e0e0e0;
           border-radius: 50%;
         }
         span {
-          background-color: #e0e0e0; /* Adjust the background color for the skeleton */
-          height: 10px; /* Adjust the height for the skeleton */
-          width: 30px; /* Adjust the width for the skeleton */
+          background-color: #e0e0e0;
+          height: 10px;
+          width: 30px;
           border-radius: 5px;
         }
       }
@@ -1246,52 +1251,53 @@ const SkeletonPost = styled.div`
   }
 
   /* Add media queries for responsiveness */
-  @media (max-width: 768px) {
-    width: 98vw;
-    margin: 0 auto;
-    padding: 0 10px;
+  @media (max-width: 320px) {
+    /* Small mobile */
+    width: 100vw;
     height: 671.334px;
-    animation: ${fadeIn} 0.5s ease-in-out;
-    /* Adjust skeleton styles for smaller screens if needed */
     .post-user-details {
       width: 100%;
     }
-    .details {
-      span {
-        width: 150px; /* Adjust the width for the skeleton */
-      }
+    .details span {
+      width: 150px;
     }
-    .img-status {
-      position: "relative";
-      width: 100%;
-      grid-template-columns: 95%;
-      grid-template-rows: 470px auto;
-      gap: 21px;
-
-      /* Adjust skeleton styles for smaller screens if needed */
-      .status {
-        width: 100%;
-        justify-content: space-around;
-        align-items: center;
-        flex-direction: row;
-      }
-      .img {
-        margin-left: 0px;
-      }
+    .img-status .img {
+      margin-left: 0;
     }
     .title {
-      width: 75%;
+      width: 95%;
+    }
+  }
+
+  @media (min-width: 321px) and (max-width: 768px) {
+    /* Large mobile */
+    width: 100vw;
+    height: 671.334px;
+    .post-user-details {
+      width: 100%;
+    }
+    .details span {
+      width: 150px;
+    }
+    .img-status .img {
+      margin-left: 0;
+    }
+    .title {
+      width: 95%;
     }
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
+    /* Tablet */
     width: 100%;
-    top: 5%;
-    animation: ${fadeIn} 0.5s ease-in-out;
-    /* Adjust skeleton styles for medium-sized screens if needed */
     .post-user-details {
       width: 550.112px;
     }
+  }
+
+  @media (min-width: 1025px) {
+    /* Desktop */
+    /* Reset any specific styles for desktop, as it will use the default styles. */
   }
 `;
 

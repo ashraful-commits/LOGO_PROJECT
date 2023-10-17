@@ -1229,13 +1229,46 @@ const SkeletonStyle = styled.div`
       opacity: 1;
     }
   }
-  @media (max-width: 768px) {
+
+  @media (max-width: 320px) {
+    /* Small mobile */
     .skeleton-loader {
       display: none;
     }
     .skeleton-item {
       display: none;
     }
+  }
+
+  @media (min-width: 321px) and (max-width: 768px) {
+    /* Large mobile */
+    .skeleton-item {
+      height: 15px;
+    }
+    .avatar,
+    .creator-details {
+      height: 40px;
+      width: 40px;
+    }
+    .store {
+      .apple-store,
+      .play-store {
+        height: 30px;
+        width: 100px;
+      }
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    /* Tablet */
+    .skeleton-item {
+      height: 25px;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    /* Desktop */
+    /* Reset any specific styles for desktop, as it will use the default styles. */
   }
 `;
 
