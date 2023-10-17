@@ -675,7 +675,7 @@ const PostComponent = ({
                 <span>{msgCount}</span>
               </div>
               <div className="status-item">
-                <button onClick={() => handleShareClick(postId)}>
+                <button onClick={() => handleShareClick(id)}>
                   <BsShare />
                 </button>
                 <span>3.5 k</span>
