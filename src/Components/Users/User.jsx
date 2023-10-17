@@ -146,7 +146,13 @@ const User = () => {
     return userData;
   }, []);
   return (
-    <div style={{ width: "100%", overflow: "auto" }}>
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        overflow: "auto",
+      }}
+    >
       {/* //=======================data table  */}
       <DataTable data={Users} columns={columns} />
     </div>

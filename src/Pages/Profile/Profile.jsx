@@ -570,7 +570,12 @@ const Profile = () => {
                     },
                   }}
                 >
-                  <Box sx={{ border: "1px solid #eee" }}>
+                  <Box
+                    sx={{
+                      border: "1px solid #eee",
+                      boxShadow: "0 0 10px #eee",
+                    }}
+                  >
                     <Box
                       sx={{
                         borderBottom: "1px solid #eee",
@@ -608,6 +613,7 @@ const Profile = () => {
                         display: "flex",
                         flexDirection: "column",
                         rowGap: "50px",
+                        boxShadow: "0 0 10px #ddd",
                       }}
                     >
                       <PostComponent
@@ -713,14 +719,14 @@ const SkeletonPost = styled(SkeletonElement)`
 const Container = styled.div`
   display: flex;
   justify-content: center;
-  max-width: 1440px; /* Adjust the max width as needed */
+  max-width: 1300px; /* Adjust the max width as needed */
   margin: 0 auto;
   padding: 2rem auto;
   overflow: hidden;
 
   @media (max-width: 767px) {
     flex-direction: column;
-    width: 99%;
+    width: 100%;
     display: flex;
     justify-content: center;
     margin: 0 auto;

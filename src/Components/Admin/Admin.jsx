@@ -20,6 +20,7 @@ const Admin = () => {
         minHeight: "50vh",
         overflow: "auto",
         margin: "0 auto",
+        boxShadow: "0 0 10px #dcdcdb",
       }}
     >
       <TabContext value={value}>

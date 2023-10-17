@@ -43,7 +43,7 @@ const Following = ({ user, id }) => {
     fetchUserDataById();
   }, [id]);
   return (
-    <div>
+    <div style={{ width: "100%", boxShadow: "0 0 10px #eee", padding: "10px" }}>
       {friend?.following?.length > 0 ? (
         friend?.following?.map((item, index) => {
           return (

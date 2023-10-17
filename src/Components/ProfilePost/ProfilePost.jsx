@@ -782,6 +782,11 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                                   height: "300px",
                                   gridTemplateColumns: "auto 80px",
                                 },
+                              "@media (min-width: 1024px) and (max-width: 1365px)":
+                                {
+                                  height: "300px",
+                                  gridTemplateColumns: "auto 80px",
+                                },
                             }}
                           >
                             <CardMedia
@@ -845,7 +850,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                                 flexDirection: "column",
                                 justifyContent: "end",
                                 alignItems: "center",
-                                "@media (max-width: 768px)": {
+                                "@media (max-width: 767px)": {
                                   flexDirection: "row",
                                   justifyContent: "space-between",
                                 },
@@ -853,14 +858,19 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                             >
                               <Button
                                 sx={{
-                                  "@media (max-width: 1024px) and (min-width: 769px)":
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  justifyContent: "end",
+                                  alignItems: "center",
+
+                                  "@media (max-width: 1023px) and (min-width: 768px)":
                                     {
                                       display: "flex",
                                       flexDirection: "column",
                                       justifyContent: "end",
                                       alignItems: "center",
                                     },
-                                  "@media (min-width: 1025px) and (min-width: 1442px)":
+                                  "@media (min-width: 1024px) and (max-width: 1365px)":
                                     {
                                       display: "flex",
                                       flexDirection: "column",
@@ -882,14 +892,18 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                               </Button>
                               <Button
                                 sx={{
-                                  "@media (max-width: 1024px) and (min-width: 769px)":
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  justifyContent: "end",
+                                  alignItems: "center",
+                                  "@media (max-width: 1023px) and (min-width: 768px)":
                                     {
                                       display: "flex",
                                       flexDirection: "column",
                                       justifyContent: "end",
                                       alignItems: "center",
                                     },
-                                  "@media (min-width: 1025px) and (min-width: 1442px)":
+                                  "@media (min-width: 1024px) and (max-width: 1365px)":
                                     {
                                       display: "flex",
                                       flexDirection: "column",
@@ -911,14 +925,18 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                               </Button>
                               <Button
                                 sx={{
-                                  "@media (max-width: 1024px) and (min-width: 769px)":
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  justifyContent: "end",
+                                  alignItems: "center",
+                                  "@media (max-width: 1023px) and (min-width: 768px)":
                                     {
                                       display: "flex",
                                       flexDirection: "column",
                                       justifyContent: "end",
                                       alignItems: "center",
                                     },
-                                  "@media (min-width: 1025px) and (min-width: 1442px)":
+                                  "@media (min-width: 1024px) and (max-width: 1365px)":
                                     {
                                       display: "flex",
                                       flexDirection: "column",
