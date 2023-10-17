@@ -229,7 +229,7 @@ const AllPosts = () => {
       selector: (row) => (
         <Box
           sx={{
-            width: "600px",
+            width: "700px",
             display: "flex",
             alignItems: "center",
             columnGap: "5px",
