@@ -569,7 +569,7 @@ const Container = styled.div`
   }
   @media (max-width: 767px) {
     width: 100vw;
-    /* padding: 0 50px; */
+    padding: 0 5px;
     .container {
       width: 100%;
       min-width: 320px;
@@ -841,6 +841,7 @@ const Container = styled.div`
   @media (min-width: 1024px) and (max-width: 1365px) {
     width: 100vw;
     margin: 0 auto;
+    padding: 10px;
     .container {
       width: 1365px;
       min-width: 1024px;

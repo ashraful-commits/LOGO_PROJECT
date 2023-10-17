@@ -169,7 +169,7 @@ const PostContainer = styled.div`
     margin: 0 auto;
     .infinite-scroll-component {
       margin: 0 auto;
-      display: flex; 
+      display: flex;
       flex-direction: column;
       row-gap: 30px;
     }
