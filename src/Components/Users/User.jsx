@@ -83,7 +83,7 @@ const User = () => {
       selector: (row) => (
         <>
           <Select
-            sx={{ height: "35px", width: "100px" }}
+            sx={{ height: "35px", width: "100px", marginRight: "50px" }}
             onChange={(e) => handleOnchange(e, row.id)}
             label="Role"
             value={row.role} // Use row.role as the value
@@ -97,13 +97,41 @@ const User = () => {
     {
       name: "Action",
       selector: (row) => (
-        <Box sx={{ display: "flex", alignItems: "center", columnGap: "5px" }}>
-          <Button variant="outlined">
+        <Box
+          sx={{
+            width: "100px",
+            display: "flex",
+            alignItems: "center",
+            columnGap: "5px",
+          }}
+        >
+          <button
+            style={{
+              backgroundColor: "#71bb41",
+              border: "none",
+              padding: "5px",
+              color: "white",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <FaEdit />
-          </Button>
-          <Button onClick={() => handleUserDelete(row.id)} variant="outlined">
+          </button>
+          <button
+            style={{
+              backgroundColor: "#71bb41",
+              border: "none",
+              padding: "5px",
+              color: "white",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onClick={() => handleUserDelete(row.id)}
+          >
             <FaTrash />
-          </Button>
+          </button>
         </Box>
       ),
     },
@@ -118,7 +146,7 @@ const User = () => {
     return userData;
   }, []);
   return (
-    <div>
+    <div style={{ width: "100%", overflow: "auto" }}>
       {/* //=======================data table  */}
       <DataTable data={Users} columns={columns} />
     </div>

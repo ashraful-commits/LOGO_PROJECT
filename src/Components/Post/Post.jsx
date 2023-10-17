@@ -146,25 +146,30 @@ const PostContainer = styled.div`
     max-height: fit-content;
   }
   // Media query for smaller screens.
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     width: 100%;
   }
 
   // Media query for screens between 300px and 768px.
-  @media (min-width: 300px) and (max-width: 768px) {
+  @media (min-width: 300px) and (max-width: 766px) {
     gap: 32px;
   }
 
   // Media query for screens between 769px and 1024px.
-  @media (min-width: 769px) and (max-width: 1024px) {
+  @media (min-width: 768px) and (max-width: 1023px) {
     margin-top: 50px;
     top: 33%;
+  }
+  // Media query for screens between 769px and 1024px.
+  @media (min-width: 1024px) and (max-width: 1365px) {
+    margin-top: 50px;
+    top: 30%;
   }
   .infinite-scroll-component__outerdiv {
     margin: 0 auto;
     .infinite-scroll-component {
       margin: 0 auto;
-      display: flex;
+      display: flex; 
       flex-direction: column;
       row-gap: 30px;
     }

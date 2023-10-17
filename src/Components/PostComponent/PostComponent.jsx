@@ -975,8 +975,8 @@ const PostContainer = styled.div`
       }
     }
   }
-  @media (max-width: 768px) {
-    width: 98vw;
+  @media (max-width: 767px) {
+    width: 99vw;
     margin: 0 auto;
     padding: 0 10px;
     height: 671.334px;
@@ -1028,9 +1028,45 @@ const PostContainer = styled.div`
     }
   }
 
-  @media (min-width: 769px) and (max-width: 1024px) {
+  @media (min-width: 768px) and (max-width: 1023px) {
     width: 100%;
     top: 5%;
+    .post-user-details {
+      width: 550.112px;
+    }
+    .img-status {
+      position: "relative";
+      grid-template-columns: 420px auto;
+      padding-bottom: 30px;
+      .img {
+        width: 100%;
+        .loading {
+          width: 100%;
+        }
+        .desc {
+          p {
+            color: #bcbcbc;
+            font-family: Roboto;
+            font-size: 10.234px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            z-index: 2;
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Display an ellipsis (...) when text is truncated */
+            width: 100%;
+          }
+        }
+      }
+    }
+    .title {
+      width: 70%;
+    }
+  }
+  @media (min-width: 1024px) and (max-width: 1365px) {
+    width: 100%;
+    top: 15%;
     .post-user-details {
       width: 550.112px;
     }

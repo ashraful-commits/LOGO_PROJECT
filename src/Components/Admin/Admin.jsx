@@ -14,7 +14,14 @@ const Admin = () => {
   };
 
   return (
-    <Container sx={{ width: "100%", minHeight: "50vh" }}>
+    <Container
+      sx={{
+        width: "100vw",
+        minHeight: "50vh",
+        overflow: "auto",
+        margin: "0 auto",
+      }}
+    >
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           {/*======== TabList  */}
@@ -25,13 +32,13 @@ const Admin = () => {
         </Box>
         {/*============ TabPanel for displaying the selected content based on the active tab. */}
         <TabPanel value="1">
-          <Box>
+          <Box sx={{ width: "100%", overflow: "hidden" }}>
             {/*============ Render the User component within the Users tab. */}
             <User />
           </Box>
         </TabPanel>
         <TabPanel value="2">
-          <Box>
+          <Box sx={{ width: "100%", overflow: "hidden" }}>
             {/*============ Render the AllPosts component within the Posts tab. */}
             <AllPosts />
           </Box>

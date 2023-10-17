@@ -26,12 +26,12 @@ const Container = styled.div`
   grid-template-columns: 255.333px auto auto;
 
   /*================= Responsive design using media queries */
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     width: 100%;
     grid-template-columns: 1fr;
   }
 
-  @media (min-width: 769px) and (max-width: 1024px) {
+  @media (min-width: 768px) and (max-width: 1023px) {
     width: 100%;
     grid-template-columns: 255.333px auto;
     gap: 10px;
@@ -43,9 +43,11 @@ const Container = styled.div`
     }
   }
 
-  @media (min-width: 1025px) and (max-width: 1279px) {
+  @media (min-width: 1024px) and (max-width: 1365px) {
     width: 100vw;
-    grid-template-columns: 255.333px auto auto;
+    grid-template-columns: 255.333px auto;
+    padding: 0 100px;
+    gap: 50px;
   }
 `;
 

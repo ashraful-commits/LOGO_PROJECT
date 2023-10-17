@@ -163,7 +163,7 @@ const AllPosts = () => {
         return row?.video ? (
           <video
             controls
-            style={{ width: "100px", height: "80px" }}
+            style={{ width: "80px", height: "80px", padding: "10px" }}
             src={row.video}
           ></video>
         ) : (
@@ -176,11 +176,11 @@ const AllPosts = () => {
       },
     },
     {
-      name: "title",
+      name: "Title",
       selector: (row) => (
         <p
           style={{
-            width: " 200px",
+            width: " 100px",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -191,11 +191,11 @@ const AllPosts = () => {
       ),
     },
     {
-      name: "Desc",
+      name: "Description",
       selector: (row) => (
         <p
           style={{
-            width: " 200px",
+            width: " 100px",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -211,6 +211,7 @@ const AllPosts = () => {
       selector: (row) => (
         <Box
           sx={{
+            width: "600px",
             display: "flex",
             alignItems: "center",
             columnGap: "5px",
@@ -373,7 +374,7 @@ const AllPosts = () => {
   }, [Posts]);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ width: "100%", position: "relative", overflow: "auto" }}>
       {suspend && (
         <div
           style={{
@@ -386,6 +387,7 @@ const AllPosts = () => {
             borderRadius: "10px",
             zIndex: 999999,
             backgroundColor: "white",
+            overflow: "auto",
           }}
         >
           <form
@@ -624,7 +626,9 @@ const AllPosts = () => {
           </form>
         </Box>
       </Modal>
-      <DataTable data={filterPosts} columns={columns} />
+      <Box sx={{ width: "100%", overflow: "hidden" }}>
+        <DataTable data={filterPosts} columns={columns} />
+      </Box>
     </div>
   );
 };

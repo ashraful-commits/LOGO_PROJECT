@@ -292,7 +292,14 @@ const Profile = () => {
           </SkeletonContainer>
         ) : (
           <>
-            <Box sx={{ position: "relative" }}>
+            <Box
+              sx={{
+                position: "relative",
+                width: "100vw",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               {isCoverUploading ? (
                 <CoverLoader component="div" color="text.secondary">
                   <Typography> {`${CoverUploadProgress}%`}</Typography>
@@ -723,14 +730,31 @@ const Container = styled.div`
   padding: 2rem auto;
   overflow: hidden;
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     flex-direction: column;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0 5px;
+    overflow: hidden;
+    margin-top: 20px;
   }
-  @media (max-width: 1024px) {
-    flex-direction: row;
-    width: 100%;
-    padding: 0 20px;
+  @media (min-width: 768px) and (max-width: 1023px) {
+    display: flex;
+    justify-content: center;
+    width: "100%";
+    margin: 0 auto;
+    padding: 2rem auto;
+    overflow: hidden;
+  }
+  @media (min-width: 1024px) and (max-width: 1365px) {
+    display: flex;
+    justify-content: center;
+    max-width: 1023px;
+    margin: 0 auto;
+    padding: 2rem auto;
+    overflow: hidden;
   }
 `;
 
@@ -753,6 +777,9 @@ const Content = styled.div`
   width: 100%;
   flex: 1;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const CoverPhoto = styled.img`
@@ -760,14 +787,20 @@ const CoverPhoto = styled.img`
   height: 300px;
   object-fit: cover;
   border-radius: 10px;
+  margin: 0 auto;
   margin-top: 20px;
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     flex-direction: column;
     width: 100%;
     height: 220px;
     border-radius: 40px;
+    margin: 0 auto;
   }
-  @media (max-width: 1024px) {
+  @media (max-width: 768px) and (max-width: 1023px) {
+    padding: 0 20px;
+    border-radius: 50px;
+  }
+  @media (max-width: 1024px) and (max-width: 1365px) {
     padding: 0 20px;
     border-radius: 50px;
   }

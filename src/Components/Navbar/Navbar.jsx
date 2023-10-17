@@ -32,7 +32,7 @@ import { getAuth, signOut } from "firebase/auth";
 //================== Ensure that your Firebase configuration is correctly set up
 import { app } from "../../firebase.confige";
 import { Link } from "react-router-dom";
-import { GoogleAuthProvider } from "firebase/auth";
+
 import Login from "../Login/Login";
 import Register from "../Register/Register";
 import useOpen from "../../hooks/useOpen";
@@ -287,8 +287,8 @@ const Navbar = () => {
                   <img src={logo} alt="" />
                 </Link>
               </div>
-              {user && (
-                <div className="loginAvatar">
+              <div className="loginAvatar">
+                {user && (
                   <Link to={`/${user?.uid}`}>
                     {user?.photoURL ? (
                       <img src={user?.photoURL} alt="avatar" />
@@ -299,8 +299,8 @@ const Navbar = () => {
                       />
                     )}
                   </Link>
-                </div>
-              )}
+                )}
+              </div>
 
               {user ? (
                 <button className="logout" onClick={handleLogout}>
@@ -322,18 +322,21 @@ const Navbar = () => {
 };
 /* Your container styles */
 const Container = styled.div`
-  width: 100%;
+  width: 1442px;
   height: 75px;
   flex-shrink: 0;
-  background: #fff;
+
   display: flex;
   justify-content: center;
   position: relative;
+  margin: 0 auto;
   .nav-container {
     display: flex;
+
     justify-content: center;
     align-items: center;
     .login_container {
+      width: 100%;
       display: flex;
       flex-direction: column;
     }
@@ -349,6 +352,7 @@ const Container = styled.div`
     margin: 0 auto;
     grid-template-columns: 126px auto;
     align-items: center;
+
     .left {
       width: 100%;
       display: flex;
@@ -563,10 +567,12 @@ const Container = styled.div`
     }
     /* Styles for mobile devices */
   }
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     width: 100vw;
+    /* padding: 0 50px; */
     .container {
       width: 100%;
+      min-width: 320px;
       grid-template-columns: 1fr 2fr;
       justify-content: space-between;
       .left {
@@ -577,7 +583,7 @@ const Container = styled.div`
           display: flex;
           justify-content: start;
           align-items: center;
-          padding-left: 12px;
+
           button {
             span {
               display: none;
@@ -670,10 +676,33 @@ const Container = styled.div`
             display: none;
           }
         }
+        .loginAvatar {
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          margin-top: 10px;
+          border: 2px solid white;
+          background-color: white;
+          margin-left: 30px;
+          a {
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+            overflow: hidden;
+            img {
+              width: 40px;
+              border-radius: 100%;
+              height: 40px;
+
+              object-fit: cover;
+            }
+          }
+        }
         .creator {
           border-left: 0px solid gray;
           display: flex;
-          padding: 20px;
+          margin-right: 10px;
 
           a {
             display: none;
@@ -703,11 +732,11 @@ const Container = styled.div`
     }
   }
 
-  @media (min-width: 769px) and (max-width: 1024px) {
+  @media (min-width: 768px) and (max-width: 1023px) {
     width: 100%;
     .container {
       width: 100%;
-      grid-template-columns: 1fr 2fr;
+      grid-template-columns: 1fr 4fr;
       justify-content: space-between;
       align-items: center;
       padding: 0 30px;
@@ -756,7 +785,7 @@ const Container = styled.div`
             background-image: linear-gradient(#71bb42, #8fdd5d);
           }
         }
-        grid-template-columns: 3fr 1fr 1fr 1fr;
+        grid-template-columns: 7fr 1fr 1fr 1fr;
         .search-field {
           display: flex;
           justify-content: end;
@@ -809,13 +838,228 @@ const Container = styled.div`
       }
     }
   }
-  @media (min-width: 1025px) and (max-width: 1441px) {
-    width: 100%;
+  @media (min-width: 1024px) and (max-width: 1365px) {
+    width: 100vw;
+    margin: 0 auto;
     .container {
-      width: 100%;
-      grid-template-columns: 1fr 2fr;
+      width: 1365px;
+      min-width: 1024px;
+      max-width: 1365px;
+      grid-template-columns: 1fr 10fr;
       justify-content: space-between;
-      padding: 0 50px;
+      padding: 0 30px;
+      .left {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-right: 1px solid gray;
+        height: 40px;
+        .small-menu {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-left: 0px;
+          gap: 10px;
+
+          button {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            align-items: center;
+            border: none;
+            background-color: transparent;
+            padding: 10px;
+            transition: all 0.2s ease-in-out 0.1s;
+            &:hover {
+              background-color: #8fdd5d;
+              svg {
+                color: white;
+              }
+              span {
+                color: white;
+              }
+            }
+            svg {
+              font-size: 22px;
+              transition: all 0.2s ease-in-out 0.1s;
+            }
+            span {
+              transition: all 0.2s ease-in-out 0.1s;
+              color: #000;
+              text-align: center;
+              font-family: Roboto;
+              font-size: 14px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: normal;
+              text-transform: capitalize;
+            }
+            img {
+              display: none;
+            }
+          }
+          a {
+            display: none;
+            cursor: pointer;
+          }
+        }
+      }
+      .right {
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        grid-template-columns: 1fr 6fr 1fr 1fr 1fr;
+        button {
+          width: 93px;
+          height: 40px;
+          flex-shrink: 0;
+          color: #fff;
+          font-family: Poppins;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 30px;
+          border: none;
+          border-radius: 50px;
+          background-image: linear-gradient(#8fdd5d, #71bb42);
+          transition: all 0.5s ease-in-out;
+          position: relative;
+          &:hover {
+            background-image: linear-gradient(#71bb42, #8fdd5d);
+          }
+        }
+        .logout {
+          width: 40px;
+          height: 40px;
+          flex-shrink: 0;
+          color: #fff;
+          font-family: Poppins;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 30px;
+          border: none;
+          border-radius: 50px;
+          background-image: linear-gradient(#8fdd5d, #71bb42);
+          transition: all 0.5s ease-in-out;
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          svg {
+            font-size: 20px;
+          }
+          &:hover {
+            background-image: linear-gradient(#71bb42, #8fdd5d);
+          }
+        }
+        .search-field {
+          margin-left: 25px;
+          display: flex;
+          align-items: center;
+          form {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            gap: 7px;
+
+            svg {
+              font-size: 25px;
+              cursor: pointer;
+              &:hover {
+                color: #71bb42;
+              }
+            }
+            input {
+              border: none;
+              font-family: Poppins;
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 21px;
+              letter-spacing: 0em;
+              text-align: left;
+              padding: 5px 5px;
+              border-left: 1px solid white;
+
+              &:focus {
+                outline: none;
+                border-left: 1px solid #71bb42;
+              }
+            }
+          }
+        }
+        .logo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          img {
+            width: 56px;
+            height: 30px;
+            object-fit: contain;
+            margin-right: 132px;
+          }
+        }
+        .loginAvatar {
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          margin-top: 10px;
+          border: 2px solid white;
+          background-color: white;
+          a {
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+            overflow: hidden;
+            img {
+              width: 40px;
+              border-radius: 100%;
+              height: 40px;
+
+              object-fit: cover;
+            }
+          }
+        }
+        .creator {
+          border-left: 1px solid gray;
+          padding-left: 15px;
+          margin-left: 10px;
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          gap: 16px;
+          position: relative;
+          a {
+            color: #3c3c3c;
+            font-family: Poppins;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+          }
+          button {
+            width: 93px;
+            height: 40px;
+            flex-shrink: 0;
+            color: #fff;
+            font-family: Poppins;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 30px;
+            border: none;
+            border-radius: 50px;
+            background-image: linear-gradient(#8fdd5d, #71bb42);
+            transition: all 0.5s ease-in-out;
+            position: relative;
+            &:hover {
+              background-image: linear-gradient(#71bb42, #8fdd5d);
+            }
+          }
+        }
+      }
     }
   }
 `;

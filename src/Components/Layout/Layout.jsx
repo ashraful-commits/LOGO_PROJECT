@@ -15,23 +15,21 @@ const Layout = () => {
 
 //
 const Container = styled.div`
-  width: 99vw;
+  width: 100vw;
 
   min-height: 100vh;
 
   max-height: fit-content;
-
-  background-color: #fff;
+  margin: 0 auto;
+  background-color: white;
 
   display: flex;
   justify-content: center;
-
-  @media (max-width: 768px) {
+  .container {
     width: 100%;
   }
-
-  @media (min-width: 769px) and (max-width: 1024px) {
-    width: 100%;
+  @media (max-width: 767px) {
+    width: 100vw; // Full width for smaller screens
   }
 `;
 
