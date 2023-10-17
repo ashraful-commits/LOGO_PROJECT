@@ -28,13 +28,13 @@ const Container = styled.div`
     width: 100%;
   }
   @media (max-width: 767px) {
-    width: 100vw;
+    width: 100%;
   }
   @media (min-width: 768px) and (max-width: 1023px) {
     width: 100%;
   }
   @media (min-width: 1024px) and (max-width: 1365px) {
-    width: 100vw;
+    width: 100%;
   }
 `;
 

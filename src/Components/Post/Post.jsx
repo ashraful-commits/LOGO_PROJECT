@@ -96,7 +96,7 @@ const Post = () => {
           hasMore={hasMore}
           loader={
             <img
-              style={{ width: "50px" }}
+              style={{ width: "50px", margin: "0 auto" }}
               src="https://bestanimations.com/media/loading-gears/1575100148loading-gear-6.gif"
             />
           }
