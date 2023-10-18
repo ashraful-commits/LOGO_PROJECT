@@ -230,14 +230,12 @@ const AllPosts = () => {
       selector: (row) => (
         <Box
           sx={{
+            width: "700px",
             display: "flex",
             alignItems: "center",
             columnGap: "5px",
             gap: "10px",
             zIndex: 0,
-            "@media (max-width:767px)": {
-              width: "700px",
-            },
           }}
         >
           <button
