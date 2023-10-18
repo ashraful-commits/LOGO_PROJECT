@@ -433,7 +433,7 @@ const AllPosts = () => {
           style={{
             position: "fixed",
             top: "30%",
-            right: "2%",
+            right: "10%",
             width: "300px",
             height: "210px",
             boxShadow: " 0 0 10px #32d105",
@@ -465,6 +465,7 @@ const AllPosts = () => {
             <input
               style={{
                 height: "40px",
+                width: "100%",
                 border: "none",
                 borderRadius: "50px",
                 padding: "0 10px",
