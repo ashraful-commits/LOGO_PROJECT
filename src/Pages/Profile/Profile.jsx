@@ -541,18 +541,33 @@ const Profile = () => {
                     sx={{
                       fontSize: "12px",
                       padding: "0px",
-                      minWidth: "50px",
+
+                      "@media (max-width:767px)": {
+                        minWidth: "50px",
+                      },
                     }}
                     label="Post"
                     value="1"
                   />
                   <Tab
-                    sx={{ fontSize: "12px", padding: "2px", minWidth: "50px" }}
+                    sx={{
+                      fontSize: "12px",
+                      padding: "2px",
+                      "@media (max-width:767px)": {
+                        minWidth: "50px",
+                      },
+                    }}
                     label="Photo"
                     value="2"
                   />
                   <Tab
-                    sx={{ fontSize: "12px", padding: "2px", minWidth: "50px" }}
+                    sx={{
+                      fontSize: "12px",
+                      padding: "2px",
+                      "@media (max-width:767px)": {
+                        minWidth: "50px",
+                      },
+                    }}
                     label="Videos"
                     value="7"
                   />
@@ -572,7 +587,9 @@ const Profile = () => {
                         sx={{
                           fontSize: "12px",
                           padding: "2px",
-                          minWidth: "50px",
+                          "@media (max-width:767px)": {
+                            minWidth: "50px",
+                          },
                         }}
                         label="Admin"
                         value="6"
