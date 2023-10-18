@@ -9,26 +9,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
 import PostComponent from "../../Components/ProfilePost/ProfilePost";
-import {
-  Box,
-  Button,
-  Input,
-  ListItemAvatar,
-  Tab,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Input, ListItemAvatar, Tab, Typography } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import StandardImageList from "../../Components/ImageList/ImgaeList";
 
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut,
-  updateEmail,
-  updatePassword,
-  updateProfile,
-} from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { app } from "../../firebase.confige";
 import {
   getDownloadURL,
@@ -55,10 +40,7 @@ const Profile = () => {
   const [LoggedInUser, setLoggedInUser] = useState({});
   const [isProfileProgress, setIsProfileProgress] = useState(0);
   const [CoverUploadProgress, setCoverUploadProgress] = useState(0);
-  const [input, setInput] = useState({
-    email: "",
-    password: "",
-  });
+
   const [totalPost, setTotalPost] = useState(0);
   const [totalPhoto, setTotalPhoto] = useState(0);
   const [totalVideo, setTotalVideo] = useState(0);
@@ -82,10 +64,6 @@ const Profile = () => {
       ToastifyFunc("Please Login!", "warning");
     }
     setLoggedInUser(auth?.currentUser);
-    setInput({
-      email: auth?.currentUser?.email,
-      password: auth?.currentUser?.password,
-    });
   }, [navigate, setOpen]);
   //============================handle input change
   const handleChange = (event, newValue) => {
@@ -785,20 +763,6 @@ const Container = styled.div`
     padding: 2rem auto;
     overflow: hidden;
     width: 100vw;
-  }
-`;
-
-const LeftSidebar = styled.div`
-  width: 100%;
-  height: 100vh;
-  background-color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  @media (max-width: 767px) {
-    display: none;
   }
 `;
 

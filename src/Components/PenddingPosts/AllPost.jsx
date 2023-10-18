@@ -432,10 +432,10 @@ const AllPosts = () => {
           ref={modalRef}
           style={{
             position: "fixed",
-            top: "44%",
+            top: "30%",
             right: "2%",
             width: "300px",
-            height: "300px",
+            height: "210px",
             boxShadow: " 0 0 10px #32d105",
             borderRadius: "10px",
             zIndex: 999999999,
@@ -450,6 +450,7 @@ const AllPosts = () => {
               padding: "20px",
               gap: "10px",
               textAlign: "center",
+              justifyContent: "space-between",
             }}
             onSubmit={handleSubmitSuspend}
           >
