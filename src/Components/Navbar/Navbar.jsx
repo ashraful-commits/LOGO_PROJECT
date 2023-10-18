@@ -100,6 +100,14 @@ const Navbar = () => {
     const user = auth.currentUser;
     setUser(user);
   }, [auth.currentUser]);
+  const handleSearchForm = (e) => {
+    e.preventDefault();
+    if (search) {
+      const capitalizedSearch =
+        search.charAt(0).toUpperCase() + search.slice(1);
+      navigate(`/search/${capitalizedSearch}`);
+    }
+  };
   return (
     <>
       {loading ? (
@@ -272,10 +280,10 @@ const Navbar = () => {
 
             <div className="right">
               <div className="search-field">
-                <form>
-                  <Link to={`/search/${search}`}>
+                <form onSubmit={handleSearchForm}>
+                  <button className="searchButton" type="submit">
                     <CiSearch />
-                  </Link>
+                  </button>
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -463,12 +471,21 @@ const Container = styled.div`
         margin-left: 25px;
         display: flex;
         align-items: center;
+
         form {
           display: flex;
           justify-content: start;
           align-items: center;
           gap: 7px;
-
+          .searchButton {
+            background-image: none !important;
+            width: 30px !important;
+            height: 30px !important;
+            color: #45b201;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
           svg {
             font-size: 25px;
             cursor: pointer;
@@ -654,6 +671,9 @@ const Container = styled.div`
                 display: block;
               }
             }
+            .searchButton {
+              /* background-color: #fff !important; */
+            }
             input {
               position: absolute; /* Position the input absolutely */
               display: block;
@@ -793,6 +813,9 @@ const Container = styled.div`
           form {
             svg {
               font-size: 25px;
+            }
+            .searchButton {
+              background-color: #fff !important;
             }
             input {
               &:focus {
@@ -964,7 +987,9 @@ const Container = styled.div`
             justify-content: start;
             align-items: center;
             gap: 7px;
-
+            .searchButton {
+              background-color: #fff !important;
+            }
             svg {
               font-size: 25px;
               cursor: pointer;

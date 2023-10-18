@@ -3,6 +3,7 @@ import Layout from "../Components/Layout/Layout";
 import Home from "../Pages/Home/Home";
 import Profile from "../Pages/Profile/Profile";
 import { Search } from "@mui/icons-material";
+import SearchPage from "../Pages/SearchPage";
 
 const PublicRoute = createBrowserRouter([
   {
@@ -18,7 +19,7 @@ const PublicRoute = createBrowserRouter([
       },
       {
         path: "/search/:search",
-        element: <Search />,
+        element: <SearchPage />,
       },
     ],
   },

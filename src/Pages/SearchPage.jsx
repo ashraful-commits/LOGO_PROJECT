@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   ListItem,
@@ -12,68 +13,69 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import styled from "styled-components";
 
 const SearchPage = () => {
   const [searchItem, setSearchItem] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { search } = useParams();
-  useEffect(() => {
-    const handleSubmitSerach = async (e) => {
-      e.preventDefault();
-      const db = getFirestore();
-      const usersCollection = collection(db, "users"); // 'users' is the name of your Firestore collection
 
-      //============ Create a query that filters users by name
+  useEffect(() => {
+    const handleSubmitSearch = async () => {
+      const db = getFirestore();
+      const usersCollection = collection(db, "users");
+
       const queryByName = query(
         usersCollection,
-        where("name", ">=", search).where("name", "<", search + "z")
+        where("name", ">=", search),
+        where("name", "<", search + "z")
       );
+
       try {
         const querySnapshot = await getDocs(queryByName);
 
         if (querySnapshot.empty) {
-          console.log("No users found with the name:", name);
-          return [];
+          console.log("No users found with the name:", search);
+          setSearchItem([]);
+        } else {
+          const users = [];
+          querySnapshot.forEach((userDoc) => {
+            const userData = userDoc.data();
+            users.push(userData);
+          });
+          setSearchItem(users);
         }
 
-        const users = [];
-        querySnapshot.forEach((userDoc) => {
-          //=========== Access the user data
-          const userData = userDoc.data();
-          console.log(userData);
-          users.push(userData);
-        });
-
-        setSearchItem(users);
+        setLoading(false);
       } catch (error) {
         console.error("Error finding users by name:", error);
-        return [];
+        setLoading(false);
       }
     };
-    handleSubmitSerach();
+
+    handleSubmitSearch();
   }, [search]);
+
   return (
-    <div>
-      {searchItem > 0 ? (
-        searchItem.map((item, index) => {
-          return (
+    <SearchContainer>
+      <div className="container">
+        {loading ? (
+          <LoadingContainer>
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            {/* Add as many skeleton components as needed */}
+          </LoadingContainer>
+        ) : searchItem?.length > 0 ? (
+          searchItem.map((item, index) => (
             <ListItem
-              key={index}
               sx={{
-                width: "350px",
                 border: "1px solid #eee",
-                "@media (max-width: 768px)": {
-                  width: "100%",
-                },
-                "@media (max-width: 1024px) and (min-width: 769px)": {
-                  width: "430px",
-                },
-                "@media (min-width: 1025px) and (min-width: 1442px)": {
-                  width: "430px",
-                },
+                margin: "20px",
+                boxShadow: "0 0 10px #eee",
               }}
-              alignItems="flex-start"
+              key={index}
             >
               <ListItemAvatar>
                 <Avatar alt="Travis Howard" src={item?.photoURL} />
@@ -84,7 +86,6 @@ const SearchPage = () => {
                   secondary={
                     <React.Fragment>
                       <Typography
-                        sx={{ display: "inline" }}
                         component="span"
                         variant="body2"
                         color="text.primary"
@@ -96,13 +97,41 @@ const SearchPage = () => {
                 />
               </Link>
             </ListItem>
-          );
-        })
-      ) : (
-        <Typography>No search item</Typography>
-      )}
-    </div>
+          ))
+        ) : (
+          <p style={{ textAlign: "center" }}>No search item</p>
+        )}
+      </div>
+    </SearchContainer>
   );
 };
+
+const SearchContainer = styled.div`
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: start;
+  margin: 0 auto;
+  width: 100%;
+
+  .container {
+    width: 1442px;
+    margin-top: 20px;
+  }
+`;
+
+const LoadingContainer = styled.div`
+  /* Style your loading container here */
+  display: flex;
+  flex-direction: column;
+`;
+
+const LoadingSkeleton = styled.div`
+  /* Style your loading skeleton here */
+  height: 100px;
+  width: 100%;
+  background-color: #f0f0f0;
+  margin-bottom: 10px;
+`;
 
 export default SearchPage;
