@@ -48,7 +48,7 @@ const Followers = ({ user, id }) => {
         boxShadow: "0 0 10px #eee",
         padding: "10px",
         display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr",
+        gridTemplateColumns: "1fr 1fr auto",
         gap: "10px",
         "@media (max-width:767px)": {
           gridTemplateColumns: "1fr",
