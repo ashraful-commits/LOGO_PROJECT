@@ -713,14 +713,30 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                               boxShadow: "0 0 10px gray",
                               zIndex: "1",
                               border: "20px",
+                              borderRadius: "10px",
+                              overflow: "hidden",
                             }}
                           >
+                            <button
+                              onClick={() => setDropDrown(false)}
+                              style={{
+                                position: "absolute",
+                                zIndex: 99999,
+                                right: 10,
+                                top: 10,
+                                backgroundColor: "transparent",
+                                border: "none",
+                              }}
+                            >
+                              <AiOutlineClose />
+                            </button>
                             <List
                               sx={{
                                 width: "100%",
                                 maxWidth: 360,
-                                bgcolor: "background.paper",
+                                bgcolor: "white",
                                 border: "10px",
+                                borderRadius: "10px",
                               }}
                               component="nav"
                               aria-labelledby="nested-list-subheader"

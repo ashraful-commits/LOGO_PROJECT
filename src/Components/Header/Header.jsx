@@ -29,7 +29,7 @@ const HeaderContainer = styled.div`
 
   // Media queries for responsive design
   @media (max-width: 767px) {
-    width: 100; // Full width for smaller screens
+    width: 100%; // Full width for smaller screens
   }
   @media (min-width: 768px) and (max-width: 1023px) {
     width: 100%; // Full width for medium-sized screens
