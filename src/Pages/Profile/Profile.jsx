@@ -745,11 +745,12 @@ const Container = styled.div`
   max-width: 1300px; /* Adjust the max width as needed */
   margin: 0 auto;
   padding: 2rem auto;
+
   overflow: hidden;
 
   @media (max-width: 767px) {
     flex-direction: column;
-    width: 100%;
+    width: 100vw;
     display: flex;
     justify-content: center;
     margin: 0 auto;
@@ -760,7 +761,7 @@ const Container = styled.div`
   @media (min-width: 768px) and (max-width: 1023px) {
     display: flex;
     justify-content: center;
-    width: "100%";
+    width: "100vw";
     margin: 0 auto;
     padding: 2rem auto;
     overflow: hidden;
