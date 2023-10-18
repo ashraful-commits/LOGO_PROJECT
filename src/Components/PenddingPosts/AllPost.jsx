@@ -468,7 +468,7 @@ const AllPosts = () => {
                 width: "100%",
                 border: "none",
                 borderRadius: "50px",
-                padding: "0 10px",
+                padding: "0 15px",
                 textTransform: "uppercase",
                 fontWeight: "bold",
               }}
