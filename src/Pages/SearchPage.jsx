@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
   Avatar,
+  Box,
+  Button,
   ListItem,
   ListItemAvatar,
   ListItemText,
@@ -15,10 +17,13 @@ import {
 } from "firebase/firestore";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { ArrowCircleLeft } from "@mui/icons-material";
 
 const SearchPage = () => {
   const [searchItem, setSearchItem] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1); // Current page
+  const [itemsPerPage] = useState(10); // Number of items per page
   const { search } = useParams();
 
   useEffect(() => {
@@ -57,6 +62,19 @@ const SearchPage = () => {
     handleSubmitSearch();
   }, [search]);
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
+  // Calculate the index of the first and last item on the current page
+  const indexOfLastItem = page * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = searchItem.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => {
+    setPage(pageNumber);
+  };
+
   return (
     <SearchContainer>
       <div className="container">
@@ -68,36 +86,53 @@ const SearchPage = () => {
             {/* Add as many skeleton components as needed */}
           </LoadingContainer>
         ) : searchItem?.length > 0 ? (
-          searchItem.map((item, index) => (
-            <ListItem
-              sx={{
-                border: "1px solid #eee",
-                margin: "20px",
-                boxShadow: "0 0 10px #eee",
-              }}
-              key={index}
-            >
-              <ListItemAvatar>
-                <Avatar alt="Travis Howard" src={item?.photoURL} />
-              </ListItemAvatar>
-              <Link to={`/${item.id}`}>
-                <ListItemText
-                  primary={item?.name}
-                  secondary={
-                    <React.Fragment>
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="text.primary"
-                      >
-                        {item?.email}
-                      </Typography>
-                    </React.Fragment>
-                  }
-                />
-              </Link>
-            </ListItem>
-          ))
+          <Box>
+            <Button onClick={handleBack}>
+              <ArrowCircleLeft />
+            </Button>
+            {currentItems.map((item, index) => (
+              <ListItem
+                sx={{
+                  border: "1px solid #eee",
+                  margin: "20px",
+                  boxShadow: "0 0 10px #eee",
+                }}
+                key={index}
+              >
+                <ListItemAvatar>
+                  <Avatar alt="Travis Howard" src={item?.photoURL} />
+                </ListItemAvatar>
+                <Link to={`/${item.id}`}>
+                  <ListItemText
+                    primary={item?.name}
+                    secondary={
+                      <React.Fragment>
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.primary"
+                        >
+                          {item?.email}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                </Link>
+              </ListItem>
+            ))}
+            <PaginationContainer>
+              {Array.from({
+                length: Math.ceil(searchItem.length / itemsPerPage),
+              }).map((_, index) => (
+                <PaginationButton
+                  key={index}
+                  onClick={() => paginate(index + 1)}
+                >
+                  {index + 1}
+                </PaginationButton>
+              ))}
+            </PaginationContainer>
+          </Box>
         ) : (
           <p style={{ textAlign: "center" }}>No search item</p>
         )}
@@ -121,17 +156,30 @@ const SearchContainer = styled.div`
 `;
 
 const LoadingContainer = styled.div`
-  /* Style your loading container here */
   display: flex;
   flex-direction: column;
 `;
 
 const LoadingSkeleton = styled.div`
-  /* Style your loading skeleton here */
   height: 100px;
   width: 100%;
   background-color: #f0f0f0;
   margin-bottom: 10px;
+`;
+
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const PaginationButton = styled.button`
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
 `;
 
 export default SearchPage;
