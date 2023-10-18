@@ -270,7 +270,7 @@ const Profile = () => {
             <Box
               sx={{
                 position: "relative",
-                width: "100%",
+                width: "100vw",
                 display: "flex",
                 alignItems: "center",
               }}
@@ -529,14 +529,14 @@ const Profile = () => {
             <TabContext value={value}>
               <Box
                 sx={{
-                  width: "100vw",
+                  width: "100%",
                   borderBottom: 1,
                   padding: "0px",
                   borderColor: "divider",
                   overflow: "auto",
                 }}
               >
-                <TabList sx={{ width: "100vw" }} onChange={handleChange}>
+                <TabList sx={{ width: "100%" }} onChange={handleChange}>
                   <Tab
                     sx={{ fontSize: "12px", padding: "0px" }}
                     label="Post"
