@@ -2,7 +2,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Container, Tab } from "@mui/material";
 import { useState } from "react";
 import User from "../Users/User";
-import AllPosts from "../AllPost/AllPost";
+import AllPosts from "../PenddingPosts/AllPost";
 
 //============== The Admin
 const Admin = () => {

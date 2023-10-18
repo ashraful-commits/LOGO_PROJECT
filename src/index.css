@@ -53,26 +53,29 @@ a {
   border: 1px solid #eee;
   box-shadow: 0 0 30px #b3fdaf;
 }
-/* .rdt_TableRow */
+
 .rdt_TableCol {
   display: flex;
   justify-content: center;
 }
-/* .rdt_TableCol_Sortable */
+
 .rdt_TableCell {
   display: flex;
   justify-content: center;
   padding: 15px 0;
 }
-/* .rdt_TableHeader */
-/* .rdt_TableFooter  */
 
-/* .rdt_TableHead */
 .rdt_TableHeadRow {
   background-color: #9ae769 !important;
   color: white;
   font-weight: bold;
   font-size: 16px;
 }
-/* .rdt_TableBody */
-/* .rdt_ExpanderRow   */
+@media (max-width: 767px) {
+  .css-1c87n4e-MuiButtonBase-root-MuiTab-root {
+    min-width: 50px !important;
+  }
+  .css-73xyce-MuiButtonBase-root-MuiTab-root {
+    min-width: 70px !important;
+  }
+}
