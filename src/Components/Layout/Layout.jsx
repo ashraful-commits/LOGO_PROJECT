@@ -25,7 +25,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   .container {
-    width: 100%;
+    width: 99vw;
   }
   @media (max-width: 767px) {
     width: 100%;

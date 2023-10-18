@@ -325,11 +325,10 @@ const Container = styled.div`
   width: 1442px;
   height: 75px;
   flex-shrink: 0;
-
   display: flex;
   justify-content: center;
   position: relative;
-  margin: 0 auto;
+  width: 100%;
   .nav-container {
     display: flex;
 

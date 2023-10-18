@@ -745,7 +745,7 @@ const Container = styled.div`
   max-width: 1300px; /* Adjust the max width as needed */
   margin: 0 auto;
   padding: 2rem auto;
-
+  width: 99vw;
   overflow: hidden;
 
   @media (max-width: 767px) {
@@ -761,7 +761,7 @@ const Container = styled.div`
   @media (min-width: 768px) and (max-width: 1023px) {
     display: flex;
     justify-content: center;
-    width: "100vw";
+    width: 100vw;
     margin: 0 auto;
     padding: 2rem auto;
     overflow: hidden;
@@ -773,6 +773,7 @@ const Container = styled.div`
     margin: 0 auto;
     padding: 2rem auto;
     overflow: hidden;
+    width: 100vw;
   }
 `;
 

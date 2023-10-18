@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
 import getAllData from "../../Utility/GetAllData";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -55,6 +55,7 @@ const AllPosts = () => {
   const [filterPosts, setFilterPosts] = useState([]); // State to store filtered posts
 
   const [suspend, setSuspend] = useState(false);
+  const modalRef = useRef(null);
   //===========================handle edit change
   const handleInputChange = (e) => {
     setInput((prev) => ({
@@ -165,7 +166,7 @@ const AllPosts = () => {
       selector: (row) => (
         <p
           style={{
-            width: " 100px",
+            width: " 200px",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -198,7 +199,7 @@ const AllPosts = () => {
       selector: (row) => (
         <p
           style={{
-            width: " 100px",
+            width: " 60px",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -213,7 +214,7 @@ const AllPosts = () => {
       selector: (row) => (
         <p
           style={{
-            width: " 100px",
+            width: " 50px",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -407,14 +408,32 @@ const AllPosts = () => {
       fetchUserNames();
     }
   }, [Posts]);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        // Click occurred outside the modal
+        setSuspend(false);
+      }
+    };
+
+    if (suspend) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
   return (
-    <div style={{ width: "100vw", position: "relative", overflow: "auto" }}>
+    <>
       {suspend && (
         <div
+          ref={modalRef}
           style={{
-            position: "absolute",
-            top: "-10%",
-            right: "25%",
+            position: "fixed",
+            top: "44%",
+            right: "44%",
             width: "300px",
             height: "300px",
             boxShadow: " 0 0 10px #32d105",
@@ -488,182 +507,192 @@ const AllPosts = () => {
           </form>
         </div>
       )}
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{
-          width: "100vw",
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+      <div
+        style={{
+          width: "100%",
+          zIndex: 0,
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <Box
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
           sx={{
+            width: "100vw",
+            height: "100vh",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            width: "400px",
-
-            bgcolor: "white",
           }}
         >
-          <form onSubmit={handlePostEdit}>
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                padding: "15px",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Typography
-                variant="h6"
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "400px",
+
+              bgcolor: "white",
+            }}
+          >
+            <form onSubmit={handlePostEdit}>
+              <Box
                 sx={{
-                  bgcolor: "#71bb42",
                   width: "100%",
-                  textAlign: "center",
-                  padding: "5px 0",
-                  color: "white",
-                  marginBottom: "10px",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "15px",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                {Id ? "Edit Post" : "Add new Post"}
-              </Typography>
-
-              <label htmlFor="postVide">
-                <Box
+                <Typography
+                  variant="h6"
                   sx={{
-                    width: "380px",
-                    height: "200px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    bgcolor: "#71bb42",
+                    width: "100%",
+                    textAlign: "center",
+                    padding: "5px 0",
+                    color: "white",
                     marginBottom: "10px",
                   }}
                 >
-                  {loading ? (
-                    <Typography sx={{ fontSize: "24px" }}>
-                      {progress}%
-                    </Typography>
-                  ) : preview ? (
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        overflow: "hidden",
-                        position: "relative",
-                      }}
-                    >
-                      <ReactPlayer
-                        style={{
+                  {Id ? "Edit Post" : "Add new Post"}
+                </Typography>
+
+                <label htmlFor="postVide">
+                  <Box
+                    sx={{
+                      width: "380px",
+                      height: "200px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {loading ? (
+                      <Typography sx={{ fontSize: "24px" }}>
+                        {progress}%
+                      </Typography>
+                    ) : preview ? (
+                      <Box
+                        sx={{
                           width: "100%",
-                          bgcolor: "black",
                           height: "100%",
+                          overflow: "hidden",
+                          position: "relative",
                         }}
-                        url={preview}
-                        width="100%"
-                        height="100%"
-                        controls={true}
-                        playing={true}
-                      />
-                      <button
-                        onClick={handleClear}
-                        style={{
-                          backgroundColor: "white",
-                          position: "absolute",
-                          top: 0,
-                          right: 0,
-                          zIndex: 99999,
-                          border: "none",
-                          padding: "5px",
-                          borderRadius: "100%",
-                        }}
-                        className="previewClear"
                       >
-                        <AiOutlineClose />
-                      </button>
-                    </Box>
-                  ) : (
-                    <label
-                      style={{
-                        overflow: "hidden",
-                        width: "100%",
-                        height: "100%",
-                      }}
-                      htmlFor="postVide0"
-                    >
-                      <img
+                        <ReactPlayer
+                          style={{
+                            width: "100%",
+                            bgcolor: "black",
+                            height: "100%",
+                          }}
+                          url={preview}
+                          width="100%"
+                          height="100%"
+                          controls={true}
+                          playing={true}
+                        />
+                        <button
+                          onClick={handleClear}
+                          style={{
+                            backgroundColor: "white",
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            zIndex: 99999,
+                            border: "none",
+                            padding: "5px",
+                            borderRadius: "100%",
+                          }}
+                          className="previewClear"
+                        >
+                          <AiOutlineClose />
+                        </button>
+                      </Box>
+                    ) : (
+                      <label
                         style={{
+                          overflow: "hidden",
                           width: "100%",
                           height: "100%",
-                          objectFit: "cover",
                         }}
-                        src="https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
-                        alt="preview"
-                      />
-                    </label>
-                  )}
-                </Box>
-              </label>
-              <TextField
-                id="outlined-multiline-flexible"
-                label="Title"
-                multiline
-                maxRows={4}
-                name="title"
-                value={input.title}
-                onChange={handleInputChange}
-                sx={{ width: "100%", marginBottom: "10px" }}
-              />
-              <TextField
-                id="outlined-multiline-flexible"
-                label="Description"
-                multiline
-                maxRows={4}
-                sx={{ width: "100%" }}
-                name="desc"
-                value={input.desc}
-                onChange={handleInputChange}
-              />
+                        htmlFor="postVide0"
+                      >
+                        <img
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                          src="https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg"
+                          alt="preview"
+                        />
+                      </label>
+                    )}
+                  </Box>
+                </label>
+                <TextField
+                  id="outlined-multiline-flexible"
+                  label="Title"
+                  multiline
+                  maxRows={4}
+                  name="title"
+                  value={input.title}
+                  onChange={handleInputChange}
+                  sx={{ width: "100%", marginBottom: "10px" }}
+                />
+                <TextField
+                  id="outlined-multiline-flexible"
+                  label="Description"
+                  multiline
+                  maxRows={4}
+                  sx={{ width: "100%" }}
+                  name="desc"
+                  value={input.desc}
+                  onChange={handleInputChange}
+                />
 
-              <Input
-                sx={{ display: "none" }}
-                type="file"
-                id="postVide0"
-                onChange={handleVideo}
-              />
+                <Input
+                  sx={{ display: "none" }}
+                  type="file"
+                  id="postVide0"
+                  onChange={handleVideo}
+                />
 
-              <Button
-                type="submit"
-                sx={{
-                  bgcolor: "#71bb42",
-                  width: "100%",
-                  textAlign: "center",
-                  padding: "5px 0",
-                  color: "white",
-                  marginTop: "10px",
-                  "&:hover": {
-                    color: "#068a02",
-                  },
-                }}
-              >
-                {Id ? "Save" : "Post"}
-              </Button>
-            </Box>
-          </form>
+                <Button
+                  type="submit"
+                  sx={{
+                    bgcolor: "#71bb42",
+                    width: "100%",
+                    textAlign: "center",
+                    padding: "5px 0",
+                    color: "white",
+                    marginTop: "10px",
+                    "&:hover": {
+                      color: "#068a02",
+                    },
+                  }}
+                >
+                  {Id ? "Save" : "Post"}
+                </Button>
+              </Box>
+            </form>
+          </Box>
+        </Modal>
+
+        <Box sx={{ width: "100%", minWidth: "500px", overflow: "hidden" }}>
+          <DataTable data={filterPosts} columns={columns} />
         </Box>
-      </Modal>
-      <Box sx={{ width: "100vw", overflow: "hidden" }}>
-        <DataTable data={filterPosts} columns={columns} />
-      </Box>
-    </div>
+      </div>
+    </>
   );
 };
 //===========================export
