@@ -536,7 +536,7 @@ const Profile = () => {
                   overflow: "auto",
                 }}
               >
-                <TabList sx={{ width: "100%" }} onChange={handleChange}>
+                <TabList sx={{ width: "100vw" }} onChange={handleChange}>
                   <Tab
                     sx={{ fontSize: "12px", padding: "0px" }}
                     label="Post"
