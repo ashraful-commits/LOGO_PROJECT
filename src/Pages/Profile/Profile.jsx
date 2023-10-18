@@ -248,7 +248,7 @@ const Profile = () => {
             <Box
               sx={{
                 position: "relative",
-                width: "100vw",
+                width: "100%",
                 display: "flex",
                 alignItems: "center",
               }}
@@ -350,10 +350,10 @@ const Profile = () => {
                 <Box
                   sx={{
                     position: "absolute",
-                    top: 40,
-                    left: 60,
-                    width: "35px",
-                    height: "35px",
+                    top: -10,
+                    right: -10,
+                    width: "30px",
+                    height: "30px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -369,7 +369,7 @@ const Profile = () => {
                   }}
                 >
                   <label htmlFor="profile">
-                    <MdPhotoCamera size={"20"} />
+                    <MdPhotoCamera size={"16"} />
                   </label>
                   <Input
                     onChange={handleProfile}

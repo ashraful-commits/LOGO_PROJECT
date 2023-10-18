@@ -539,12 +539,15 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                             style={{
                               backgroundColor: "white",
                               position: "absolute",
-                              top: 0,
-                              right: 0,
+                              top: 10,
+                              right: 20,
                               zIndex: 99999,
                               border: "none",
                               padding: "5px",
                               borderRadius: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
                             }}
                             className="previewClear"
                           >

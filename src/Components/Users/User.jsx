@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 
 import DataTable from "react-data-table-component";
-import getAllData from "../../Utility/GetAllData";
+
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { Box, Button, ButtonBase, MenuItem, Select } from "@mui/material";
+import { Box, MenuItem, Select } from "@mui/material";
 import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { app } from "../../firebase.confige";
-import { toast } from "react-toastify";
+
 import swal from "sweetalert";
 import { ToastifyFunc } from "../../Utility/TostifyFunc";
 import getAllDataWithSnapshot from "../../Utility/GetAllData";
 
 const User = () => {
   const [Users, setUsers] = useState([]);
-  const [unsubscribe, setUnsubscribe] = useState(null);
+
   //=========================handle onchange
   const handleOnchange = async (e, id) => {
     const newRole = e.target.value;

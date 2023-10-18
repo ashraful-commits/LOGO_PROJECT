@@ -166,7 +166,6 @@ const AllPosts = () => {
       selector: (row) => (
         <p
           style={{
-            width: " 200px",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -182,7 +181,7 @@ const AllPosts = () => {
         return row?.video ? (
           <video
             controls
-            style={{ width: "80px", height: "80px", padding: "10px" }}
+            style={{ width: "80px", height: "80px" }}
             src={row.video}
           ></video>
         ) : (
@@ -199,7 +198,6 @@ const AllPosts = () => {
       selector: (row) => (
         <p
           style={{
-            width: " 60px",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -214,7 +212,6 @@ const AllPosts = () => {
       selector: (row) => (
         <p
           style={{
-            width: " 50px",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -239,7 +236,11 @@ const AllPosts = () => {
           }}
         >
           <button
-            style={{ border: "none", color: "green" }}
+            style={{
+              border: "none",
+              color: "green",
+              backgroundColor: "transparent",
+            }}
             onClick={() => handleEdit(row.dataId)}
           >
             <Tooltip title="Edit">
@@ -249,17 +250,25 @@ const AllPosts = () => {
             </Tooltip>
           </button>
           <button
-            style={{ border: "none", color: "red" }}
+            style={{
+              border: "none",
+              color: "red",
+              backgroundColor: "transparent",
+            }}
             onClick={() => handlePostDelete(row.dataId, row.video)}
           >
             <Tooltip title="Permanent delete">
               <IconButton>
-                <FaTrash fontSize={"18"} color="red" />
+                <FaTrash fontSize={"18"} color="#ef6c6c" />
               </IconButton>
             </Tooltip>
           </button>
           <button
-            style={{ border: "none", color: "green" }}
+            style={{
+              border: "none",
+              color: "green",
+              backgroundColor: "transparent",
+            }}
             color="primary"
             onClick={() => handleApprove(row.dataId, row.pending)}
           >
@@ -270,24 +279,32 @@ const AllPosts = () => {
             </Tooltip>
           </button>
           <button
-            style={{ border: "none", color: "red" }}
+            style={{
+              border: "none",
+              color: "red",
+              backgroundColor: "transparent",
+            }}
             color="secondary"
             onClick={() => handleDecline(row.dataId, row.pending, row.decline)}
           >
             <Tooltip title="Decline">
               <IconButton>
-                <AiOutlineCloseCircle fontSize={"18"} color="red" />
+                <AiOutlineCloseCircle fontSize={"18"} color="#ef6c6c" />
               </IconButton>
             </Tooltip>
           </button>
 
           <button
-            style={{ border: "none", color: "red" }}
+            style={{
+              border: "none",
+              color: "red",
+              backgroundColor: "transparent",
+            }}
             onClick={() => handleSuspend(row.dataId, row.id)}
           >
             <Tooltip title="Suspend">
               <IconButton>
-                <AiOutlineStop fontSize={"18"} color="red" />
+                <AiOutlineStop fontSize={"18"} color="#ef6c6c" />
               </IconButton>
             </Tooltip>
           </button>
@@ -533,7 +550,7 @@ const AllPosts = () => {
               justifyContent: "center",
               alignItems: "center",
               width: "400px",
-
+              borderRadius: "10px",
               bgcolor: "white",
             }}
           >
@@ -552,11 +569,11 @@ const AllPosts = () => {
                 <Typography
                   variant="h6"
                   sx={{
-                    bgcolor: "#71bb42",
+                    bgcolor: "white",
                     width: "100%",
                     textAlign: "center",
                     padding: "5px 0",
-                    color: "white",
+                    color: "gray",
                     marginBottom: "10px",
                   }}
                 >
@@ -604,12 +621,15 @@ const AllPosts = () => {
                           style={{
                             backgroundColor: "white",
                             position: "absolute",
-                            top: 0,
-                            right: 0,
+                            top: 10,
+                            right: 10,
                             zIndex: 99999,
                             border: "none",
                             padding: "5px",
                             borderRadius: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                           }}
                           className="previewClear"
                         >
@@ -669,11 +689,11 @@ const AllPosts = () => {
                 <Button
                   type="submit"
                   sx={{
-                    bgcolor: "#71bb42",
+                    bgcolor: "white",
                     width: "100%",
                     textAlign: "center",
                     padding: "5px 0",
-                    color: "white",
+                    color: "gray",
                     marginTop: "10px",
                     "&:hover": {
                       color: "#068a02",
