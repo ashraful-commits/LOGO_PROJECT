@@ -43,7 +43,22 @@ const Following = ({ user, id }) => {
     fetchUserDataById();
   }, [id]);
   return (
-    <div style={{ width: "100%", boxShadow: "0 0 10px #eee", padding: "10px" }}>
+    <Box
+      sx={{
+        width: "100%",
+        boxShadow: "0 0 10px #eee",
+        padding: "10px",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 1fr",
+        gap: "10px",
+        "@media (max-width:767px)": {
+          gridTemplateColumns: "1fr",
+        },
+        "@media (min-width:768px) and (max-width:1023px)": {
+          gridTemplateColumns: "1fr 1fr",
+        },
+      }}
+    >
       {friend?.following?.length > 0 ? (
         friend?.following?.map((item, index) => {
           return (
@@ -92,7 +107,7 @@ const Following = ({ user, id }) => {
           <Typography>No Following</Typography>
         </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

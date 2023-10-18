@@ -150,8 +150,11 @@ const SearchContainer = styled.div`
   width: 100%;
 
   .container {
-    width: 1442px;
+    max-width: 1430px;
     margin-top: 20px;
+  }
+  @media (max-width: 767px) {
+    width: 100%;
   }
 `;
 
