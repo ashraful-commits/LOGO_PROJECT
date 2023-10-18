@@ -71,3 +71,6 @@ a {
   font-weight: bold;
   font-size: 16px;
 }
+.rdt_TableRow {
+  width: 100% !important;
+}
