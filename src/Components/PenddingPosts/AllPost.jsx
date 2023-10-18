@@ -230,12 +230,14 @@ const AllPosts = () => {
       selector: (row) => (
         <Box
           sx={{
-            width: "700px",
             display: "flex",
             alignItems: "center",
             columnGap: "5px",
             gap: "10px",
             zIndex: 0,
+            "@media (max-width:767px)": {
+              width: "700px",
+            },
           }}
         >
           <button
@@ -433,7 +435,7 @@ const AllPosts = () => {
           style={{
             position: "fixed",
             top: "44%",
-            right: "44%",
+            right: "2%",
             width: "300px",
             height: "300px",
             boxShadow: " 0 0 10px #32d105",
@@ -688,7 +690,7 @@ const AllPosts = () => {
           </Box>
         </Modal>
 
-        <Box sx={{ width: "100%", minWidth: "500px", overflow: "hidden" }}>
+        <Box sx={{ width: "100%", overflow: "auto" }}>
           <DataTable data={filterPosts} columns={columns} />
         </Box>
       </div>
