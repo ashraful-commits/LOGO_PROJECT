@@ -1,20 +1,14 @@
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
-import {
-  getStorage,
-  ref,
-  list,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
+import { getStorage, ref, list, getDownloadURL } from "firebase/storage";
 import { app } from "../../firebase.confige";
 import { useEffect } from "react";
-import { getAuth } from "firebase/auth";
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { AiOutlineClose } from "react-icons/ai";
-import { ToastifyFunc } from "../../Utility/TostifyFunc";
+
 import FileDeleteFunc from "../../Utility/FileDeleteFunc";
 
 export default function StandardImageList({ setTotalPhoto }) {

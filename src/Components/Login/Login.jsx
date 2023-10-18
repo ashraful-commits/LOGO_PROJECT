@@ -52,20 +52,18 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
           email,
           password
         );
-        const user = userCredential.user;
-        console.log(user);
-        const db = getFirestore(app);
-        const docRef = doc(db, "users", user?.uid);
-        const docSnap = await getDoc(docRef);
+        const user = userCredential?.user;
 
-        if (docSnap.data()) {
+        const docSnap = await getDocumentById("users", user?.uid);
+
+        if (docSnap) {
           navigate("/");
         } else {
-          await setDocumentWithId("users", {
+          await setDocumentWithId("users", `${user?.uid}`, {
             id: user?.uid,
             name: user?.displayName,
             email: user?.email,
-            photoURL: user?.phoneURL,
+            photoURL: user?.photoURL,
             coverPhotoUrl: "",
             followers: [],
             following: [],
@@ -77,6 +75,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
             role: "user",
             timestamp: serverTimestamp(),
           }).then(() => {
+            console.log(user);
             setUser(user);
             setOpen(false);
             ToastifyFunc("Login successful!", "success");
@@ -100,6 +99,7 @@ const Login = ({ setOpen, setRedirect, setUser }) => {
       const user = result.user;
 
       const docSnap = await getDocumentById("users", user.uid);
+      console.log(docSnap);
       if (docSnap) {
         navigate("/");
       } else {

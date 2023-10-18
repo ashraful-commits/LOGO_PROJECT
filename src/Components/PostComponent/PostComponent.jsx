@@ -18,12 +18,11 @@ import {
   getDoc,
   getFirestore,
   onSnapshot,
-  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { app } from "../../firebase.confige";
 import { getAuth } from "firebase/auth";
-import { toast } from "react-toastify";
+
 import {
   Avatar,
   Box,
@@ -232,13 +231,13 @@ const PostComponent = ({
         await setDocumentWithId(
           "users",
           id,
-          { followers: updatedFollowerArray },
+          { ...followerDoc, followers: updatedFollowerArray },
           { merge: true }
         );
         await setDocumentWithId(
           "users",
           auth?.currentUser?.uid,
-          { following: updatedFollowingArray },
+          { ...followingDoc, following: updatedFollowingArray },
           { merge: true }
         ).then(() => {
           ToastifyFunc("Unfollow!", "success");

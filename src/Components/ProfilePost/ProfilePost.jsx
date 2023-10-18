@@ -17,6 +17,7 @@ import Skeleton from "@mui/material/Skeleton";
 import ReactPlayer from "react-player";
 import {
   Box,
+  CircularProgress,
   Input,
   List,
   ListItemButton,
@@ -510,9 +511,13 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                       }}
                     >
                       {loading ? (
-                        <Typography sx={{ fontSize: "24px" }}>
-                          {progress}%
-                        </Typography>
+                        <Box>
+                          <CircularProgress
+                            variant="determinate"
+                            sx={{ color: "#71b112" }}
+                            value={progress}
+                          />
+                        </Box>
                       ) : preview ? (
                         <Box
                           sx={{

@@ -1,25 +1,17 @@
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-import {
-  getStorage,
-  ref,
-  list,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
+import { getStorage, ref, list, getDownloadURL } from "firebase/storage";
 import { app } from "../../firebase.confige";
 import { useEffect } from "react";
-import { getAuth } from "firebase/auth";
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import { AiOutlineClose } from "react-icons/ai";
-import { ToastifyFunc } from "../../Utility/TostifyFunc";
+
 import FileDeleteFunc from "../../Utility/FileDeleteFunc";
 
 export default function VideoList({ setTotalVideo }) {
   //=============== State to store the list of images
-  const [imageList, setImagesList] = useState([]);
+  const [videoList, setVideoList] = useState([]);
   //============ Get user ID from route parameters
   const { id } = useParams();
   useEffect(() => {
@@ -35,11 +27,11 @@ export default function VideoList({ setTotalVideo }) {
       //============ Get the download URL of each image
       firstPage.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
-          if (imageList.length < 10) {
+          if (videoList.length < 10) {
             totalImg.push(url);
             totalPhoto++;
           }
-          setImagesList(totalImg);
+          setVideoList(totalImg);
           setTotalVideo(totalPhoto);
         });
       });
@@ -47,15 +39,16 @@ export default function VideoList({ setTotalVideo }) {
     pageTokenExample();
   }, [id]);
 
-  const handleDeletePhoto = (url) => {
-    FileDeleteFunc(url);
-    const updatedImageList = imageList.filter((imageUrl) => imageUrl !== url);
-    setImagesList(updatedImageList);
+  const handleDeleteVideo = (videoUrl) => {
+    FileDeleteFunc(videoUrl);
+
+    const updatedImageList = videoList.filter((item) => item !== videoUrl);
+    setVideoList([...updatedImageList]);
   };
 
   return (
     <>
-      {imageList.length > 0 ? (
+      {videoList.length > 0 ? (
         <Box>
           <Card
             sx={{
@@ -73,34 +66,32 @@ export default function VideoList({ setTotalVideo }) {
               },
             }}
           >
-            {imageList.map((item, index) => (
-              <>
-                <Box
-                  sx={{
-                    position: "relative",
+            {videoList.map((item, index) => (
+              <Box
+                sx={{
+                  position: "relative",
 
-                    overflow: "hidden",
+                  overflow: "hidden",
+                }}
+                key={index}
+              >
+                <video style={{ width: "100%" }} autoPlay loop muted>
+                  <source src={item} />
+                </video>
+                <button
+                  onClick={() => handleDeleteVideo(item)}
+                  style={{
+                    position: "absolute",
+                    zIndex: 999999,
+                    top: 10,
+                    right: 10,
+                    backgroundColor: "transparent",
+                    border: "none",
                   }}
-                  key={index}
                 >
-                  <video style={{ width: "100%" }} autoPlay loop muted>
-                    <source src={item} />
-                  </video>
-                  <button
-                    onClick={() => handleDeletePhoto(item)}
-                    style={{
-                      position: "absolute",
-                      zIndex: 999999,
-                      top: 10,
-                      right: 10,
-                      backgroundColor: "transparent",
-                      border: "none",
-                    }}
-                  >
-                    <AiOutlineClose color="white" fontSize={22} />
-                  </button>
-                </Box>
-              </>
+                  <AiOutlineClose color="white" fontSize={22} />
+                </button>
+              </Box>
             ))}
           </Card>
         </Box>

@@ -9,7 +9,14 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
 import PostComponent from "../../Components/ProfilePost/ProfilePost";
-import { Box, Input, ListItemAvatar, Tab, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Input,
+  ListItemAvatar,
+  Tab,
+  Typography,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import StandardImageList from "../../Components/ImageList/ImgaeList";
 
@@ -255,7 +262,13 @@ const Profile = () => {
             >
               {isCoverUploading ? (
                 <CoverLoader component="div" color="text.secondary">
-                  <Typography> {`${CoverUploadProgress}%`}</Typography>
+                  <Box>
+                    <CircularProgress
+                      variant="determinate"
+                      sx={{ color: "#71b112" }}
+                      value={CoverUploadProgress}
+                    />
+                  </Box>
                 </CoverLoader>
               ) : user?.coverPhotoUrl ? (
                 <Box
@@ -335,7 +348,13 @@ const Profile = () => {
             >
               {isProfileLoading ? (
                 <Loader variant="h5" component="div" color="text.secondary">
-                  {`${isProfileProgress}%`}
+                  <Box>
+                    <CircularProgress
+                      variant="determinate"
+                      sx={{ color: "#71b112" }}
+                      value={isProfileProgress}
+                    />
+                  </Box>
                 </Loader>
               ) : user?.photoURL ? (
                 <Avatar src={user?.photoURL} alt="Avatar" />

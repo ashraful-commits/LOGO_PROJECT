@@ -31,7 +31,7 @@ import {
 import { getAuth, signOut } from "firebase/auth";
 //================== Ensure that your Firebase configuration is correctly set up
 import { app } from "../../firebase.confige";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Login from "../Login/Login";
 import Register from "../Register/Register";
@@ -48,6 +48,7 @@ const Navbar = () => {
   const [search, setSearch] = useState("");
   const [redirect, setRedirect] = useState("Login");
   const [seeMore, setSeMore] = useState(false);
+  const navigate = useNavigate();
   //======================= use hook
   const { open, setOpen } = useOpen();
   //====================get auth
@@ -88,6 +89,7 @@ const Navbar = () => {
         setUser(null);
         ToastifyFunc("Logout successful!", "success");
         setUser(null);
+        navigate("/");
       })
       .catch((error) => {
         const message = error.message;
