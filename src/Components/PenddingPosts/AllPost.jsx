@@ -408,23 +408,7 @@ const AllPosts = () => {
       fetchUserNames();
     }
   }, [Posts]);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        // Click occurred outside the modal
-        setSuspend(false);
-      }
-    };
 
-    if (suspend) {
-      document.addEventListener("click", handleClickOutside);
-    }
-
-    // Remove the event listener when the component unmounts
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
   return (
     <>
       {suspend && (
@@ -451,9 +435,22 @@ const AllPosts = () => {
               gap: "10px",
               textAlign: "center",
               justifyContent: "space-between",
+              position: "relative",
             }}
             onSubmit={handleSubmitSuspend}
           >
+            <button
+              onClick={() => setSuspend(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                backgroundColor: "transparent",
+                border: "none",
+              }}
+            >
+              <AiOutlineClose color="gray" fontSize={16} />
+            </button>
             <h4
               style={{
                 color: "#71bb41",
