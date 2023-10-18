@@ -529,26 +529,33 @@ const Profile = () => {
             <TabContext value={value}>
               <Box
                 sx={{
-                  width: "100%",
+                  width: "100vw",
                   borderBottom: 1,
                   padding: "0px",
                   borderColor: "divider",
                   overflow: "auto",
                 }}
               >
-                <TabList sx={{ width: "100%" }} onChange={handleChange}>
+                <TabList
+                  sx={{ width: "100%", overflow: "auto" }}
+                  onChange={handleChange}
+                >
                   <Tab
-                    sx={{ fontSize: "12px", padding: "0px" }}
+                    sx={{
+                      fontSize: "12px",
+                      padding: "0px",
+                      minWidth: "50px",
+                    }}
                     label="Post"
                     value="1"
                   />
                   <Tab
-                    sx={{ fontSize: "12px", padding: "2px" }}
+                    sx={{ fontSize: "12px", padding: "2px", minWidth: "50px" }}
                     label="Photo"
                     value="2"
                   />
                   <Tab
-                    sx={{ fontSize: "12px", padding: "2px" }}
+                    sx={{ fontSize: "12px", padding: "2px", minWidth: "50px" }}
                     label="Videos"
                     value="7"
                   />
@@ -565,7 +572,11 @@ const Profile = () => {
                   {user.role == "admin" &&
                     user.id === auth?.currentUser?.uid && (
                       <Tab
-                        sx={{ fontSize: "12px", padding: "2px" }}
+                        sx={{
+                          fontSize: "12px",
+                          padding: "2px",
+                          minWidth: "50px",
+                        }}
                         label="Admin"
                         value="6"
                       />

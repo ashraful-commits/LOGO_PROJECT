@@ -71,15 +71,3 @@ a {
   font-weight: bold;
   font-size: 16px;
 }
-@media (max-width: 767px) {
-  .css-1c87n4e-MuiButtonBase-root-MuiTab-root {
-    min-width: 50px !important;
-    max-width: 50px !important;
-    font-size: 10px !important;
-  }
-  .css-73xyce-MuiButtonBase-root-MuiTab-root {
-    min-width: 50px !important;
-    max-width: 60px !important;
-    font-size: 10px !important;
-  }
-}
