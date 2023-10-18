@@ -76,6 +76,7 @@ a {
     min-width: 50px !important;
   }
   .css-73xyce-MuiButtonBase-root-MuiTab-root {
-    min-width: 70px !important;
+    min-width: 50px !important;
+    font-size: 10px !important;
   }
 }
