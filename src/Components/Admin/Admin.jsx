@@ -16,14 +16,14 @@ const Admin = () => {
   return (
     <Container
       sx={{
-        width: "100vw",
+        width: "90vw",
         minHeight: "50vh",
         overflow: "auto",
         margin: "0 auto",
         boxShadow: "0 0 10px #dcdcdb",
       }}
     >
-      <TabContext value={value}>
+      <TabContext sx={{ width: "100%" }} value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           {/*======== TabList  */}
           <TabList onChange={handleChange} aria-label="lab API tabs example">

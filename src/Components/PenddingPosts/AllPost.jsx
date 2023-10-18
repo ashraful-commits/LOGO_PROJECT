@@ -408,7 +408,7 @@ const AllPosts = () => {
     }
   }, [Posts]);
   return (
-    <div style={{ width: "100%", position: "relative", overflow: "auto" }}>
+    <div style={{ width: "100vw", position: "relative", overflow: "auto" }}>
       {suspend && (
         <div
           style={{
@@ -660,7 +660,7 @@ const AllPosts = () => {
           </form>
         </Box>
       </Modal>
-      <Box sx={{ width: "100%", overflow: "hidden" }}>
+      <Box sx={{ width: "100vw", overflow: "hidden" }}>
         <DataTable data={filterPosts} columns={columns} />
       </Box>
     </div>

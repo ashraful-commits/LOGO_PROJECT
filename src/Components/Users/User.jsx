@@ -146,8 +146,8 @@ const User = () => {
     return userData;
   }, []);
   return (
-    <div style={{ width: "100vw", position: "relative", overflow: "auto" }}>
-      <Box sx={{ width: "100vw", overflow: "hidden" }}>
+    <div style={{ width: "100%", position: "relative", overflow: "auto" }}>
+      <Box sx={{ width: "100%", overflow: "auto" }}>
         {/* //=======================data table  */}
         <DataTable data={Users} columns={columns} />
       </Box>
