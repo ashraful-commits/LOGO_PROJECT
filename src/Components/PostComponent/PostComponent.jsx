@@ -55,9 +55,7 @@ const PostComponent = ({
   name,
   postId,
   Like,
-  posts,
   messages,
-  setTotalPost,
 }) => {
   //=========================all states
 

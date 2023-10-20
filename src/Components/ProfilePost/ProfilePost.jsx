@@ -70,6 +70,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(false);
   const [dropDown, setDropDrown] = useState(false);
+  const [dropIndex, setDropIndex] = useState(null);
   const [LoggedInUser, setLoggedInUser] = useState({});
   const [Id, setId] = useState(null);
   const [posts, setPost] = useState([]);
@@ -202,6 +203,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
         desc: input.desc,
         video: preview,
         pending: true,
+        Like: [],
         suspended: {
           status: false,
           startTime: serverTimestamp(),
@@ -434,7 +436,10 @@ const PostComponent = ({ user, id, setTotalPost }) => {
     };
     fetchData();
   }, [id, auth?.currentUser?.uid]);
-
+  const handleDropdown = (drop, index) => {
+    setDropDrown(drop);
+    setDropIndex(index);
+  };
   return (
     <Card
       sx={{
@@ -442,7 +447,6 @@ const PostComponent = ({ user, id, setTotalPost }) => {
         boxShadow: "none",
         "@media (max-width: 768px)": {
           paddingTop: "10px",
-          // Adjust the aspect ratio for screens <= 768px width
         },
       }}
     >
@@ -677,12 +681,15 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                             width: "100%",
                             borderBottom: "1px solid #eeeeee",
                             bgcolor:
-                              item?.suspended?.status === true
+                              item?.suspended?.status || item?.decline
                                 ? "#fa8b8b"
-                                : "#93ff8f",
+                                : "#b5eefa",
+                            color:
+                              item?.suspended?.status || item?.decline
+                                ? "white"
+                                : "gray",
                             position: "relative",
                           }}
-                          variant="primary"
                           avatar={
                             <Avatar alt="User Avatar" src={user?.photoURL} />
                           }
@@ -690,8 +697,17 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                           subheader={user?.email}
                           action={
                             auth?.currentUser?.uid === id ? (
-                              <Button onClick={() => setDropDrown(!dropDown)}>
-                                <AiOutlineMenu size={"24"} />
+                              <Button
+                                onClick={() => handleDropdown(!dropDown, index)}
+                              >
+                                <AiOutlineMenu
+                                  color={`${
+                                    item?.suspended?.status || item?.decline
+                                      ? "white"
+                                      : "gray"
+                                  }`}
+                                  size={"24"}
+                                />
                               </Button>
                             ) : (
                               LoggedInUser?.following?.some((item) =>
@@ -712,7 +728,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                             )
                           }
                         />
-                        {dropDown && (
+                        {dropDown && dropIndex === index && (
                           <Box
                             sx={{
                               position: "absolute",

@@ -16,11 +16,13 @@ import play from "../../../public/playIcon.png";
 import { useEffect, useState } from "react";
 import { collection, getDocs, getFirestore, query } from "firebase/firestore";
 import { app } from "../../firebase.confige";
+import { getAuth } from "firebase/auth";
 
 const SideBar = () => {
   const [loading, setLoading] = useState(true);
   const [users, setUser] = useState([]);
   const [showMore, setShowMore] = useState(false);
+  const auth = getAuth();
   useEffect(() => {
     //================ Simulate a delay, e.g., while fetching data
     setTimeout(() => {
@@ -103,13 +105,13 @@ const SideBar = () => {
           <div className="trending-following-explore">
             <ul>
               <li>
-                <Link>
+                <Link to="/trending">
                   <img src={trending} alt="trending" />
                   <span></span>Trending
                 </Link>
               </li>
               <li>
-                <Link>
+                <Link to={`/${auth?.currentUser?.uid}`}>
                   <img src={group} alt="" />
                   <span></span>Following
                 </Link>

@@ -181,22 +181,26 @@ const Navbar = () => {
                 <AiOutlineClose />
               </IconButton>
               <List sx={{ padding: "50px 0" }}>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={trending} alt="" />
-                    </ListItemIcon>
-                    <ListItemText primary="Trending" />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={group} />
-                    </ListItemIcon>
-                    <ListItemText primary="Following" />
-                  </ListItemButton>
-                </ListItem>
+                <Link to={`/trending`}>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={trending} alt="" />
+                      </ListItemIcon>
+                      <ListItemText primary="Trending" />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+                <Link to={`/${auth?.currentUser?.uid}`}>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={group} />
+                      </ListItemIcon>
+                      <ListItemText primary="Following" />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
                 <ListItem disablePadding>
                   <ListItemButton>
                     <ListItemIcon>
