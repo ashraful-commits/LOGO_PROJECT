@@ -201,14 +201,16 @@ const Navbar = () => {
                     </ListItemButton>
                   </ListItem>
                 </Link>
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <img src={play} />
-                    </ListItemIcon>
-                    <ListItemText primary="Following" />
-                  </ListItemButton>
-                </ListItem>
+                <Link to="/explore">
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <img src={play} />
+                      </ListItemIcon>
+                      <ListItemText primary="Explore" />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
               </List>
               <Typography fontSize={18} fontWeight={600}>
                 Popular Creators

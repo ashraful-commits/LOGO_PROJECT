@@ -5,6 +5,7 @@ import Profile from "../Pages/Profile/Profile";
 import { Search } from "@mui/icons-material";
 import SearchPage from "../Pages/SearchPage";
 import Trending from "../Pages/Trending/Trending";
+import Explore from "../Pages/Explore/Explore";
 
 const PublicRoute = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const PublicRoute = createBrowserRouter([
       {
         path: "/trending",
         element: <Trending />,
+      },
+      {
+        path: "/explore",
+        element: <Explore />,
       },
     ],
   },

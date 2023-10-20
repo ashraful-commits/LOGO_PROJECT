@@ -117,7 +117,7 @@ const SideBar = () => {
                 </Link>
               </li>
               <li>
-                <Link>
+                <Link to="/explore">
                   <img src={play} alt="" />
                   <span></span>Explore
                 </Link>

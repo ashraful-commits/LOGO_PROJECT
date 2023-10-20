@@ -1,4 +1,4 @@
-import { ExpandMore, Favorite } from "@mui/icons-material";
+import { Favorite } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -72,7 +72,15 @@ const Trending = () => {
                 <CardHeader
                   avatar={
                     <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
-                      <img src={item?.user?.photoURL} alt="" />
+                      <img
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        src={item?.user?.photoURL}
+                        alt=""
+                      />
                     </Avatar>
                   }
                   action={
