@@ -85,7 +85,7 @@ const PostComponent = ({
   const [isLiked, setIsLiked] = useState(false);
   const [shareBtn, setShareBtn] = useState(false);
   const [Id, setId] = useState(null);
-
+  console.log(messages);
   //===========================firestore
   const db = getFirestore(app);
 
@@ -150,12 +150,7 @@ const PostComponent = ({
       }
     };
   }, [id, auth?.currentUser?.uid, db, unsubscribe]);
-  useEffect(() => {
-    messages?.forEach(async (message) => {
-      const user = await getDocumentById("users", message.id);
-      setTotalChat((prev) => [...prev, { ...message, user }]);
-    });
-  }, []);
+
   const videoRef = useRef();
   //=================================================== video toggle paly
   const togglePlay = () => {

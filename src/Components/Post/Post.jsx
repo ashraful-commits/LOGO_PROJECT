@@ -12,12 +12,14 @@ import styled from "styled-components";
 import PostComponent from "../PostComponent/PostComponent";
 import { Box } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
+import getDocumentById from "../../Utility/getSingleData";
 
 const Post = () => {
   //====================al state
   const [posts, setPosts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [limit, setLimit] = useState(2);
+
   const [lastPost, setLastPost] = useState(null);
   //====================fetch more data
   const fetchMoreData = async () => {
@@ -64,6 +66,18 @@ const Post = () => {
               const userId = postData.id;
               const userDocRef = doc(db, "users", userId);
               const userSnapshot = await getDoc(userDocRef);
+
+              // Fetch messages for the post
+              postData.messages = [];
+              for (const element of postData.messages) {
+                const newMessages = await Promise.all(
+                  element.messages.map(async (message) => {
+                    const msgUser = await getDocumentById("users", message.id);
+                    return { ...message, user: msgUser };
+                  })
+                );
+                element.messages = newMessages;
+              }
 
               if (userSnapshot.exists()) {
                 postData.user = userSnapshot.data();
