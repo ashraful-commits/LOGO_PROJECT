@@ -57,6 +57,7 @@ const PostComponent = ({
   postId,
   Like,
   messages,
+  Share,
 }) => {
   //=========================all states
 
@@ -70,6 +71,7 @@ const PostComponent = ({
   const [postUid, setPostUid] = useState(null);
   const [redirect, setRedirect] = useState("Login");
   const [likeCount, setLikeCount] = useState(Like ? Like?.length : 0);
+  const [shareCount, setShareCount] = useState(Share ? Share?.length : 0);
   const [msgCount, setMsgCount] = useState(messages ? messages?.length : 0);
   const [totalChat, setTotalChat] = useState(messages ? messages : []);
 
@@ -670,7 +672,7 @@ const PostComponent = ({
                   <BsShare />
                 </FacebookShareButton>
 
-                <span>3.5 k</span>
+                <span>{shareCount}</span>
               </div>
             </div>
           </div>
