@@ -226,7 +226,7 @@ const Navbar = () => {
                           key={index}
                           to={`/${item.id}`}
                         >
-                          <ListItem>
+                          <ListItem onClick={() => toggleDrawer(false)}>
                             <ListItemButton>
                               <ListItemIcon>
                                 <Avatar>

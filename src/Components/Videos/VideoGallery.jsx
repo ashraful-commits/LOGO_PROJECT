@@ -8,6 +8,7 @@ import { Box, Card, Typography } from "@mui/material";
 import { AiOutlineClose } from "react-icons/ai";
 
 import FileDeleteFunc from "../../Utility/FileDeleteFunc";
+import styled from "styled-components";
 
 export default function VideoList({ setTotalVideo }) {
   //=============== State to store the list of images
@@ -47,7 +48,7 @@ export default function VideoList({ setTotalVideo }) {
   };
 
   return (
-    <>
+    <VideoContainer>
       {videoList.length > 0 ? (
         <Box>
           <Card
@@ -107,6 +108,19 @@ export default function VideoList({ setTotalVideo }) {
           <Typography>No Gallery Video found</Typography>
         </Box>
       )}
-    </>
+    </VideoContainer>
   );
 }
+
+const VideoContainer = styled.div`
+  .video {
+    &:hover {
+      .button {
+        display: block;
+      }
+    }
+  }
+  .button {
+    display: none;
+  }
+`;

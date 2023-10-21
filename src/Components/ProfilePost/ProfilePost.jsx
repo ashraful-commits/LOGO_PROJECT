@@ -59,9 +59,9 @@ import getDocumentById from "../../Utility/getSingleData";
 import setDocumentWithId from "../../Utility/SetDocWithId";
 import updateDocumentWithSnapshot from "../../Utility/UpdateDoc";
 import FileDeleteFunc from "../../Utility/FileDeleteFunc";
-// Define the PostComponent functional component
+//================================ Define the PostComponent functional component
 const PostComponent = ({ user, id, setTotalPost }) => {
-  //==================all states
+  //==============================all states
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef(null);
   const [loader, setLoader] = useState(true);
@@ -79,20 +79,20 @@ const PostComponent = ({ user, id, setTotalPost }) => {
     title: "",
     desc: "",
   });
-  //=====================get auth
+  //===========================get auth
   const auth = getAuth(app);
-  //=====================handle input
+  //===========================handle input
   const handleInput = (e) => {
     setInput((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
-  //======================handle toggle button for video
+  //==========================handle toggle button for video
   const togglePlay = () => {
     setPlaying(!playing);
   };
-  //==================== handle profile upload
+  //============================ handle profile upload
   const handleProfile = async (e) => {
     const file = e.target.files[0];
 
@@ -147,7 +147,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       }
     }
   };
-  //========================= handle video play
+  //=========================== handle video play
   useEffect(() => {
     const options = {
       root: null,
@@ -178,21 +178,21 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       }
     };
   }, []);
-  //=====================handle loading time
+  //===========================handle loading time
   useEffect(() => {
     setTimeout(() => {
       setLoader(false);
     }, 2000);
   }, []);
-  //======================handle post modal
+  //============================handle post modal
   const handlePostModel = () => {
     setOpen(true);
   };
-  //================== handle modal close
+  //============================ handle modal close
   const handleClose = () => {
     setOpen(false);
   };
-  //=========================handle post create and update
+  //============================handle post create and update
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     if (Id) {
@@ -288,7 +288,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       }
     }
   };
-  //==========================find user all post
+  //============================find user all post
   useEffect(() => {
     const db = getFirestore();
     const postsRef = collection(db, "Posts");
@@ -315,7 +315,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       setLoader(false); // Set loader to false in case of an error
     }
   }, [id, setTotalPost]);
-  //===========================handle edit post
+  //============================handle edit post
   const handleEdit = (id) => {
     setId(id);
     setOpen(true);
@@ -326,7 +326,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
     });
     setPreview(singlePost.video);
   };
-  //=========================handle delete post
+  //===========================handle delete post
   const handleDelete = async (id, url) => {
     const db = getFirestore();
     const postRef = doc(db, "Posts", id);
@@ -340,7 +340,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       console.error("Error deleting post: ", error);
     }
   };
-  //=======================handle clear preview
+  //===========================handle clear preview
   const handleClear = () => {
     setPreview(null);
   };
@@ -366,7 +366,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       setOpen(true);
     }
   };
-  //===========================handle unfollow
+  //============================handle unfollow
   const handleUnfollow = async (id) => {
     const auth = getAuth(app);
     if (auth.currentUser) {
@@ -408,7 +408,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
       setOpen(true);
     }
   };
-  //===========================fetch all user
+  //============================fetch all user
   useEffect(() => {
     const fetchData = async () => {
       await getDocumentById("users", auth?.currentUser?.uid, (data) => {
@@ -683,7 +683,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                             bgcolor:
                               item?.suspended?.status || item?.decline
                                 ? "#fa8b8b"
-                                : "#b5eefa",
+                                : "#f5fdff",
                             color:
                               item?.suspended?.status || item?.decline
                                 ? "white"
