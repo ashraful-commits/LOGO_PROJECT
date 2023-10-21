@@ -146,7 +146,7 @@ const Navbar = () => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  marginTop: "160px",
+                  marginTop: "10rem",
                   width: "100%",
                 }}
               >
@@ -165,13 +165,13 @@ const Navbar = () => {
           <Drawer open={showMenu} onClose={() => toggleDrawer(false)}>
             <Box
               sx={{
-                width: "300px",
-                padding: "30px 10px",
+                width: "18.75rem",
+                padding: "1.875rem .625rem",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "start",
-                gap: "10px",
+                gap: ".625rem",
               }}
             >
               <IconButton
@@ -180,7 +180,7 @@ const Navbar = () => {
               >
                 <AiOutlineClose />
               </IconButton>
-              <List sx={{ padding: "50px 0" }}>
+              <List sx={{ padding: "3.125rem 0" }}>
                 <Link to={`/trending`}>
                   <ListItem disablePadding>
                     <ListItemButton>
@@ -215,14 +215,14 @@ const Navbar = () => {
               <Typography fontSize={18} fontWeight={600}>
                 Popular Creators
               </Typography>
-              <List sx={{ height: "350px", overflow: "auto" }}>
+              <List sx={{ height: "21.875rem", overflow: "auto" }}>
                 {users.length > 0 ? (
                   users
                     ?.slice(0, seeMore ? users.length : 5)
                     .map((item, index) => {
                       return (
                         <Link
-                          style={{ width: "270px" }}
+                          style={{ width: "16.875rem" }}
                           key={index}
                           to={`/${item.id}`}
                         >
@@ -338,8 +338,8 @@ const Navbar = () => {
 };
 /* Your container styles */
 const Container = styled.div`
-  width: 1442px;
-  height: 75px;
+  width: 90.125rem;
+  height: 4.6875rem;
   flex-shrink: 0;
   display: flex;
   justify-content: center;
@@ -361,10 +361,10 @@ const Container = styled.div`
   }
   .container {
     position: relative;
-    width: 1440px;
+    width: 90rem;
     display: grid;
     margin: 0 auto;
-    grid-template-columns: 126px auto;
+    grid-template-columns: 7.875rem auto;
     align-items: center;
 
     .left {
@@ -372,23 +372,23 @@ const Container = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      border-right: 1px solid gray;
-      height: 40px;
+      border-right: 0.0625rem solid gray;
+      height: 2.5rem;
       .small-menu {
         display: flex;
         justify-content: center;
         align-items: center;
-        padding-left: 7px;
-        gap: 10px;
+        padding-left: 0.4375rem;
+        gap: 0.625rem;
 
         button {
           display: flex;
           justify-content: center;
-          gap: 8px;
+          gap: 0.5rem;
           align-items: center;
           border: none;
           background-color: transparent;
-          padding: 10px;
+          padding: 0.625rem;
           transition: all 0.2s ease-in-out 0.1s;
           &:hover {
             background-color: #8fdd5d;
@@ -400,7 +400,7 @@ const Container = styled.div`
             }
           }
           svg {
-            font-size: 22px;
+            font-size: 1.375rem;
             transition: all 0.2s ease-in-out 0.1s;
           }
           span {
@@ -408,7 +408,7 @@ const Container = styled.div`
             color: #000;
             text-align: center;
             font-family: Roboto;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-style: normal;
             font-weight: 400;
             line-height: normal;
@@ -428,19 +428,19 @@ const Container = styled.div`
       display: grid;
       align-items: center;
       justify-content: center;
-      grid-template-columns: 1fr 780px 1fr 1fr 1fr;
+      grid-template-columns: 1fr 48.75rem 1fr 1fr 1fr;
       button {
-        width: 93px;
-        height: 40px;
+        width: 5.8125rem;
+        height: 2.5rem;
         flex-shrink: 0;
         color: #fff;
         font-family: Poppins;
-        font-size: 16px;
+        font-size: 1rem;
         font-style: normal;
         font-weight: 400;
-        line-height: 30px;
+        line-height: 1.875rem;
         border: none;
-        border-radius: 50px;
+        border-radius: 3.125rem;
         background-image: linear-gradient(#8fdd5d, #71bb42);
         transition: all 0.5s ease-in-out;
         position: relative;
@@ -449,17 +449,17 @@ const Container = styled.div`
         }
       }
       .logout {
-        width: 40px;
-        height: 40px;
+        width: 2.5rem;
+        height: 2.5rem;
         flex-shrink: 0;
         color: #fff;
         font-family: Poppins;
-        font-size: 16px;
+        font-size: 1rem;
         font-style: normal;
         font-weight: 400;
-        line-height: 30px;
+        line-height: 1.875rem;
         border: none;
-        border-radius: 50px;
+        border-radius: 3.125rem;
         background-image: linear-gradient(#8fdd5d, #71bb42);
         transition: all 0.5s ease-in-out;
         position: relative;
@@ -467,14 +467,14 @@ const Container = styled.div`
         justify-content: center;
         align-items: center;
         svg {
-          font-size: 20px;
+          font-size: 1.25rem;
         }
         &:hover {
           background-image: linear-gradient(#71bb42, #8fdd5d);
         }
       }
       .search-field {
-        margin-left: 25px;
+        margin-left: 1.5625rem;
         display: flex;
         align-items: center;
 
@@ -482,18 +482,18 @@ const Container = styled.div`
           display: flex;
           justify-content: start;
           align-items: center;
-          gap: 7px;
+          gap: 0.4375rem;
           .searchButton {
             background-image: none !important;
-            width: 30px !important;
-            height: 30px !important;
+            width: 1.875rem !important;
+            height: 1.875rem !important;
             color: #45b201;
             display: flex;
             align-items: center;
             justify-content: center;
           }
           svg {
-            font-size: 25px;
+            font-size: 1.5625rem;
             cursor: pointer;
             &:hover {
               color: #71bb42;
@@ -502,17 +502,17 @@ const Container = styled.div`
           input {
             border: none;
             font-family: Poppins;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 400;
-            line-height: 21px;
+            line-height: 1.3125rem;
             letter-spacing: 0em;
             text-align: left;
-            padding: 5px 5px;
-            border-left: 1px solid white;
+            padding: 0.3125rem 0.3125rem;
+            border-left: 0.0625rem solid white;
 
             &:focus {
               outline: none;
-              border-left: 1px solid #71bb42;
+              border-left: 0.0625rem solid #71bb42;
             }
           }
         }
@@ -522,18 +522,18 @@ const Container = styled.div`
         align-items: center;
         justify-content: center;
         img {
-          width: 56px;
-          height: 30px;
+          width: 3.5rem;
+          height: 1.875rem;
           object-fit: contain;
-          margin-right: 132px;
+          margin-right: 8.25rem;
         }
       }
       .loginAvatar {
-        width: 50px;
-        height: 50px;
+        width: 3.125rem;
+        height: 3.125rem;
         overflow: hidden;
-        margin-top: 10px;
-        border: 2px solid white;
+        margin-top: 0.625rem;
+        border: 0.125rem solid white;
         background-color: white;
         a {
           width: 100%;
@@ -542,43 +542,43 @@ const Container = styled.div`
           overflow: hidden;
           overflow: hidden;
           img {
-            width: 40px;
+            width: 2.5rem;
             border-radius: 100%;
-            height: 40px;
+            height: 2.5rem;
 
             object-fit: cover;
           }
         }
       }
       .creator {
-        border-left: 1px solid gray;
-        padding-left: 15px;
-        margin-left: 10px;
+        border-left: 0.0625rem solid gray;
+        padding-left: 0.9375rem;
+        margin-left: 0.625rem;
         display: flex;
         justify-content: start;
         align-items: center;
-        gap: 16px;
+        gap: 1rem;
         position: relative;
         a {
           color: #3c3c3c;
           font-family: Poppins;
-          font-size: 14px;
+          font-size: 0.875rem;
           font-style: normal;
           font-weight: 500;
           line-height: normal;
         }
         button {
-          width: 93px;
-          height: 40px;
+          width: 5.8125rem;
+          height: 2.5rem;
           flex-shrink: 0;
           color: #fff;
           font-family: Poppins;
-          font-size: 16px;
+          font-size: 1rem;
           font-style: normal;
           font-weight: 400;
-          line-height: 30px;
+          line-height: 1.875rem;
           border: none;
-          border-radius: 50px;
+          border-radius: 3.125rem;
           background-image: linear-gradient(#8fdd5d, #71bb42);
           transition: all 0.5s ease-in-out;
           position: relative;
@@ -590,16 +590,16 @@ const Container = styled.div`
     }
     /* Styles for mobile devices */
   }
-  @media (max-width: 767px) {
+  @media (max-width: 47.9375rem) {
     width: 100vw;
-    padding: 0 5px;
+    padding: 0 0.3125rem;
     .container {
       width: 100%;
-      min-width: 320px;
+      min-width: 20rem;
       grid-template-columns: 1fr 2fr;
       justify-content: space-between;
       .left {
-        border-right: 0px solid gray;
+        border-right: 0rem solid gray;
         display: flex;
         justify-content: start;
         .small-menu {
@@ -625,17 +625,17 @@ const Container = styled.div`
         grid-template-columns: 2fr 1fr 1fr 1fr;
         align-items: center;
         button {
-          width: 65px;
-          height: 35px;
+          width: 4.0625rem;
+          height: 2.1875rem;
           flex-shrink: 0;
           color: #fff;
           font-family: Poppins;
-          font-size: 12px;
+          font-size: 0.75rem;
           font-style: normal;
           font-weight: 400;
-          line-height: 30px;
+          line-height: 1.875rem;
           border: none;
-          border-radius: 50px;
+          border-radius: 3.125rem;
           justify-self: flex-end;
           background-image: linear-gradient(#8fdd5d, #71bb42);
           transition: all 0.5s ease-in-out;
@@ -645,17 +645,17 @@ const Container = styled.div`
           }
         }
         .logout {
-          width: 33px;
-          height: 33px;
+          width: 2.0625rem;
+          height: 2.0625rem;
           flex-shrink: 0;
           color: #fff;
           font-family: Poppins;
-          font-size: 12px;
+          font-size: 0.75rem;
           font-style: normal;
           font-weight: 400;
-          line-height: 30px;
+          line-height: 1.875rem;
           border: none;
-          border-radius: 50px;
+          border-radius: 3.125rem;
           justify-self: flex-end;
           background-image: linear-gradient(#8fdd5d, #71bb42);
           transition: all 0.5s ease-in-out;
@@ -667,7 +667,7 @@ const Container = styled.div`
         .search-field {
           position: relative;
           &:hover input {
-            max-width: 200px; /* Adjust the max-width value as needed */
+            max-width: 12.5rem; /* Adjust the max-width value as needed */
             opacity: 1;
           }
           form {
@@ -688,7 +688,7 @@ const Container = styled.div`
               transition: max-width 0.5s ease-in-out, opacity 0.5s ease-in-out;
             }
             svg {
-              font-size: 25px;
+              font-size: 1.5625rem;
               transition: all 0.5s ease-in-out 0.1s; /* Apply transition to the SVG element */
             }
           }
@@ -703,13 +703,13 @@ const Container = styled.div`
           }
         }
         .loginAvatar {
-          width: 50px;
-          height: 50px;
+          width: 3.125rem;
+          height: 3.125rem;
           overflow: hidden;
-          margin-top: 10px;
-          border: 2px solid white;
+          margin-top: 0.625rem;
+          border: 0.125rem solid white;
           background-color: white;
-          margin-left: 30px;
+          margin-left: 1.875rem;
           a {
             width: 100%;
             height: 100%;
@@ -717,40 +717,40 @@ const Container = styled.div`
             overflow: hidden;
             overflow: hidden;
             img {
-              width: 40px;
+              width: 2.5rem;
               border-radius: 100%;
-              height: 40px;
+              height: 2.5rem;
 
               object-fit: cover;
             }
           }
         }
         .creator {
-          border-left: 0px solid gray;
+          border-left: 0rem solid gray;
           display: flex;
-          margin-right: 10px;
+          margin-right: 0.625rem;
 
           a {
             display: none;
             color: #3c3c3c;
             font-family: Poppins;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-style: normal;
             font-weight: 500;
             line-height: normal;
           }
           button {
-            width: 70px;
-            height: 35px;
+            width: 4.375rem;
+            height: 2.1875rem;
             flex-shrink: 0;
             color: #fff;
             font-family: Poppins;
-            font-size: 12px;
+            font-size: 0.75rem;
             font-style: normal;
             font-weight: 400;
-            line-height: 30px;
+            line-height: 1.875rem;
             border: none;
-            border-radius: 50px;
+            border-radius: 3.125rem;
             background-image: linear-gradient(#8fdd5d, #71bb42);
           }
         }
@@ -758,23 +758,23 @@ const Container = styled.div`
     }
   }
 
-  @media (min-width: 768px) and (max-width: 1023px) {
+  @media (min-width: 48rem) and (max-width: 63.9375rem) {
     width: 100%;
     .container {
       width: 100%;
       grid-template-columns: 1fr 4fr;
       justify-content: space-between;
       align-items: center;
-      padding: 0 5px;
+      padding: 0 0.3125rem;
       .left {
-        border-right: 0px solid gray;
+        border-right: 0rem solid gray;
         display: flex;
         justify-content: start;
         .small-menu {
           display: flex;
           justify-content: start;
           align-items: center;
-          padding-left: 12px;
+          padding-left: 0.75rem;
           button {
             span {
               display: none;
@@ -791,18 +791,18 @@ const Container = styled.div`
         display: grid;
         align-items: center;
         button {
-          width: 70px;
-          height: 35px;
-          margin-right: 10px;
+          width: 4.375rem;
+          height: 2.1875rem;
+          margin-right: 0.625rem;
           flex-shrink: 0;
           color: #fff;
           font-family: Poppins;
-          font-size: 12px;
+          font-size: 0.75rem;
           font-style: normal;
           font-weight: 400;
-          line-height: 30px;
+          line-height: 1.875rem;
           border: none;
-          border-radius: 50px;
+          border-radius: 3.125rem;
           justify-self: flex-end;
           background-image: linear-gradient(#8fdd5d, #71bb42);
           transition: all 0.5s ease-in-out;
@@ -818,7 +818,7 @@ const Container = styled.div`
           align-items: center;
           form {
             svg {
-              font-size: 25px;
+              font-size: 1.5625rem;
             }
             .searchButton {
               background-color: #fff !important;
@@ -839,67 +839,67 @@ const Container = styled.div`
           }
         }
         .creator {
-          border-left: 1px solid gray;
+          border-left: 0.0625rem solid gray;
           display: flex;
           a {
             color: #3c3c3c;
             font-family: Poppins;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-style: normal;
             font-weight: 500;
             line-height: normal;
           }
           button {
-            width: 75px;
-            height: 37px;
+            width: 4.6875rem;
+            height: 2.3125rem;
             flex-shrink: 0;
             color: #fff;
             font-family: Poppins;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-style: normal;
             font-weight: 400;
-            line-height: 30px;
+            line-height: 1.875rem;
             border: none;
-            border-radius: 50px;
+            border-radius: 3.125rem;
             background-image: linear-gradient(#8fdd5d, #71bb42);
           }
         }
       }
     }
   }
-  @media (min-width: 1024px) and (max-width: 1365px) {
+  @media (min-width: 64rem) and (max-width: 85.3125rem) {
     width: 100vw;
     margin: 0 auto;
-    padding: 10px;
+    padding: 0.625rem;
     .container {
-      width: 1365px;
-      min-width: 1024px;
-      max-width: 1365px;
+      width: 85.3125rem;
+      min-width: 64rem;
+      max-width: 85.3125rem;
       grid-template-columns: 1fr 10fr;
       justify-content: space-between;
-      padding: 0 30px;
+      padding: 0 1.875rem;
       .left {
         width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        border-right: 1px solid gray;
-        height: 40px;
+        border-right: 0.0625rem solid gray;
+        height: 2.5rem;
         .small-menu {
           display: flex;
           justify-content: center;
           align-items: center;
-          padding-left: 0px;
-          gap: 10px;
+          padding-left: 0rem;
+          gap: 0.625rem;
 
           button {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 0.5rem;
             align-items: center;
             border: none;
             background-color: transparent;
-            padding: 10px;
+            padding: 0.625rem;
             transition: all 0.2s ease-in-out 0.1s;
             &:hover {
               background-color: #8fdd5d;
@@ -911,7 +911,7 @@ const Container = styled.div`
               }
             }
             svg {
-              font-size: 22px;
+              font-size: 1.375rem;
               transition: all 0.2s ease-in-out 0.1s;
             }
             span {
@@ -919,7 +919,7 @@ const Container = styled.div`
               color: #000;
               text-align: center;
               font-family: Roboto;
-              font-size: 14px;
+              font-size: 0.875rem;
               font-style: normal;
               font-weight: 400;
               line-height: normal;
@@ -941,17 +941,17 @@ const Container = styled.div`
         justify-content: center;
         grid-template-columns: 1fr 6fr 1fr 1fr 1fr;
         button {
-          width: 93px;
-          height: 40px;
+          width: 5.8125rem;
+          height: 2.5rem;
           flex-shrink: 0;
           color: #fff;
           font-family: Poppins;
-          font-size: 16px;
+          font-size: 1rem;
           font-style: normal;
           font-weight: 400;
-          line-height: 30px;
+          line-height: 1.875rem;
           border: none;
-          border-radius: 50px;
+          border-radius: 3.125rem;
           background-image: linear-gradient(#8fdd5d, #71bb42);
           transition: all 0.5s ease-in-out;
           position: relative;
@@ -960,17 +960,17 @@ const Container = styled.div`
           }
         }
         .logout {
-          width: 40px;
-          height: 40px;
+          width: 2.5rem;
+          height: 2.5rem;
           flex-shrink: 0;
           color: #fff;
           font-family: Poppins;
-          font-size: 16px;
+          font-size: 1rem;
           font-style: normal;
           font-weight: 400;
-          line-height: 30px;
+          line-height: 1.875rem;
           border: none;
-          border-radius: 50px;
+          border-radius: 3.125rem;
           background-image: linear-gradient(#8fdd5d, #71bb42);
           transition: all 0.5s ease-in-out;
           position: relative;
@@ -978,26 +978,26 @@ const Container = styled.div`
           justify-content: center;
           align-items: center;
           svg {
-            font-size: 20px;
+            font-size: 1.25rem;
           }
           &:hover {
             background-image: linear-gradient(#71bb42, #8fdd5d);
           }
         }
         .search-field {
-          margin-left: 25px;
+          margin-left: 1.5625rem;
           display: flex;
           align-items: center;
           form {
             display: flex;
             justify-content: start;
             align-items: center;
-            gap: 7px;
+            gap: 0.4375rem;
             .searchButton {
               background-color: #fff !important;
             }
             svg {
-              font-size: 25px;
+              font-size: 1.5625rem;
               cursor: pointer;
               &:hover {
                 color: #71bb42;
@@ -1006,17 +1006,17 @@ const Container = styled.div`
             input {
               border: none;
               font-family: Poppins;
-              font-size: 14px;
+              font-size: 0.875rem;
               font-weight: 400;
-              line-height: 21px;
+              line-height: 1.3125rem;
               letter-spacing: 0em;
               text-align: left;
-              padding: 5px 5px;
-              border-left: 1px solid white;
+              padding: 0.3125rem 0.3125rem;
+              border-left: 0.0625rem solid white;
 
               &:focus {
                 outline: none;
-                border-left: 1px solid #71bb42;
+                border-left: 0.0625rem solid #71bb42;
               }
             }
           }
@@ -1026,18 +1026,18 @@ const Container = styled.div`
           align-items: center;
           justify-content: center;
           img {
-            width: 56px;
-            height: 30px;
+            width: 3.5rem;
+            height: 1.875rem;
             object-fit: contain;
-            margin-right: 132px;
+            margin-right: 8.25rem;
           }
         }
         .loginAvatar {
-          width: 50px;
-          height: 50px;
+          width: 3.125rem;
+          height: 3.125rem;
           overflow: hidden;
-          margin-top: 10px;
-          border: 2px solid white;
+          margin-top: 0.625rem;
+          border: 0.125rem solid white;
           background-color: white;
           a {
             width: 100%;
@@ -1046,43 +1046,43 @@ const Container = styled.div`
             overflow: hidden;
             overflow: hidden;
             img {
-              width: 40px;
+              width: 2.5rem;
               border-radius: 100%;
-              height: 40px;
+              height: 2.5rem;
 
               object-fit: cover;
             }
           }
         }
         .creator {
-          border-left: 1px solid gray;
-          padding-left: 15px;
-          margin-left: 10px;
+          border-left: 0.0625rem solid gray;
+          padding-left: 0.9375rem;
+          margin-left: 0.625rem;
           display: flex;
           justify-content: start;
           align-items: center;
-          gap: 16px;
+          gap: 1rem;
           position: relative;
           a {
             color: #3c3c3c;
             font-family: Poppins;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-style: normal;
             font-weight: 500;
             line-height: normal;
           }
           button {
-            width: 93px;
-            height: 40px;
+            width: 5.8125rem;
+            height: 2.5rem;
             flex-shrink: 0;
             color: #fff;
             font-family: Poppins;
-            font-size: 16px;
+            font-size: 1rem;
             font-style: normal;
             font-weight: 400;
-            line-height: 30px;
+            line-height: 1.875rem;
             border: none;
-            border-radius: 50px;
+            border-radius: 3.125rem;
             background-image: linear-gradient(#8fdd5d, #71bb42);
             transition: all 0.5s ease-in-out;
             position: relative;
@@ -1097,19 +1097,19 @@ const Container = styled.div`
 `;
 /* Your skeleton content styles */
 const SkeletonContent = styled.div`
-  width: 1442px;
+  width: 90.125rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 50px;
+  padding: 0 0rem;
   .left,
   .right {
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  margin-left: 25px;
-  @media (max-width: 768px) {
+  margin-left: 1.5625rem;
+  @media (max-width: 48rem) {
     width: 100%;
   }
 `;
@@ -1117,42 +1117,50 @@ const SkeletonContent = styled.div`
 const SmallMenuButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   border: none;
   background-color: transparent;
-  padding: 10px;
+  padding: 0.625rem;
+  span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    background-color: #eee;
+    padding: 0.9375rem;
+  }
 `;
 /* Your search field styles */
 const SearchField = styled.div`
-  margin-left: 25px;
-  @media (max-width: 768px) {
+  margin-left: 1.5625rem;
+  @media (max-width: 48rem) {
     display: none;
   }
 `;
 /* Your logo styles */
 const Logo = styled.div`
-  margin-left: 25px;
+  margin-left: 1.5625rem;
 `;
 /* Your creator styles */
 const Creator = styled.div`
-  margin-left: 25px;
+  margin-left: 1.5625rem;
 `;
 /* Your skeleton logo styles */
 const SkeletonLogo = styled.div`
-  width: 56px;
-  height: 30px;
+  width: 3.5rem;
+  height: 1.875rem;
   background-color: #ddd; /* Placeholder background color */
 `;
 /* Your skeleton search styles */
 const SkeletonSearch = styled.div`
-  width: 200px;
-  height: 40px;
+  width: 12.5rem;
+  height: 2.5rem;
   background-color: #ddd; /* Placeholder background color */
 `;
 /* Your skeleton creator button styles */
 const SkeletonCreatorButton = styled.div`
-  width: 50px;
-  height: 40px;
+  width: 3.125rem;
+  height: 2.5rem;
   background-color: #ddd; /* Placeholder background color */
 `;
 export default Navbar;

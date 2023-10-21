@@ -241,6 +241,7 @@ const Sidebar = styled.div`
     height: 50px;
     width: 50px;
     overflow: hidden;
+
     img {
       width: 100%;
       height: 100%;
