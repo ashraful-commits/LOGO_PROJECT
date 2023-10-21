@@ -931,7 +931,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                                   color="textSecondary"
                                   component="span"
                                 >
-                                  22 M
+                                  {item?.Like?.length ? item?.Like?.length : 0}
                                 </Typography>
                               </Button>
                               <Button
@@ -964,7 +964,9 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                                   color="textSecondary"
                                   component="span"
                                 >
-                                  15.5 k
+                                  {item?.messages?.length
+                                    ? item?.messages?.length
+                                    : 0}
                                 </Typography>
                               </Button>
                               <Button
@@ -997,7 +999,9 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                                   color="textSecondary"
                                   component="span"
                                 >
-                                  3.5 k
+                                  {item?.share?.length
+                                    ? item?.share?.length
+                                    : 0}
                                 </Typography>
                               </Button>
                             </CardActions>

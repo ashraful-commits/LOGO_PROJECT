@@ -42,6 +42,7 @@ import Login from "../Login/Login";
 import updateDocumentWithSnapshot from "../../Utility/UpdateDoc";
 import getDocumentById from "../../Utility/getSingleData";
 import setDocumentWithId from "../../Utility/SetDocWithId";
+import { FacebookShareButton } from "react-share";
 
 // Define the 'PostComponent' functional component.
 const PostComponent = ({
@@ -147,7 +148,7 @@ const PostComponent = ({
   useEffect(() => {
     const options = {
       root: null,
-      rootMargin: "0px",
+      rootMargin: "0px", // Or "0%"
       threshold: 0.5,
     };
 
@@ -333,19 +334,7 @@ const PostComponent = ({
     addMessageToPost(postUid, loggedInUser.id, message);
   };
   //===================================== handle share
-  const handleShareClick = (postId) => {
-    const url = `${postId}`;
-    const shareWindow = window.open(
-      url,
-      "Share on Facebook",
-      "width=600, height=400"
-    );
-    if (shareWindow) {
-      shareWindow.focus();
-    } else {
-      alert("Please allow pop-ups to share on Facebook.");
-    }
-  };
+
   //==========================handle close
   const handleClose = () => setOpen(false);
 
@@ -362,7 +351,7 @@ const PostComponent = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: "160px",
+            marginTop: "10rem",
             width: "100%",
           }}
         >
@@ -520,15 +509,15 @@ const PostComponent = ({
                   bottom: "30%",
                   right: "10%",
                   zIndex: 999,
-                  width: "335px",
-                  height: "300px",
-                  boxShadow: "0 0 10px #ccffc9 inset",
+                  width: "20.9375rem",
+                  height: "18.75rem",
+                  boxShadow: "0 0 .625rem #ccffc9 inset",
                   bgcolor: "#eee",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  padding: "10px",
-                  borderRadius: "10px",
+                  padding: ".625rem",
+                  borderRadius: ".625rem",
                 }}
               >
                 <button
@@ -536,14 +525,14 @@ const PostComponent = ({
                   style={{
                     position: "absolute",
                     top: 10,
-                    width: "20px",
-                    height: "20px",
+                    width: "1.25rem",
+                    height: "1.25rem",
                     display: "flex",
                     right: 10,
                     background: "transparent",
                     cursor: "pointer",
                     zIndex: 999999,
-                    border: "1px solid gray",
+                    border: ".0625rem solid gray",
                     borderRadius: "100%",
                     justifyContent: "center",
                     alignItems: "center",
@@ -559,16 +548,16 @@ const PostComponent = ({
                     flexDirection: "column",
                     bgcolor: "#fff",
                     alignItems: "start",
-                    padding: "5px 5px 0 5px",
-                    margin: "25px 0 4px 0",
-                    gap: "1px",
+                    padding: ".3125rem .3125rem 0 .3125rem",
+                    margin: "1.5625rem 0 .25rem 0",
+                    gap: ".0625rem",
                     "&::-webkit-scrollbar": {
-                      width: "1px",
+                      width: ".0625rem",
                       opacity: 0,
                     },
                     "&::-webkit-scrollbar-thumb": {
                       backgroundColor: "#fefefe",
-                      borderRadius: "4px",
+                      borderRadius: ".25rem",
                     },
                     "&::-webkit-scrollbar-thumb:hover": {
                       backgroundColor: "#555",
@@ -580,8 +569,8 @@ const PostComponent = ({
                       <ListItem
                         sx={{
                           display: "flex",
-                          marginBottom: "10px",
-                          gap: "10px",
+                          marginBottom: ".625rem",
+                          gap: ".625rem",
                           flexDirection:
                             loggedInUser?.id === item?.id
                               ? "row-reverse"
@@ -597,7 +586,7 @@ const PostComponent = ({
                             loggedInUser?.id === item?.id
                               ? "flex-end"
                               : "flex-start",
-                          borderRadius: "10px",
+                          borderRadius: ".625rem",
                         }}
                         key={index}
                       >
@@ -609,7 +598,9 @@ const PostComponent = ({
                           }}
                         >
                           <ListItemAvatar>
-                            <Avatar sx={{ width: "20px", height: "20px" }} />
+                            <Avatar
+                              sx={{ width: "1.25rem", height: "1.25rem" }}
+                            />
                           </ListItemAvatar>
                           <ListItemText
                             primary={item.username} // Assuming you have a 'username' property
@@ -634,7 +625,7 @@ const PostComponent = ({
                       sx={{
                         width: "100%",
                         backgroundColor: "#71b22a",
-                        padding: "0 7px",
+                        padding: "0 .4375rem",
                         color: "white",
                       }}
                       type="text"
@@ -645,8 +636,8 @@ const PostComponent = ({
                     <button
                       className="send_btn"
                       style={{
-                        width: "30px",
-                        height: "32px",
+                        width: "1.875rem",
+                        height: "2rem",
                         backgroundColor: "#71b22a",
                         border: "none",
                       }}
@@ -672,9 +663,12 @@ const PostComponent = ({
                 <span>{msgCount}</span>
               </div>
               <div className="status-item">
-                <button onClick={() => handleShareClick(id)}>
+                <FacebookShareButton
+                  url={`https://logo-project-assignment.vercel.app/${id}`}
+                >
                   <BsShare />
-                </button>
+                </FacebookShareButton>
+
                 <span>3.5 k</span>
               </div>
             </div>
@@ -686,12 +680,12 @@ const PostComponent = ({
 };
 /* ............... (Styles for the main container) */
 const PostContainer = styled.div`
-  width: 545.112px;
-  height: 671.334px;
+  width: 34.0695rem;
+  height: 41.9584rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 0.0625rem;
   .send_btn {
     width: "100%";
     :hover {
@@ -699,18 +693,18 @@ const PostContainer = styled.div`
     }
   }
   .post-user-details {
-    width: 545.112px;
-    height: 70px;
+    width: 34.0695rem;
+    height: 4.375rem;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     .user-details {
       height: 100%;
       display: flex;
-      gap: 5.4px;
+      gap: 0.3375rem;
       .avatar {
-        width: 50px;
-        height: 50px;
+        width: 3.125rem;
+        height: 3.125rem;
         flex-shrink: 0;
         display: flex;
         justify-content: center;
@@ -734,11 +728,11 @@ const PostContainer = styled.div`
         display: flex;
         flex-direction: column;
         justify-content: start;
-        margin-left: 4px;
+        margin-left: 0.25rem;
         p {
           color: #000;
           font-family: Poppins;
-          font-size: 15.35px;
+          font-size: 0.9594rem;
           font-style: normal;
           font-weight: 600;
           line-height: normal;
@@ -747,12 +741,12 @@ const PostContainer = styled.div`
         span {
           color: #4f4f4f;
           font-family: Poppins;
-          font-size: 14px;
+          font-size: 0.875rem;
           font-style: normal;
           font-weight: 400;
           line-height: normal;
           cursor: pointer;
-          width: 60px !important; /* Adjust the width as needed */
+          width: 3.75rem !important; /* Adjust the width as needed */
           white-space: nowrap; /* Prevent text from wrapping to the next line */
           overflow: hidden; /* Hide any overflowing text */
           text-overflow: ellipsis; /* Add ellipsis (...) for truncated text */
@@ -764,16 +758,16 @@ const PostContainer = styled.div`
       justify-content: end;
 
       button {
-        width: 75px;
-        height: 32px;
+        width: 4.6875rem;
+        height: 2rem;
         flex-shrink: 0;
         background-image: var(--bg-gradient);
-        border-radius: 8px;
+        border-radius: 0.5rem;
         border: none;
         color: #fff;
         text-align: center;
         font-family: Segoe UI;
-        font-size: 14px;
+        font-size: 0.875rem;
         font-style: normal;
         font-weight: 600;
         line-height: normal;
@@ -790,36 +784,36 @@ const PostContainer = styled.div`
     text-align: left;
     display: flex;
     justify-content: start;
-    margin-left: 5px;
-    margin-top: 2px;
+    margin-left: 0.3125rem;
+    margin-top: 0.125rem;
     p {
       color: #000;
       font-family: Poppins;
-      font-size: 14px;
+      font-size: 0.875rem;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
       white-space: nowrap; /* Prevent text from wrapping to the next line */
       overflow: hidden; /* Hide any content that overflows its container */
       text-overflow: ellipsis; /* Display an ellipsis (...) when text overflows */
-      max-width: 150px;
+      max-width: 9.375rem;
     }
   }
   .img-status {
     position: "relative";
     width: 100%;
-    height: 570px;
+    height: 35.625rem;
     flex-shrink: 0;
     display: grid;
-    margin-top: 9px;
-    grid-template-columns: 320px auto;
-    gap: 10px;
+    margin-top: 0.5625rem;
+    grid-template-columns: 20rem auto;
+    gap: 0.625rem;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    padding-bottom: 30px;
+    padding-bottom: 1.875rem;
     overflow: hidden;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 0.0625rem solid #eeeeee;
     .loading {
       background-color: #bcbcbc !important;
       .play-button {
@@ -844,8 +838,8 @@ const PostContainer = styled.div`
       justify-content: center;
       align-items: center;
       background-color: #080808;
-      border-radius: 24.731px;
-      margin-left: 62px;
+      border-radius: 1.5457rem;
+      margin-left: 3.875rem;
       z-index: 1;
       img {
         width: 100%;
@@ -859,15 +853,15 @@ const PostContainer = styled.div`
         left: 50%;
         transform: translate(-50%, -50%);
         cursor: pointer;
-        font-size: 24px;
+        font-size: 1.5rem;
         color: #fff;
         background-color: rgba(0, 0, 0, 0.5);
         border-radius: 50%;
-        padding: 10px;
+        padding: 0.625rem;
         z-index: 100;
         transition: background-color 0.2s;
-        width: 50px;
-        height: 50px;
+        width: 3.125rem;
+        height: 3.125rem;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -886,9 +880,9 @@ const PostContainer = styled.div`
         overflow: hidden;
         bottom: 0;
         width: 100%;
-        height: 498px;
+        height: 31.125rem;
         flex-shrink: 0;
-        border-radius: 24.731px;
+        border-radius: 1.5457rem;
         opacity: 0.8;
         display: flex;
         flex-direction: column;
@@ -899,8 +893,8 @@ const PostContainer = styled.div`
         text-overflow: ellipsis; /* Display an ellipsis (...) when text overflows */
         max-width: 100%;
         z-index: 5;
-        padding: 20px;
-        padding-bottom: 35px;
+        padding: 1.25rem;
+        padding-bottom: 2.1875rem;
         background: linear-gradient(
           0deg,
           #1c1c1c 7.3%,
@@ -911,7 +905,7 @@ const PostContainer = styled.div`
         p {
           color: #bcbcbc;
           font-family: Roboto;
-          font-size: 10.234px;
+          font-size: 0.6396rem;
           font-style: normal;
           font-weight: 400;
           line-height: normal;
@@ -924,7 +918,7 @@ const PostContainer = styled.div`
         span {
           color: #bcbcbc;
           font-family: Roboto;
-          font-size: 8.528px;
+          font-size: 0.533rem;
           font-style: normal;
           font-weight: 400;
           line-height: normal;
@@ -933,23 +927,23 @@ const PostContainer = styled.div`
     }
     .status {
       height: 100%;
-      width: 115px;
+      width: 7.1875rem;
       display: flex;
       flex-direction: column;
       justify-content: end;
       align-items: end;
-      gap: 21px;
+      gap: 1.3125rem;
 
       .status-item {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 6px;
+        gap: 0.375rem;
 
         button {
-          width: 40px;
-          height: 40px;
+          width: 2.5rem;
+          height: 2.5rem;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -966,26 +960,26 @@ const PostContainer = styled.div`
           border-radius: 100%;
 
           svg {
-            font-size: 22px;
+            font-size: 1.375rem;
           }
         }
         span {
-          font-size: 0.6rem;
+          font-size: 9.6px;
         }
       }
     }
   }
-  @media (max-width: 767px) {
+  @media (max-width: 47.9375rem) {
     width: 99vw;
     margin: 0 auto;
-    padding: 0 30px;
-    height: 671.334px;
+    padding: 0 1.875rem;
+    height: 41.9584rem;
     .post-user-details {
       width: 100%;
     }
     .details {
       span {
-        width: 150px; /* Adjust the width as needed */
+        width: 9.375rem; /* Adjust the width as needed */
         white-space: nowrap; /* Prevent text from wrapping to the next line */
         overflow: hidden; /* Hide any overflowing text */
         text-overflow: ellipsis;
@@ -995,8 +989,8 @@ const PostContainer = styled.div`
       position: "relative";
       width: 100%;
       grid-template-columns: 95%;
-      grid-template-rows: 470px auto;
-      gap: 21px;
+      grid-template-rows: 29.375rem auto;
+      gap: 1.3125rem;
 
       .status {
         width: 100%;
@@ -1005,12 +999,12 @@ const PostContainer = styled.div`
         flex-direction: row;
       }
       .img {
-        margin-left: 0px;
+        margin-left: 0rem;
         .desc {
           p {
             color: #bcbcbc;
             font-family: Roboto;
-            font-size: 10.234px;
+            font-size: 0.6396rem;
             font-style: normal;
             font-weight: 400;
             line-height: normal;
@@ -1028,16 +1022,16 @@ const PostContainer = styled.div`
     }
   }
 
-  @media (min-width: 768px) and (max-width: 1023px) {
+  @media (min-width: 48rem) and (max-width: 63.9375rem) {
     width: 100%;
     top: 5%;
     .post-user-details {
-      width: 550.112px;
+      width: 34.382rem;
     }
     .img-status {
       position: "relative";
-      grid-template-columns: 420px auto;
-      padding-bottom: 30px;
+      grid-template-columns: 26.25rem auto;
+      padding-bottom: 1.875rem;
       .img {
         width: 100%;
         .loading {
@@ -1047,7 +1041,7 @@ const PostContainer = styled.div`
           p {
             color: #bcbcbc;
             font-family: Roboto;
-            font-size: 10.234px;
+            font-size: 0.6396rem;
             font-style: normal;
             font-weight: 400;
             line-height: normal;
@@ -1064,16 +1058,16 @@ const PostContainer = styled.div`
       width: 70%;
     }
   }
-  @media (min-width: 1024px) and (max-width: 1365px) {
+  @media (min-width: 64rem) and (max-width: 85.3125rem) {
     width: 100%;
     top: 15%;
     .post-user-details {
-      width: 550.112px;
+      width: 34.382rem;
     }
     .img-status {
       position: "relative";
-      grid-template-columns: 420px auto;
-      padding-bottom: 30px;
+      grid-template-columns: 26.25rem auto;
+      padding-bottom: 1.875rem;
       .img {
         width: 100%;
         .loading {
@@ -1083,7 +1077,7 @@ const PostContainer = styled.div`
           p {
             color: #bcbcbc;
             font-family: Roboto;
-            font-size: 10.234px;
+            font-size: 0.6396rem;
             font-style: normal;
             font-weight: 400;
             line-height: normal;
@@ -1112,19 +1106,19 @@ const fadeIn = keyframes`
 `;
 //====================== Create a separate styled component for the skeleton
 const SkeletonPost = styled.div`
-  width: 545.112px;
-  height: 671.334px;
+  width: 34.0695rem;
+  height: 41.9584rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 0.0625rem;
   background-color: #f0f0f0;
   animation: ${fadeIn} 0.5s ease-in-out;
 
   /* Add skeleton styles for the user details */
   .post-user-details {
-    width: 545.112px;
-    height: 70px;
+    width: 34.0695rem;
+    height: 4.375rem;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
@@ -1134,13 +1128,13 @@ const SkeletonPost = styled.div`
     .user-details {
       height: 100%;
       display: flex;
-      gap: 5.4px;
+      gap: 0.3375rem;
       align-items: center;
 
       /* Add skeleton styles for avatar */
       .avatar {
-        width: 50px;
-        height: 50px;
+        width: 3.125rem;
+        height: 3.125rem;
         flex-shrink: 0;
         background-color: #ccc;
         border-radius: 50%;
@@ -1151,15 +1145,15 @@ const SkeletonPost = styled.div`
       .details {
         p {
           background-color: #e0e0e0;
-          height: 20px;
-          width: 100px;
-          border-radius: 5px;
+          height: 1.25rem;
+          width: 6.25rem;
+          border-radius: 0.3125rem;
         }
         span {
           background-color: #e0e0e0;
-          height: 10px;
-          width: 60px;
-          border-radius: 5px;
+          height: 0.625rem;
+          width: 3.75rem;
+          border-radius: 0.3125rem;
         }
       }
     }
@@ -1171,13 +1165,13 @@ const SkeletonPost = styled.div`
     text-align: left;
     display: flex;
     justify-content: start;
-    margin-left: 5px;
-    margin-top: 2px;
+    margin-left: 0.3125rem;
+    margin-top: 0.125rem;
     p {
       background-color: #e0e0e0;
-      height: 15px;
+      height: 0.9375rem;
       width: 80%;
-      border-radius: 5px;
+      border-radius: 0.3125rem;
     }
   }
 
@@ -1185,16 +1179,16 @@ const SkeletonPost = styled.div`
   .img-status {
     position: "relative";
     width: 100%;
-    height: 570px;
+    height: 35.625rem;
     flex-shrink: 0;
     display: grid;
-    gap: 10px;
+    gap: 0.625rem;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    padding-bottom: 30px;
+    padding-bottom: 1.875rem;
     overflow: hidden;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 0.0625rem solid #eeeeee;
 
     /* Add skeleton styles for image */
     .img {
@@ -1202,7 +1196,7 @@ const SkeletonPost = styled.div`
       position: relative;
       height: 100%;
       background-color: #ccc;
-      border-radius: 10px;
+      border-radius: 0.625rem;
       img {
         width: 100%;
         height: 100%;
@@ -1213,24 +1207,24 @@ const SkeletonPost = styled.div`
     /* Add skeleton styles for status */
     .status {
       height: 100%;
-      width: 115px;
+      width: 7.1875rem;
       display: flex;
       flex-direction: column;
       justify-content: end;
       align-items: end;
-      gap: 21px;
+      gap: 1.3125rem;
 
       .status-item {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 6px;
+        gap: 0.375rem;
 
         /* Add skeleton styles for buttons */
         button {
-          width: 40px;
-          height: 40px;
+          width: 2.5rem;
+          height: 2.5rem;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -1239,24 +1233,24 @@ const SkeletonPost = styled.div`
         }
         span {
           background-color: #e0e0e0;
-          height: 10px;
-          width: 30px;
-          border-radius: 5px;
+          height: 0.625rem;
+          width: 1.875rem;
+          border-radius: 0.3125rem;
         }
       }
     }
   }
 
   /* Add media queries for responsiveness */
-  @media (max-width: 320px) {
+  @media (max-width: 20rem) {
     /* Small mobile */
     width: 100vw;
-    height: 671.334px;
+    height: 41.9584rem;
     .post-user-details {
       width: 100%;
     }
     .details span {
-      width: 150px;
+      width: 9.375rem;
     }
     .img-status .img {
       margin-left: 0;
@@ -1266,15 +1260,15 @@ const SkeletonPost = styled.div`
     }
   }
 
-  @media (min-width: 321px) and (max-width: 768px) {
+  @media (min-width: 20.0625rem) and (max-width: 48rem) {
     /* Large mobile */
     width: 100vw;
-    height: 671.334px;
+    height: 41.9584rem;
     .post-user-details {
       width: 100%;
     }
     .details span {
-      width: 150px;
+      width: 9.375rem;
     }
     .img-status .img {
       margin-left: 0;
@@ -1284,15 +1278,15 @@ const SkeletonPost = styled.div`
     }
   }
 
-  @media (min-width: 769px) and (max-width: 1024px) {
+  @media (min-width: 48.0625rem) and (max-width: 64rem) {
     /* Tablet */
     width: 100%;
     .post-user-details {
-      width: 550.112px;
+      width: 34.382rem;
     }
   }
 
-  @media (min-width: 1025px) {
+  @media (min-width: 64.0625rem) {
     /* Desktop */
     /* Reset any specific styles for desktop, as it will use the default styles. */
   }
