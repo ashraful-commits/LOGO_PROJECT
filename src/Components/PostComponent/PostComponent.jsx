@@ -532,6 +532,7 @@ const PostComponent = ({
                     display: "flex",
                     flexDirection: "column",
                     bgcolor: "#fff",
+                    borderRadius: "10px",
                     boxShadow: "0 0 .3125rem #003b03 inset",
                     justifyContent: "start",
                     alignItems: "start",
