@@ -683,7 +683,7 @@ const PostComponent = ({ user, id, setTotalPost }) => {
                             bgcolor:
                               item?.suspended?.status || item?.decline
                                 ? "#fa8b8b"
-                                : "#f5fdff",
+                                : "#b9ffb5",
                             color:
                               item?.suspended?.status || item?.decline
                                 ? "white"
