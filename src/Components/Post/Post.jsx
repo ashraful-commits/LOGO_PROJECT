@@ -67,16 +67,18 @@ const Post = () => {
               const userDocRef = doc(db, "users", userId);
               const userSnapshot = await getDoc(userDocRef);
 
-              // Fetch messages for the post
-              postData.messages = [];
-              for (const element of postData.messages) {
-                const newMessages = await Promise.all(
-                  element.messages.map(async (message) => {
-                    const msgUser = await getDocumentById("users", message.id);
-                    return { ...message, user: msgUser };
-                  })
-                );
-                element.messages = newMessages;
+              // Use map and Promise.all to update messages
+              const updatedMessages = await Promise.all(
+                (postData.messages || []).map(async (message) => {
+                  const msgUser = await getDocumentById("users", message?.id);
+                  return { ...message, user: msgUser };
+                })
+              );
+
+              if (postData.messages) {
+                postData.messages = updatedMessages;
+              } else {
+                postData.messages = [];
               }
 
               if (userSnapshot.exists()) {
@@ -110,7 +112,7 @@ const Post = () => {
           hasMore={hasMore}
           loader={
             <img
-              style={{ width: "50px", margin: "0 auto" }}
+              style={{ width: "3.125rem", margin: "0 auto" }}
               src="https://bestanimations.com/media/loading-gears/1575100148loading-gear-6.gif"
             />
           }
@@ -152,7 +154,7 @@ const PostContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: start;
-  gap: 52px;
+  gap: 3.25rem;
   .infinite-scroll-component {
     text-align: center;
     overflow: hidden !important;
@@ -160,23 +162,23 @@ const PostContainer = styled.div`
     max-height: fit-content;
   }
   // Media query for smaller screens.
-  @media (max-width: 767px) {
+  @media (max-width: 47.9375rem) {
     width: 100%;
   }
 
-  // Media query for screens between 300px and 768px.
-  @media (min-width: 300px) and (max-width: 766px) {
-    gap: 32px;
+  // Media query for screens between 18.75rem and 48rem.
+  @media (min-width: 18.75rem) and (max-width: 47.875rem) {
+    gap: 2rem;
   }
 
-  // Media query for screens between 769px and 1024px.
-  @media (min-width: 768px) and (max-width: 1023px) {
-    margin-top: 50px;
+  // Media query for screens between 48.0625rem and 64rem.
+  @media (min-width: 48rem) and (max-width: 63.9375rem) {
+    margin-top: 3.125rem;
     top: 33%;
   }
-  // Media query for screens between 769px and 1024px.
-  @media (min-width: 1024px) and (max-width: 1365px) {
-    margin-top: 50px;
+  // Media query for screens between 48.0625rem and 64rem.
+  @media (min-width: 64rem) and (max-width: 85.3125rem) {
+    margin-top: 3.125rem;
     top: 30%;
   }
   .infinite-scroll-component__outerdiv {
@@ -185,7 +187,7 @@ const PostContainer = styled.div`
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      row-gap: 30px;
+      row-gap: 1.875rem;
     }
   }
 `;

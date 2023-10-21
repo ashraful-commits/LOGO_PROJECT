@@ -80,30 +80,29 @@ const PostComponent = ({
   const [likeCount, setLikeCount] = useState(Like ? Like?.length : 0);
   const [shareCount, setShareCount] = useState(Share ? Share?.length : 0);
   const [msgCount, setMsgCount] = useState(messages ? messages?.length : 0);
-  const [totalChat, setTotalChat] = useState([]);
-
+  const [totalChat, setTotalChat] = useState(messages ?? []);
   const [isLiked, setIsLiked] = useState(false);
   const [shareBtn, setShareBtn] = useState(false);
   const [Id, setId] = useState(null);
-  console.log(messages);
-  //===========================firestore
+
+  //==================================firestore
   const db = getFirestore(app);
 
   const [unsubscribe, setUnsubscribe] = useState(null);
-  //=========================== fetch user data
+  //=================================== fetch user data
   useEffect(() => {
     const fetchUserDataById = async () => {
       const docRef = doc(db, "users", auth?.currentUser?.uid);
 
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
-        //======================== Return null if the user document does not exist
+        //============================== Return null if the user document does not exist
         return;
       }
       const userdata = docSnap.data();
       const user = [];
 
-      //========================== Subscribe to real-time updates for the following list
+      //==================================== Subscribe to real-time updates for the following list
       const unsubscribeFollowing = onSnapshot(docRef, (doc) => {
         const newUserData = doc.data();
         setLoggedInUser((prev) => ({
@@ -113,7 +112,7 @@ const PostComponent = ({
         }));
       });
 
-      //============================ Subscribe to real-time updates for the user's followers
+      //===================================== Subscribe to real-time updates for the user's followers
       userdata.following.forEach((item) => {
         const followersRef = doc(db, "users", item);
 
@@ -186,7 +185,7 @@ const PostComponent = ({
       setOpen(true);
     }
   };
-  //=================================================handle unfollow
+  //========================================================handle unfollow
   const handleUnfollow = async (id) => {
     const auth = getAuth(app);
     if (auth.currentUser) {
@@ -228,11 +227,11 @@ const PostComponent = ({
       setOpen(true);
     }
   };
-  //============================handle update like instent
+  //==================================================handle update like instent
   useEffect(() => {
     setIsLiked(Like?.some((item) => item === loggedInUser?.id) ? true : false);
   }, [loggedInUser?.id, Like]);
-  //============================handle post like
+  //====================================================handle post like
   const handleLike = async (postId) => {
     if (loggedInUser?.id) {
       try {
@@ -275,12 +274,12 @@ const PostComponent = ({
       setOpen(true);
     }
   };
-  //============================handle chats
+  //=========================================handle chats
   const handleChat = (postId) => {
     setPostUid(postId ? postId : null);
     setChat(!chat);
   };
-  //============================handle message
+  //============================================handle message
   const handleMessage = (e) => {
     e.preventDefault();
 
@@ -288,7 +287,7 @@ const PostComponent = ({
       const postRef = doc(db, "Posts", postUid);
       if (userId) {
         try {
-          //==================================== Update
+          //==================================================== Update
           await updateDoc(postRef, {
             messages: arrayUnion({ id: userId, text: message }),
           }).then(() => {
@@ -315,13 +314,13 @@ const PostComponent = ({
     };
     addMessageToPost(postUid, loggedInUser.id, message);
   };
-  //===================================== handle share
+  //================================================== handle share
   const handleShare = (id) => {
     setId(id);
 
     setShareBtn(true);
   };
-  //==========================handle close
+  //============================================handle close
   const handleClose = () => setOpen(false);
 
   return (
@@ -584,12 +583,15 @@ const PostComponent = ({
                             sx={{
                               display: "flex",
                               alignItems: "start",
+
+                              padding: "0 5px",
+                              width: "100%",
                               flexDirection: `${
                                 loggedInUser?.id === item?.id
                                   ? "row-reverse"
                                   : ""
                               }`,
-                              justifyContent: "flex-start",
+                              justifyContent: "start",
                               gap: "10px",
                             }}
                           >
@@ -618,7 +620,7 @@ const PostComponent = ({
                             <Typography
                               sx={{
                                 fontSize: "10px",
-                                wordBreak: "break-all",
+                                wordBreak: "break-word",
                               }}
                             >
                               {item.text}
