@@ -318,7 +318,7 @@ const PostComponent = ({
   const handleShare = (id) => {
     setId(id);
 
-    setShareBtn(true);
+    setShareBtn(!shareBtn);
   };
   //============================================handle close
   const handleClose = () => setOpen(false);
